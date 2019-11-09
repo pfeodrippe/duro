@@ -9,24 +9,30 @@
   ([k]
    (command k 0))
   ([k v]
-   (str
-    ({:pc-write "3"
-      :pc-next "0"
-      :clk "1"
-      :eval "2"}
-     k)
-    ":"
-    v)))
+   (let [cmd (str
+              ({:pc-write "3"
+                :pc-next "0"
+                :clk "1"
+                :eval "2"}
+               k)
+              ":"
+              v)]
+     (str cmd
+          (str/join
+           (repeat (- 32 (count cmd)) " "))))))
 
 #_(doseq [i (range 1)]
   (spit "jjj.txt"
         "0:2"))
 
-(doseq [c [(command :clk 0)
-           (command :pc-next 15)
-           (command :pc-write 1)
-           (command :clk 1)
-           (command :eval)]]
-  (clojure.pprint/pprint c)
-  (spit "jjj.txt"
-        (str c "\n")))
+(time
+ (doseq [i (range 9421)]
+   (doseq [c [(command :clk 0)
+              (command :eval)
+              (command :pc-next i)
+              (command :pc-write 1)
+              (command :clk 1)
+              (command :eval)]]
+     (spit "caramba.txt"
+           (str c "\n")
+           :append true))))

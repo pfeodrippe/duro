@@ -26,27 +26,39 @@ int main(int argc, char** argv, char** env) {
     top->Reset = 0;
     printf("Reset: %d\n", top->Reset);
 
-    while (!Verilated::gotFinish()) {
-        top->eval();
-        std::ifstream myfile ("jjj.txt");
-        std::string line;
+    long long last_pos = -1;
 
-        std::clock_t begin = clock();
-        if (myfile.is_open())
+    std::string line;
+
+    while (!Verilated::gotFinish()) {
+        std::ifstream fifo ("caramba.txt", std::ifstream::in);
+        fifo.seekg((last_pos + 1) * 32, std::ios::beg);
+
+        if (fifo.is_open())
         {
-            while (myfile.good())
+            while (getline(fifo,line))
             {
-                getline (myfile,line);
+                if(line.length() != 32) {
+                    continue;
+                }
+
+                getline (fifo,line);
+                ++last_pos;
+                if (line == "") {
+                    continue;
+                }
+
+                printf("last_pos: %i\n", int(last_pos));
+
                 op_cmd = line.substr(0, line.find(op_delimiter));
                 op_value = line.substr(line.find(op_delimiter) + 1);
 
                 std::string::size_type sz;
-
                 std::cout << "cmd " << op_cmd << ": " << op_value << std::endl;
 
-                if (line == "") {
-                    op_cmd = "9999";
-                }
+                printf("PCNext: %i\n", top->PCNext);
+                printf("PCWrite: %i\n", top->PCWrite);
+                printf("Clk: %i\n", top->Clk);
 
                 switch(static_cast<Command>(std::stol(op_cmd, &sz))) {
                 case PCNext: {
@@ -71,25 +83,12 @@ int main(int argc, char** argv, char** env) {
                 }
                 }
 
-                printf("PCNext: %i\n", top->PCNext);
-                printf("PCWrite: %i\n", top->PCWrite);
-                printf("Clk: %i\n", top->Clk);
+                printf("PCResult: %i\n", top->PCResult);
+                fifo.seekg((last_pos + 1) * 32, std::ios::beg);
+                printf("====================\n");
             }
-            myfile.close();
+            fifo.close();
         }
-        std::clock_t end = clock();
-        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        //printf("\n\nSECS_1: %f\n\n", elapsed_secs);
-
-        //top->PCNext += 1;
-        //top->Clk += 1;
-        //top->PCWrite = !top->PCWrite;
-        //begin = clock();
-        //top->eval();
-        //end = clock();
-        //elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        //printf("\n\nSECS_2: %f\n\n", elapsed_secs);
-        printf("%i\n", top->PCResult);
     }
 
     delete top;
