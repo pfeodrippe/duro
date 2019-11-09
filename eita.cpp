@@ -15,6 +15,37 @@ enum Command {
     PCWrite
 };
 
+void process_command(VProgramCounter* top,
+                     std::string op_cmd,
+                     std::string op_value) {
+    std::string::size_type sz;
+
+
+
+    switch(static_cast<Command>(std::stol(op_cmd, &sz))) {
+    case PCNext: {
+        printf(">>> PCNEXT\n");
+        top->PCNext = std::stol(op_value, &sz);
+        break;
+    }
+    case Clk: {
+        printf(">>> CLK\n");
+        top->Clk = std::stol(op_value, &sz);
+        break;
+    }
+    case Eval: {
+        printf(">>> EVAL\n");
+        top->eval();
+        break;
+    }
+    case PCWrite: {
+        printf(">>> PCWRITE\n");
+        top->PCWrite = std::stol(op_value, &sz);
+        break;
+    }
+    }
+}
+
 int main(int argc, char** argv, char** env) {
     Verilated::commandArgs(argc, argv);
     VProgramCounter* top = new VProgramCounter();
@@ -53,35 +84,13 @@ int main(int argc, char** argv, char** env) {
                 op_cmd = line.substr(0, line.find(op_delimiter));
                 op_value = line.substr(line.find(op_delimiter) + 1);
 
-                std::string::size_type sz;
                 std::cout << "cmd " << op_cmd << ": " << op_value << std::endl;
+
+                process_command(top, op_cmd, op_value);
 
                 printf("PCNext: %i\n", top->PCNext);
                 printf("PCWrite: %i\n", top->PCWrite);
                 printf("Clk: %i\n", top->Clk);
-
-                switch(static_cast<Command>(std::stol(op_cmd, &sz))) {
-                case PCNext: {
-                    printf(">>> PCNEXT\n");
-                    top->PCNext = std::stol(op_value, &sz);
-                    break;
-                }
-                case Clk: {
-                    printf(">>> CLK\n");
-                    top->Clk = std::stol(op_value, &sz);
-                    break;
-                }
-                case Eval: {
-                    printf(">>> EVAL\n");
-                    top->eval();
-                    break;
-                }
-                case PCWrite: {
-                    printf(">>> PCWRITE\n");
-                    top->PCWrite = std::stol(op_value, &sz);
-                    break;
-                }
-                }
 
                 printf("PCResult: %i\n", top->PCResult);
                 fifo.seekg((last_pos + 1) * 32, std::ios::beg);
