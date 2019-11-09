@@ -23,8 +23,8 @@
         "0:2"))
 
 (doseq [c [(command :clk 0)
-           (command :pc-next 10)
-           (command :pc-write 0)
+           (command :pc-next 15)
+           (command :pc-write 1)
            (command :clk 1)
            (command :eval)]]
   (clojure.pprint/pprint c)

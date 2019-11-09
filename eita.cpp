@@ -51,7 +51,6 @@ int main(int argc, char** argv, char** env) {
                 switch(static_cast<Command>(std::stol(op_cmd, &sz))) {
                 case PCNext: {
                     printf(">>> PCNEXT\n");
-                    std::cout << std::stol(op_value, &sz) << std::endl;
                     top->PCNext = std::stol(op_value, &sz);
                     break;
                 }
@@ -72,9 +71,9 @@ int main(int argc, char** argv, char** env) {
                 }
                 }
 
-                std::cout << "PCNext: " << top->PCNext << std::endl;
-                std::cout << "PCWrite: " << top->PCWrite << std::endl;
-                std::cout << "Clk: " << top->Clk << std::endl;
+                printf("PCNext: %i\n", top->PCNext);
+                printf("PCWrite: %i\n", top->PCWrite);
+                printf("Clk: %i\n", top->Clk);
             }
             myfile.close();
         }
