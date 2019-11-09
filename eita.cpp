@@ -15,32 +15,28 @@ enum Command {
     PCWrite
 };
 
-void process_command(VProgramCounter* top,
-                     std::string op_cmd,
-                     std::string op_value) {
-    std::string::size_type sz;
-
-
-
-    switch(static_cast<Command>(std::stol(op_cmd, &sz))) {
+inline void process_command(VProgramCounter* top,
+                            Command command,
+                            long command_value) {
+    switch(command) {
     case PCNext: {
         printf(">>> PCNEXT\n");
-        top->PCNext = std::stol(op_value, &sz);
+        top->PCNext = command_value;
         break;
     }
     case Clk: {
         printf(">>> CLK\n");
-        top->Clk = std::stol(op_value, &sz);
+        top->Clk = command_value;
+        break;
+    }
+    case PCWrite: {
+        printf(">>> PCWRITE\n");
+        top->PCWrite = command_value;
         break;
     }
     case Eval: {
         printf(">>> EVAL\n");
         top->eval();
-        break;
-    }
-    case PCWrite: {
-        printf(">>> PCWRITE\n");
-        top->PCWrite = std::stol(op_value, &sz);
         break;
     }
     }
@@ -86,7 +82,12 @@ int main(int argc, char** argv, char** env) {
 
                 std::cout << "cmd " << op_cmd << ": " << op_value << std::endl;
 
-                process_command(top, op_cmd, op_value);
+                std::string::size_type sz;
+                Command command = static_cast<Command>(std::stol(op_cmd, &sz));
+                long command_value = std::stol(op_value, &sz);
+                const std::clock_t begin_time = clock();
+                process_command(top, command, command_value);
+                std::cout << float(clock () - begin_time ) /  CLOCKS_PER_SEC << std::endl;
 
                 printf("PCNext: %i\n", top->PCNext);
                 printf("PCWrite: %i\n", top->PCWrite);
