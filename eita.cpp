@@ -8,23 +8,26 @@
 #include <functional>
 #include <string>
 
+enum Command {
+    PCNext,
+    Clk,
+    Eval,
+    PCWrite
+};
+
 int main(int argc, char** argv, char** env) {
     Verilated::commandArgs(argc, argv);
-
-    vluint8_t VProgramCounter::*pmd = &VProgramCounter::Clk;
-    //propmap props;
-    //props["name"] = &Foo::name;
-
     VProgramCounter* top = new VProgramCounter();
-    long long last_pos = -1;
 
-    std::string::size_type sz;
+    std::string op_delimiter = ":";
+    std::string op_cmd;
+    std::string op_value;
 
-    top->Reset = std::stol("0", &sz);
+    top->Reset = 0;
     printf("Reset: %d\n", top->Reset);
-    printf("Clk %d\n", top->*pmd);
 
     while (!Verilated::gotFinish()) {
+        top->eval();
         std::ifstream myfile ("jjj.txt");
         std::string line;
 
@@ -34,24 +37,60 @@ int main(int argc, char** argv, char** env) {
             while (myfile.good())
             {
                 getline (myfile,line);
-                printf("%s\n", line.c_str());
-                ++last_pos;
+                op_cmd = line.substr(0, line.find(op_delimiter));
+                op_value = line.substr(line.find(op_delimiter) + 1);
+
+                std::string::size_type sz;
+
+                std::cout << "cmd " << op_cmd << ": " << op_value << std::endl;
+
+                if (line == "") {
+                    op_cmd = "9999";
+                }
+
+                switch(static_cast<Command>(std::stol(op_cmd, &sz))) {
+                case PCNext: {
+                    printf(">>> PCNEXT\n");
+                    std::cout << std::stol(op_value, &sz) << std::endl;
+                    top->PCNext = std::stol(op_value, &sz);
+                    break;
+                }
+                case Clk: {
+                    printf(">>> CLK\n");
+                    top->Clk = std::stol(op_value, &sz);
+                    break;
+                }
+                case Eval: {
+                    printf(">>> EVAL\n");
+                    top->eval();
+                    break;
+                }
+                case PCWrite: {
+                    printf(">>> PCWRITE\n");
+                    top->PCWrite = std::stol(op_value, &sz);
+                    break;
+                }
+                }
+
+                std::cout << "PCNext: " << top->PCNext << std::endl;
+                std::cout << "PCWrite: " << top->PCWrite << std::endl;
+                std::cout << "Clk: " << top->Clk << std::endl;
             }
             myfile.close();
         }
         std::clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        printf("\n\nSECS_1: %f\n\n", elapsed_secs);
+        //printf("\n\nSECS_1: %f\n\n", elapsed_secs);
 
-        top->PCNext += 1;
-        top->Clk += 1;
+        //top->PCNext += 1;
+        //top->Clk += 1;
         //top->PCWrite = !top->PCWrite;
-        begin = clock();
-        top->eval();
-        end = clock();
-        elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        printf("\n\nSECS_2: %f\n\n", elapsed_secs);
-        //printf("%i\n", top->PCResult);
+        //begin = clock();
+        //top->eval();
+        //end = clock();
+        //elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        //printf("\n\nSECS_2: %f\n\n", elapsed_secs);
+        printf("%i\n", top->PCResult);
     }
 
     delete top;

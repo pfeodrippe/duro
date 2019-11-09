@@ -5,6 +5,28 @@
       "\njesus"
       :append true)
 
-(doseq [i (range 1)]
+(defn command
+  ([k]
+   (command k 0))
+  ([k v]
+   (str
+    ({:pc-write "3"
+      :pc-next "0"
+      :clk "1"
+      :eval "2"}
+     k)
+    ":"
+    v)))
+
+#_(doseq [i (range 1)]
   (spit "jjj.txt"
-        (str/join (range 3))))
+        "0:2"))
+
+(doseq [c [(command :clk 0)
+           (command :pc-next 10)
+           (command :pc-write 0)
+           (command :clk 1)
+           (command :eval)]]
+  (clojure.pprint/pprint c)
+  (spit "jjj.txt"
+        (str c "\n")))
