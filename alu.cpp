@@ -73,12 +73,12 @@ int main(int argc, char** argv, char** env) {
                 }
 
                 last_pos = fifo.tellg();
-                printf("last_pos: %i\n", int(last_pos));
+                //printf("last_pos: %i\n", int(last_pos));
 
                 op_cmd = line.substr(0, line.find(op_delimiter));
                 op_value = line.substr(line.find(op_delimiter) + 1);
 
-                std::cout << "cmd " << op_cmd << ": " << op_value << std::endl;
+                //std::cout << "cmd " << op_cmd << ": " << op_value << std::endl;
 
                 std::string::size_type sz;
                 Command command = static_cast<Command>(std::stol(op_cmd, &sz));
@@ -87,13 +87,15 @@ int main(int argc, char** argv, char** env) {
                 process_command(top, command, command_value);
                 std::cout << float(clock () - begin_time ) /  CLOCKS_PER_SEC << std::endl;
 
-                printf("ALUControl: %i\n", top->ALUControl);
-                printf("A: %i\n", top->A);
-                printf("B: %i\n", top->B);
+                if (command == Eval) {
+                    printf("ALUControl: %i\n", top->ALUControl);
+                    printf("A: %i\n", top->A);
+                    printf("B: %i\n", top->B);
 
-                printf("Zero: %i\n", top->Zero);
-                printf("ALUResult: %i\n", top->ALUResult);
-                printf("====================\n");
+                    printf("Zero: %i\n", top->Zero);
+                    printf("ALUResult: %i\n", top->ALUResult);
+                    printf("====================\n");
+                }
             }
             fifo.close();
         }

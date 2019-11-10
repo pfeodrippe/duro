@@ -86,8 +86,8 @@
 
   (time
    (doseq [i (range 5)]
-     (doseq [c (tick-alu i {} {:alu-control 6
-                               :a 1
+     (doseq [c (tick-alu i {} {:alu-control 2r0000
+                               :a 2
                                :b i})]
        (spit "caramba.txt"
              (str c "\n")
