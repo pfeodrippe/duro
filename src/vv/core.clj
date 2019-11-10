@@ -88,11 +88,15 @@
   (do
     (spit "verilator-writer.txt" "")
     (time
-     (doall
-      (for [i (range 10)]
-        (let [input {:alu-control 2r0111
-                     :a 4
-                     :b i}]
-          (merge input (run-eval! input)))))))
+     (every? (fn [{:keys [:alu/pc-result
+                          :a
+                          :b]}]
+               (= pc-result (bit-or a b)))
+             (doall
+              (for [i (range 100)]
+                (let [input {:alu-control 2r0001
+                             :a (* 2 i)
+                             :b (* 4 i)}]
+                  (merge input (run-eval! input))))))))
 
   ())
