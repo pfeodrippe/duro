@@ -15,6 +15,11 @@ enum Command {
     Eval
 };
 
+enum Output {
+    OutputALUResult,
+    OutputZero
+};
+
 inline void process_command(VALU32Bit* top,
                             Command command,
                             long command_value) {
@@ -55,8 +60,13 @@ int main(int argc, char** argv, char** env) {
 
     std::string line;
 
+    std::ofstream fifo_out ("caramba.txt");
+    fifo_out << "";
+    fifo_out.close();
+
     while (!Verilated::gotFinish()) {
         std::ifstream fifo ("caramba.txt", std::ifstream::in);
+        std::ofstream outfile ("verilator-writer.txt", std::ios_base::app);
         fifo.seekg(last_pos);
 
         if (fifo.is_open())
@@ -73,21 +83,23 @@ int main(int argc, char** argv, char** env) {
                 }
 
                 last_pos = fifo.tellg();
-                //printf("last_pos: %i\n", int(last_pos));
-
                 op_cmd = line.substr(0, line.find(op_delimiter));
                 op_value = line.substr(line.find(op_delimiter) + 1);
-
-                //std::cout << "cmd " << op_cmd << ": " << op_value << std::endl;
 
                 std::string::size_type sz;
                 Command command = static_cast<Command>(std::stol(op_cmd, &sz));
                 long command_value = std::stol(op_value, &sz);
                 const std::clock_t begin_time = clock();
                 process_command(top, command, command_value);
-                std::cout << float(clock () - begin_time ) /  CLOCKS_PER_SEC << std::endl;
+                std::cout << float(clock () - begin_time ) /  CLOCKS_PER_SEC
+                          << std::endl;
 
                 if (command == Eval) {
+                    outfile
+                        << OutputALUResult << ":" << int(top->ALUResult)
+                        << " "
+                        << OutputZero << ":" << int(top->Zero);
+
                     printf("ALUControl: %i\n", top->ALUControl);
                     printf("A: %i\n", top->A);
                     printf("B: %i\n", top->B);
@@ -98,6 +110,7 @@ int main(int argc, char** argv, char** env) {
                 }
             }
             fifo.close();
+            outfile.close();
         }
     }
 

@@ -18,12 +18,6 @@
           (str/join
            (repeat (- 32 (count cmd)) " "))))))
 
-#_(doseq [i (range 1)]
-  (spit "jjj.txt"
-        "0:2"))
-
-
-
 (defn tick
   ([i old-state rise-m]
    (tick old-state i rise-m {}))
@@ -47,13 +41,6 @@
              (str c "\n")
              :append true))))
 
-  #_[(command :clk 0)
-     (command :eval)
-     (command :clk 1)
-     (command :pc-next (* i 2))
-     (command :pc-write 1)
-     (command :eval)]
-
   ())
 
 ;; ALU
@@ -71,26 +58,41 @@
           (str/join
            (repeat (- 32 (count cmd)) " "))))))
 
-(defn tick-alu
-  ([i old-state rise-m]
-   (tick-alu old-state i rise-m {}))
-  ([i old-state rise-m fall-m]
-   (vec
-    (concat
-     []
-     (some->> (first (data/diff rise-m old-state))
-              (mapv (fn [[op arg]] (command-alu op arg))))
-     [(command-alu :eval)]))))
+(defn parse-alu-out
+  [s]
+  (->> (str/split s #" ")
+       (mapv #(str/split % #":"))
+       (mapv (fn [[id v]]
+               [(case id
+                  "0" :alu/pc-result
+                  "1" :alu/zero)
+                (Integer/parseInt v)]))
+       (into {})))
+
+(defn run-eval!
+  [m]
+  (try
+    (doseq [c (vec (conj (mapv (fn [[op arg]]
+                                 (command-alu op arg))
+                               m)
+                         (command-alu :eval)))]
+      (spit "caramba.txt"
+            (str c "\n")
+            :append true))
+    (while (empty? (slurp "verilator-writer.txt")))
+    (parse-alu-out (slurp "verilator-writer.txt"))
+    (finally (spit "verilator-writer.txt" ""))))
 
 (comment
 
-  (time
-   (doseq [i (range 5)]
-     (doseq [c (tick-alu i {} {:alu-control 2r0000
-                               :a 2
-                               :b i})]
-       (spit "caramba.txt"
-             (str c "\n")
-             :append true))))
+  (do
+    (spit "verilator-writer.txt" "")
+    (time
+     (doall
+      (for [i (range 10)]
+        (let [input {:alu-control 2r0111
+                     :a 4
+                     :b i}]
+          (merge input (run-eval! input)))))))
 
   ())
