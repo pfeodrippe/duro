@@ -11,23 +11,29 @@
   (zip/xml-zip (xml/parse (new org.xml.sax.InputSource
                                (new java.io.StringReader s)))))
 
-(xml-> (parse-str (slurp "obj_dir/VALU32Bit.xml"))
-       :verilator_xml
-       :netlist
-       :module
-       :var
-       (attr= :vartype "logic")
-       (attr= :dir "input")
-       (attr :name))
+(defn module-interface
+  [path]
+  (let [parsed-xml (parse-str (slurp path))
+        inputs (xml-> parsed-xml
+                      :verilator_xml
+                      :netlist
+                      :module
+                      :var
+                      (attr= :vartype "logic")
+                      (attr= :dir "input")
+                      (attr :name))
+        outputs (xml-> parsed-xml
+                       :verilator_xml
+                       :netlist
+                       :module
+                       :var
+                       (attr= :vartype "logic")
+                       (attr= :dir "output")
+                       (attr :name))]
+    {:inputs inputs
+     :outputs outputs}))
 
-(xml-> (parse-str (slurp "obj_dir/VALU32Bit.xml"))
-       :verilator_xml
-       :netlist
-       :module
-       :var
-       (attr= :vartype "logic")
-       (attr= :dir "output")
-       (attr :name))
+(module-interface "obj_dir/VALU32Bit.xml")
 
 (defn command
   ([k]
