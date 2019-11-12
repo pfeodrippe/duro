@@ -1,6 +1,7 @@
 (ns vv.core
   (:require [clojure.string :as str]
-            [clojure.data :as data]))
+            [clojure.data :as data]
+            [vv.io]))
 
 (defn command
   ([k]
@@ -44,57 +45,25 @@
   ())
 
 ;; ALU
-(defn command-alu
-  ([k]
-   (command-alu k 0))
-  ([k v]
-   (let [op (case k
-              :alu-control "0"
-              :a "1"
-              :b "2"
-              :eval "3")
-         cmd (str op ":" v)]
-     (str cmd
-          (str/join
-           (repeat (- 32 (count cmd)) " "))))))
-
-(defn parse-alu-out
-  [s]
-  (->> (str/split s #" ")
-       (mapv #(str/split % #":"))
-       (mapv (fn [[id v]]
-               [(case id
-                  "0" :alu/pc-result
-                  "1" :alu/zero)
-                (Integer/parseInt v)]))
-       (into {})))
-
-(defn run-eval!
-  [m]
-  (try
-    (doseq [c (vec (conj (mapv (fn [[op arg]]
-                                 (command-alu op arg))
-                               m)
-                         (command-alu :eval)))]
-      (spit "caramba.txt"
-            (str c "\n")
-            :append true))
-    (while (empty? (slurp "verilator-writer.txt")))
-    (parse-alu-out (slurp "verilator-writer.txt"))
-    (finally (spit "verilator-writer.txt" ""))))
-
 (comment
 
-  (do
-    (spit "verilator-writer.txt" "")
-    (time
+  (time
+   (let [file-based (vv.io/init-file-based-io
+                     {:request-file "caramba.txt"
+                      :response-file "verilator-writer.txt"
+                      :request->out-id {:alu-control "0"
+                                        :a "1"
+                                        :b "2"
+                                        :eval "3"}
+                      :in-id->response {"0" :alu/pc-result
+                                        "1" :alu/zero}})]
      (every? (fn [{:keys [:alu/pc-result
                           :a
                           :b]}]
-               (= pc-result (bit-or a b)))
+               (= pc-result (- a b)))
              (doall
-              (for [i (range 100)]
-                (let [input {:alu-control 2r0001
+              (for [i (range 1000)]
+                (let [input {:alu-control 2r0110
                              :a (* 2 i)
                              :b (* 4 i)}]
                   (merge input (run-eval! input))))))))
