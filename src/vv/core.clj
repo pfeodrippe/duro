@@ -1,7 +1,33 @@
 (ns vv.core
   (:require [clojure.string :as str]
             [clojure.data :as data]
+            [clojure.zip :as zip]
+            [clojure.xml :as xml]
+            [clojure.data.zip :as dzip]
+            [clojure.data.zip.xml :refer [xml-> xml1-> attr attr= text]]
             [vv.io]))
+
+(defn parse-str [s]
+  (zip/xml-zip (xml/parse (new org.xml.sax.InputSource
+                               (new java.io.StringReader s)))))
+
+(xml-> (parse-str (slurp "obj_dir/VALU32Bit.xml"))
+       :verilator_xml
+       :netlist
+       :module
+       :var
+       (attr= :vartype "logic")
+       (attr= :dir "input")
+       (attr :name))
+
+(xml-> (parse-str (slurp "obj_dir/VALU32Bit.xml"))
+       :verilator_xml
+       :netlist
+       :module
+       :var
+       (attr= :vartype "logic")
+       (attr= :dir "output")
+       (attr :name))
 
 (defn command
   ([k]
