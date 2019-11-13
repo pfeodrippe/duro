@@ -1,103 +1,31 @@
 (ns vv.core
   (:require [clojure.string :as str]
             [clojure.data :as data]
-            [clojure.zip :as zip]
-            [clojure.xml :as xml]
-            [clojure.data.zip :as dzip]
-            [clojure.data.zip.xml :refer [xml-> xml1-> attr attr= text]]
-            [vv.io]))
-
-(defn parse-str [s]
-  (zip/xml-zip (xml/parse (new org.xml.sax.InputSource
-                               (new java.io.StringReader s)))))
-
-(defn module-interface
-  [path]
-  (let [parsed-xml (parse-str (slurp path))
-        inputs (xml-> parsed-xml
-                      :verilator_xml
-                      :netlist
-                      :module
-                      :var
-                      (attr= :vartype "logic")
-                      (attr= :dir "input")
-                      (attr :name))
-        outputs (xml-> parsed-xml
-                       :verilator_xml
-                       :netlist
-                       :module
-                       :var
-                       (attr= :vartype "logic")
-                       (attr= :dir "output")
-                       (attr :name))]
-    {:inputs inputs
-     :outputs outputs}))
-
-(module-interface "obj_dir/VALU32Bit.xml")
-
-(defn command
-  ([k]
-   (command k 0))
-  ([k v]
-   (let [cmd (str
-              ({:pc-write "3"
-                :pc-next "0"
-                :clk "1"
-                :eval "2"}
-               k)
-              ":"
-              v)]
-     (str cmd
-          (str/join
-           (repeat (- 32 (count cmd)) " "))))))
-
-(defn tick
-  ([i old-state rise-m]
-   (tick old-state i rise-m {}))
-  ([i old-state rise-m fall-m]
-   (vec
-    (concat
-     [(command :clk 0)
-      (command :eval)
-      (command :clk 1)]
-     (some->> (first (data/diff rise-m old-state))
-              (mapv (fn [[op arg]] (command op arg))))
-     [(command :eval)]))))
-
-(comment
-
-  (time
-   (doseq [i (range 10)]
-     (doseq [c (tick i {} {:pc-next (* i 1)
-                           :pc-write 1})]
-       (spit "caramba.txt"
-             (str c "\n")
-             :append true))))
-
-  ())
+            [vv.io]
+            [vv.parser]))
 
 ;; ALU
 (comment
 
-  (time
-   (let [file-based (vv.io/init-file-based-io
-                     {:request-file "caramba.txt"
-                      :response-file "verilator-writer.txt"
-                      :request->out-id {:alu-control "0"
-                                        :a "1"
-                                        :b "2"
-                                        :eval "3"}
-                      :in-id->response {"0" :alu/pc-result
-                                        "1" :alu/zero}})]
+  (let [file-based (vv.io/file-based-io
+                    {:request-file "caramba.txt"
+                     :response-file "verilator-writer.txt"
+                     :request->out-id {:alu-control "0"
+                                       :a "1"
+                                       :b "2"
+                                       :eval "3"}
+                     :in-id->response {"0" :alu/pc-result
+                                       "1" :alu/zero}})]
+    (time
      (every? (fn [{:keys [:alu/pc-result
                           :a
                           :b]}]
-               (= pc-result (- a b)))
+               (= pc-result (bit-and a b)))
              (doall
               (for [i (range 1000)]
-                (let [input {:alu-control 2r0110
+                (let [input {:alu-control 2r0000
                              :a (* 2 i)
                              :b (* 4 i)}]
-                  (merge input (run-eval! input))))))))
+                  (merge input (vv.io/eval file-based input))))))))
 
   ())

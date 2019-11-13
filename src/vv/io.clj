@@ -6,7 +6,7 @@
 
 (defn- parse-file-based-request
   ([request->out-id k]
-   (parse-file-based-request k 0))
+   (parse-file-based-request request->out-id k 0))
   ([request->out-id k v]
    (if-let [op (request->out-id k)]
      (let [cmd (str op ":" v)]
@@ -42,7 +42,7 @@
         (parse-file-based-response in-id->response (slurp response-file))
         (finally (spit response-file "")))))
 
-(defn init-file-based-io
+(defn file-based-io
   [params]
   (spit (:response-file params) "")
   (map->FileBasedIO params))
