@@ -31,12 +31,13 @@
     VerilatorIO
     (eval [this input-data]
       (try
-        (doseq [c (vec (conj
-                        (mapv
+        (doseq [c (conj (mapv
                          (fn [[op arg]]
                            (parse-file-based-request request->out-id op arg))
                          input-data)
-                        (parse-file-based-request request->out-id :eval)))]
+                        (parse-file-based-request
+                         {"Eval" (count request->out-id)}
+                         "Eval"))]
           (spit request-file (str c "\n") :append true))
         (while (empty? (slurp response-file)))
         (parse-file-based-response in-id->response (slurp response-file))

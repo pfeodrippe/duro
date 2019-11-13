@@ -7,25 +7,31 @@
 ;; ALU
 (comment
 
-  (let [file-based (vv.io/file-based-io
+  (let [{:keys [:inputs :outputs]} (vv.parser/module-interface
+                                    "obj_dir/VALU32Bit.xml")
+        file-based (vv.io/file-based-io
                     {:request-file "caramba.txt"
                      :response-file "verilator-writer.txt"
-                     :request->out-id {:alu-control "0"
-                                       :a "1"
-                                       :b "2"
-                                       :eval "3"}
-                     :in-id->response {"0" :alu/pc-result
-                                       "1" :alu/zero}})]
+                     :request->out-id (->> inputs
+                                           (map-indexed
+                                            (fn [i input]
+                                              [input (str i)]))
+                                           (into {}))
+                     :in-id->response (->> outputs
+                                           (map-indexed
+                                            (fn [i output]
+                                              [(str i) output]))
+                                           (into {}))})]
     (time
-     (every? (fn [{:keys [:alu/pc-result
-                          :a
-                          :b]}]
-               (= pc-result (bit-and a b)))
-             (doall
-              (for [i (range 1000)]
-                (let [input {:alu-control 2r0000
-                             :a (* 2 i)
-                             :b (* 4 i)}]
-                  (merge input (vv.io/eval file-based input))))))))
+     (every? (fn [{pc-result "ALUResult"
+                   a "A"
+                   b "B"}]
+                 (= pc-result (- a b)))
+               (doall
+                (for [i (range 200)]
+                  (let [input {"ALUControl" 2r0110
+                               "A" (* 2 i)
+                               "B" (* 4 i)}]
+                    (merge input (vv.io/eval file-based input))))))))
 
   ())
