@@ -14,26 +14,25 @@ enum Output {
 };
 
 extern "C"
-int process_command(VALU32Bit* top,
-                    Command command,
-                    long command_value) {
+void process_command(VALU32Bit* top,
+                     Command command,
+                     long command_value) {
     switch(command) {
     case ALUControl: {
         top->ALUControl = command_value;
-        return top->ALUControl;
+        break;
     }
     case A: {
         top->A = command_value;
-        return top->A;
+        break;
     }
     case B: {
         top->B = command_value;
-        return top->B;
+        break;
     }
     case Eval: {
-        printf(">>> Eval\n");
         top->eval();
-        return top->ALUResult;
+        break;
     }
     }
 }

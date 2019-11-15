@@ -1,5 +1,8 @@
 (ns vv.io
-  (:require [clojure.string :as str])
+  (:refer-clojure :exclude [eval])
+  (:require
+   [clojure.string :as str]
+   [taoensso.tufte :as tufte :refer (defnp p profiled profile)])
   (:import
    (jnr.ffi LibraryLoader Pointer)))
 
@@ -12,14 +15,17 @@
     (eval [this input-data]
       (try
         (doseq [[op arg] input-data]
-          (.process_command native-lib top (request->out-id op) arg))
+          (p op (.process_command native-lib top (request->out-id op) arg)))
         ;; eval
-        (.process_command native-lib top (count request->out-id) 0)
+        (p :eval (.process_command native-lib top (count request->out-id) 0))
         ;; read data
-        (->> in-id->response
-             (mapv (fn [[id attr]]
-                     [attr (.getInt (.read_module native-lib top) (* id 4))]))
-             (into {})))))
+        (let [outputs (p :outputs (.read_module native-lib top))]
+          (p :parse-out
+             (->> in-id->response
+                  (mapv (fn [[id attr]]
+                          [attr (p :get-int
+                                   (.getInt ^jnr.ffi.Pointer outputs (* id 4)))]))
+                  (into {})))))))
 
 (definterface NativeLibInterface
   (^jnr.ffi.Pointer create_module [])

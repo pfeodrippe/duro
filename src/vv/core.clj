@@ -1,8 +1,14 @@
 (ns vv.core
-  (:require [clojure.string :as str]
-            [clojure.data :as data]
-            [vv.io]
-            [vv.parser]))
+  (:require
+   [clojure.string :as str]
+   [clojure.data :as data]
+   [vv.io]
+   [vv.parser]
+   [taoensso.tufte :as tufte :refer (defnp p profiled profile)]))
+
+(tufte/add-basic-println-handler!
+  {:format-pstats-opts {:columns [:n-calls :p50 :mean :clock :total]
+                        :format-id-fn name}})
 
 (comment
 
@@ -19,20 +25,20 @@
                                         (fn [i output]
                                           [i output]))
                                        (into {}))}
-                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob28.dylib")]
-    (time
-     (every? (fn [{pc-result "ALUResult"
-                   zero "Zero"
-                   a "A"
-                   b "B"}]
-               (let [expected-result (bit-or a b)]
-                 (and (= pc-result expected-result)
-                      (if (zero? expected-result) (= zero 1) (= zero 0)))))
-             (doall
-              (for [i (range 500)]
-                (let [input {"ALUControl" 2r0001
-                             "A" (* 2 i)
-                             "B" (- (* 4 i) 50)}]
-                  (merge input (vv.io/eval jnr-io input))))))))
+                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob29.dylib")]
+    (profile {}
+             (every? (fn [{pc-result "ALUResult"
+                           zero "Zero"
+                           a "A"
+                           b "B"}]
+                       (let [expected-result (- a b)]
+                         (and (= pc-result expected-result)
+                              (if (zero? expected-result) (= zero 1) (= zero 0)))))
+                     (doall
+                      (for [i (range 100000)]
+                        (let [input {"ALUControl" 2r0110
+                                     "A" (* 2 i)
+                                     "B" (- (* 4 i) 50)}]
+                          (merge input (vv.io/eval jnr-io input))))))))
 
   ())

@@ -1,5 +1,6 @@
 {:default-options {:jvm-opts ["-Duser.language=en" "-Duser.country=US"]}
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
         org.clojure/data.zip {:mvn/version "0.1.3"}
-        com.github.jnr/jnr-ffi {:mvn/version "2.1.9"}}
+        com.github.jnr/jnr-ffi {:mvn/version "2.1.9"}
+        com.taoensso/tufte {:mvn/version "2.1.0"}}
  :paths ["resources" "src" "classes"]}
