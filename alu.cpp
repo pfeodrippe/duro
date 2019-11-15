@@ -21,9 +21,9 @@ enum Output {
 };
 
 extern "C"
-inline long process_command(VALU32Bit* top,
-                            Command command,
-                            long command_value) {
+inline int process_command(VALU32Bit* top,
+                           Command command,
+                           long command_value) {
     switch(command) {
     case ALUControl: {
         printf(">>> ALUControl\n");
