@@ -11,6 +11,7 @@ build-alu:
 	#OPT=-DVL_DEBUG make -j -C obj_dir -f VALU32Bit.mk VALU32Bit
 	-verilator -Wno-STMTDLY --cc ALU32Bit.v --exe alu.cpp
 	make -j -C obj_dir -f VALU32Bit.mk VALU32Bit
+	cd obj_dir && gcc -shared -o libfob10.dylib *.o -lstdc++
 
 start-verilator:
 	obj_dir/VProgramCounter

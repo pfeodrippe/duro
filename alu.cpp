@@ -20,35 +20,45 @@ enum Output {
     OutputZero
 };
 
-inline void process_command(VALU32Bit* top,
+extern "C"
+inline long process_command(VALU32Bit* top,
                             Command command,
                             long command_value) {
     switch(command) {
     case ALUControl: {
         printf(">>> ALUControl\n");
         top->ALUControl = command_value;
-        break;
+        return top->ALUControl;
     }
     case A: {
         printf(">>> A\n");
         top->A = command_value;
-        break;
+        return top->A;
     }
     case B: {
         printf(">>> B\n");
         top->B = command_value;
-        break;
+        return top->B;
     }
     case Eval: {
         printf(">>> Eval\n");
         top->eval();
-        break;
+        return top->ALUResult;
     }
     }
 }
 
 extern "C" int eita(int x) {
     return x + 13;
+}
+
+extern "C" VALU32Bit* create_module() {
+    char *args[] = {
+        NULL
+    };
+
+    Verilated::commandArgs(0, args);
+    return new VALU32Bit();
 }
 
 int main(int argc, char** argv, char** env) {
