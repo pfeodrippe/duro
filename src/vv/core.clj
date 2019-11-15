@@ -19,7 +19,7 @@
                                         (fn [i output]
                                           [i output]))
                                        (into {}))}
-                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob17.dylib")]
+                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob28.dylib")]
     (time
      (every? (fn [{pc-result "ALUResult"
                    zero "Zero"
