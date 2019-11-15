@@ -10,8 +10,9 @@ build-alu:
 	#-verilator -Wno-STMTDLY --profile-cfuncs --cc ALU32Bit.v --exe alu.cpp
 	#OPT=-DVL_DEBUG make -j -C obj_dir -f VALU32Bit.mk VALU32Bit
 	-verilator -Wno-STMTDLY --cc ALU32Bit.v --exe alu.cpp
+	-verilator -Wno-STMTDLY --xml-only ALU32Bit.v
 	make -j -C obj_dir -f VALU32Bit.mk VALU32Bit
-	cd obj_dir && gcc -shared -o libfob12.dylib *.o -lstdc++
+	cd obj_dir && gcc -shared -o libfob16.dylib *.o -lstdc++
 
 start-verilator:
 	obj_dir/VProgramCounter

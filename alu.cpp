@@ -26,17 +26,14 @@ inline int process_command(VALU32Bit* top,
                            long command_value) {
     switch(command) {
     case ALUControl: {
-        printf(">>> ALUControl\n");
         top->ALUControl = command_value;
         return top->ALUControl;
     }
     case A: {
-        printf(">>> A\n");
         top->A = command_value;
         return top->A;
     }
     case B: {
-        printf(">>> B\n");
         top->B = command_value;
         return top->B;
     }
@@ -48,17 +45,22 @@ inline int process_command(VALU32Bit* top,
     }
 }
 
-extern "C" int eita(int x) {
-    return x + 13;
-}
-
-extern "C" VALU32Bit* create_module() {
+extern "C"
+VALU32Bit* create_module() {
     char *args[] = {
         NULL
     };
 
     Verilated::commandArgs(0, args);
     return new VALU32Bit();
+}
+
+extern "C"
+int* read_module(VALU32Bit* top) {
+    static int m[2];
+    m[0] = top->ALUResult;
+    m[1] = top->Zero;
+    return m;
 }
 
 int main(int argc, char** argv, char** env) {

@@ -4,30 +4,33 @@
             [vv.io]
             [vv.parser])
   (:import
-   (jnr.ffi LibraryLoader Pointer)))
-
-#_(System/load "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob12.dylib")
+   (jnr.ffi LibraryLoader Pointer Struct)))
 
 (definterface Eita
-  (^int eita [^int x])
   (^jnr.ffi.Pointer create_module [])
   (^int process_command
-   [^jnr.ffi.Pointer top ^int command ^long command_value]))
+   [^jnr.ffi.Pointer top ^int command ^long command_value])
+  (^jnr.ffi.Pointer read_module [^jnr.ffi.Pointer top]))
+
+#_(System/load "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob16.dylib")
 
 (def libeita
-  (.load (LibraryLoader/create Eita) "fob12"))
+  (.load (LibraryLoader/create Eita) "fob16"))
 
 (comment
-
-  (time (.eita libeita 334))
 
   (def top (.create_module libeita))
 
   (time
-   (do (.process_command libeita top 0 2r0110)
-       (.process_command libeita top 1 100)
-       (.process_command libeita top 2 11)
-       (.process_command libeita top 3 0)))
+   (->
+    (doto libeita
+      (.process_command top 0 2r0110)
+      (.process_command top 1 110)
+      (.process_command top 2 100))
+    (.process_command top 3 0)))
+
+  [(.getInt (.read_module libeita top) 0)
+   (.getInt (.read_module libeita top) 4)]
 
 
   ())
