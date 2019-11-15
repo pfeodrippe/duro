@@ -6,8 +6,14 @@
   (:import
    (jnr.ffi LibraryLoader)))
 
-(definterface LibUUID
-  (^int uuid_generate_time (^{:tag java.nio.ByteBuffer Out true} uuid_t)))
+#_(definterface LibUUID
+  #_(^int uuid_generate_time (^{:tag java.nio.ByteBuffer Out true} uuid_t))
+  (^int eita [^int x]))
+
+(gen-interface
+  :name jnr.YY
+  :methods
+  [[eita [int] int]])
 
 (defn ^:private make-random-node
   []
@@ -17,7 +23,19 @@
     bytes))
 
 (def libuuid
-  (.load (LibraryLoader/create LibUUID) "uuid"))
+  (.load (LibraryLoader/create jnr.YY) "fob"))
+
+(System/getenv "LD_LIBRARY_PATH")
+
+(System/getProperty "java.library.path")
+#_(System/setProperty "java.library.path"
+                    (str (System/getProperty "java.library.path")
+                         ":"
+                         "obj_dir"))
+
+#_(System/load "/Users/feodrippe/dev/verilog-ex/obj_dir/libfoo.dylib")
+#_(System/load "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob.dylib")
+#_(System/gc "/Users/feodrippe/dev/verilog-ex/obj_dir/libfoo.dylib")
 
 (def node
   (make-random-node))
@@ -39,10 +57,13 @@
 
 (comment
 
-  (time (let [uuid-t (java.nio.ByteBuffer/allocate 16)]
-     (.uuid_generate_time libuuid uuid-t)
-     (pack (rewrite-node uuid-t))))
+  (.eita libuuid (Integer/parseInt "33"))
 
+  (time (let [uuid-t (java.nio.ByteBuffer/allocate 16)]
+          (.uuid_generate_time libuuid uuid-t)
+          (pack (rewrite-node uuid-t))))
+
+  (System/loadLibrary)
   ())
 
 ;; ALU

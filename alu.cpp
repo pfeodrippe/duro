@@ -47,6 +47,10 @@ inline void process_command(VALU32Bit* top,
     }
 }
 
+extern "C" int eita(int x) {
+    return x + 13;
+}
+
 int main(int argc, char** argv, char** env) {
     Verilated::commandArgs(argc, argv);
     Verilated::debug(1);
