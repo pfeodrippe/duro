@@ -12,8 +12,11 @@
 
 (comment
 
-  (let [{:keys [:inputs :outputs]} (:interface (verilator/gen-dynamic-lib
-                                                "ALU32Bit.v"))
+  (let [{:keys [:interface :lib-path :lib-folder]}
+        (verilator/gen-dynamic-lib "ALU32Bit.v")
+
+        _ (println :lib-folder lib-folder)
+        {:keys [:inputs :outputs]} interface
         jnr-io (vv.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
@@ -25,7 +28,7 @@
                                         (fn [i output]
                                           [i (keyword output)]))
                                        (into {}))}
-                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob40.dylib")]
+                lib-path)]
     (profile {}
              (every? (fn [{pc-result :ALUResult
                            zero :Zero

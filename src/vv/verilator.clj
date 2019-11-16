@@ -38,18 +38,19 @@
   (str "enum Input {\n"
        (->> (mapv #(str "input_" %) inputs)
             (str/join ",\n"))
-       "\n}"))
+       "\n};"))
 
 (defn- gen-output-enum
   [outputs]
   (str "enum Output {\n"
        (->> (mapv #(str "output_" %) outputs)
             (str/join ",\n"))
-       "\n}"))
+       "\n};"))
 
 (defn gen-header-string
   [{:keys [:inputs :outputs :module-name]}]
-  (->> [(gen-inputs inputs)
+  (->> [(str "#include "  "\"V" module-name ".h\"")
+        (gen-inputs inputs)
         (gen-outputs outputs)
         (gen-input-enum inputs)
         (gen-output-enum outputs)
