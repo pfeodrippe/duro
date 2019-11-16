@@ -13,50 +13,47 @@
 
 (defn- gen-input
   [k]
-  (str "input[" (name k) "]"))
+  (str "input[input_" (name k) "]"))
 
 (defn- gen-output
   [k]
-  (str "output[" (name k) "]"))
-
-(defn- gen-binding
-  [v]
-  (str (gen-top-member v) " = " (gen-output v) ";"))
+  (str "output[output_" (name k) "]"))
 
 (defn- gen-inputs
   [inputs]
   (->> inputs
-       (mapv gen-binding)
+       (mapv #(str (gen-top-member %) " = " (gen-input %) ";"))
        (cons "#define GENERATED_INPUTS")
        (str/join " \\\n")))
 
 (defn- gen-outputs
   [outputs]
   (->> outputs
-       (mapv gen-binding)
+       (mapv #(str (gen-top-member %) " = " (gen-output %) ";"))
        (cons "#define GENERATED_OUTPUTS")
        (str/join " \\\n")))
 
 (defn- gen-input-enum
   [inputs]
   (str "enum Input {\n"
-       (->> inputs
+       (->> (mapv #(str "input_" %) inputs)
             (str/join ",\n"))
        "\n}"))
 
 (defn- gen-output-enum
   [outputs]
   (str "enum Output {\n"
-       (->> outputs
+       (->> (mapv #(str "output_" %) outputs)
             (str/join ",\n"))
        "\n}"))
 
 (defn gen-header-string
-  [{:keys [:inputs :outputs]}]
+  [{:keys [:inputs :outputs :module-name]}]
   (->> [(gen-inputs inputs)
         (gen-outputs outputs)
         (gen-input-enum inputs)
-        (gen-output-enum outputs)]
+        (gen-output-enum outputs)
+        (str "#define TOP_CLASS " "V" module-name)]
        (str/join "\n\n")))
 
 (defn- parse-str [s]
@@ -81,11 +78,18 @@
                        :var
                        (attr= :vartype "logic")
                        (attr= :dir "output")
-                       (attr :name))]
+                       (attr :name))
+        module-name (first
+                     (xml-> parsed-xml
+                            :verilator_xml
+                            :netlist
+                            :module
+                            (attr :name)))]
     {:inputs inputs
-     :outputs outputs}))
+     :outputs outputs
+     :module-name module-name}))
 
-(defn read-verilog-interface
+(defn- read-verilog-interface
   [mod-path]
   (let [dir (bean (fs/temp-dir "vv"))
         xml-path (str (:path dir) "/mod.xml")]
@@ -94,4 +98,38 @@
             "--xml-output" xml-path
             "-Mdir" (:path dir)
             mod-path])
-    (module-interface xml-path)))
+    (read-module-xml xml-path)))
+
+(defn- rand-str [length]
+  (->> (repeatedly #(char (+ (rand 26) 97)))
+       (take length)
+       (apply str)))
+
+(defn gen-dynamic-lib
+  [mod-path]
+  (let [dir (bean (fs/temp-dir "vv"))
+        interface (read-verilog-interface mod-path)
+        header-str (gen-header-string interface)
+        top-path (str (:path dir) "/top.cpp")
+        lib-name (format "lib%s.dylib" (rand-str 5))
+        lib-path (str (:path dir) "/" lib-name)]
+    (fs/copy "template.cpp" top-path)
+    (spit (str (:path dir) "/generated_template.h") header-str)
+    ;; generate verilator files
+    (apply sh/sh
+           ["verilator" "-Wno-STMTDLY"
+            "--cc" mod-path
+            "-Mdir" (:path dir)
+            "--exe" top-path])
+    ;; make verilator
+    (apply sh/sh
+           ["make" "-j"
+            "-C" (:path dir)
+            "-f" (str "V" (:module-name interface) ".mk")
+            (str "V" (:module-name interface))])
+    ;; create dynamic lib
+    (sh/with-sh-dir (:path dir)
+      (apply sh/sh
+             ["bash" "-c"
+              (format "gcc -shared -o %s *.o -lstdc++" lib-name)]))
+    lib-path))

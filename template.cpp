@@ -1,4 +1,3 @@
-#include "VALU32Bit.h"
 #include "verilated.h"
 #include "generated_template.h"
 
@@ -22,7 +21,7 @@ int* get_eval_flags_pointer() {
 }
 
 extern "C"
-void eval(VALU32Bit* top) {
+void eval(TOP_CLASS* top) {
     while (eval_flags[1] != 0) {
         if (eval_flags[0] != 0) {
             GENERATED_INPUTS
@@ -34,7 +33,7 @@ void eval(VALU32Bit* top) {
 }
 
 extern "C"
-VALU32Bit* create_module() {
+TOP_CLASS* create_module() {
     char *args[] = {
         NULL
     };
@@ -42,7 +41,7 @@ VALU32Bit* create_module() {
     eval_flags[0] = 0;
     eval_flags[1] = 1;
     Verilated::commandArgs(0, args);
-    return new VALU32Bit();
+    return new TOP_CLASS();
 }
 
 int main(int argc, char** argv, char** env) {
