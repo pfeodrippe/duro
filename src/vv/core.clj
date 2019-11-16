@@ -31,11 +31,12 @@
                            zero "Zero"
                            a "A"
                            b "B"}]
-                       (let [expected-result (- a b)]
-                         (and (= pc-result expected-result)
-                              (if (zero? expected-result) (= zero 1) (= zero 0)))))
+                       (p :test
+                        (let [expected-result (- a b)]
+                          (and (= pc-result expected-result)
+                               (if (zero? expected-result) (= zero 1) (= zero 0))))))
                      (doall
-                      (for [i (range 1000000)]
+                      (for [i (range 600000)]
                         (let [input {"ALUControl" 2r0110
                                      "A" (* 2 i)
                                      "B" (- (* 4 i) 50)}]
