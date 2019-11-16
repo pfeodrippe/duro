@@ -24,8 +24,8 @@
     (eval [this input-data]
       (try
         (doseq [[op arg] input-data]
-          (p op
-             (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) ^int arg)))
+          (p :put-int
+             (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) arg)))
         (p :eval
            (.putInt ^jnr.ffi.Pointer eval-flags-ptr 0 1))
         ;; read data

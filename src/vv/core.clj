@@ -18,28 +18,28 @@
                 {:request->out-id (->> inputs
                                        (map-indexed
                                         (fn [i input]
-                                          [input i]))
+                                          [(keyword input) i]))
                                        (into {}))
                  :in-id->response (->> outputs
                                        (map-indexed
                                         (fn [i output]
-                                          [i output]))
+                                          [i (keyword output)]))
                                        (into {}))}
                 "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob36.dylib")]
     (profile {}
-             (every? (fn [{pc-result "ALUResult"
-                           zero "Zero"
-                           a "A"
-                           b "B"}]
+             (every? (fn [{pc-result :ALUResult
+                           zero :Zero
+                           a :A
+                           b :B}]
                        (let [expected-result (- a b)]
                          (and (= pc-result expected-result)
                               (if (zero? expected-result) (= zero 1) (= zero 0)))))
                      (try
                        (doall
                         (for [i (range 600000)]
-                          (let [input {"ALUControl" 2r0110
-                                       "A" (* 2 i)
-                                       "B" (- (* 4 i) 50)}]
+                          (let [input {:ALUControl 2r0110
+                                       :A (* 2 i)
+                                       :B (- (* 4 i) 50)}]
                             (merge input (p :vvv (vv.io/eval jnr-io input))))))
                        (finally
                          (vv.io/jnr-io-destroy jnr-io))))))
