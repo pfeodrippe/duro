@@ -11,19 +11,19 @@
 
 (definterface NativeLibInterface
   (^jnr.ffi.Pointer create_module [])
-  (^int process_command
-   [^jnr.ffi.Pointer top ^int command ^long command_value])
   (^jnr.ffi.Pointer read_module [^jnr.ffi.Pointer top])
-  (^int eval [^jnr.ffi.Pointer top])
-  (^jnr.ffi.Pointer get_output_pointer []))
+  (^jnr.ffi.Pointer get_input_pointer [])
+  (^jnr.ffi.Pointer get_output_pointer [])
+  (^int eval [^jnr.ffi.Pointer top]))
 
 (defrecord JnrIO
-    [native-lib top output-ptr request->out-id in-id->response]
+    [native-lib top input-ptr output-ptr request->out-id in-id->response]
     VerilatorIO
     (eval [this input-data]
       (try
         (doseq [[op arg] input-data]
-          (p op (.process_command native-lib top (request->out-id op) arg)))
+          (p op
+             (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) ^int arg)))
         (p :eval (.eval native-lib top))
         ;; read data
         (p :parse-out
@@ -46,8 +46,10 @@
                      last)
         native-lib (.load (LibraryLoader/create NativeLibInterface) lib-name)
         top (.create_module native-lib)
+        input-ptr (.get_input_pointer native-lib)
         output-ptr (.get_output_pointer native-lib)]
     (map->JnrIO (assoc params
                        :top top
                        :native-lib native-lib
+                       :input-ptr input-ptr
                        :output-ptr output-ptr))))

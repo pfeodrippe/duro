@@ -12,30 +12,24 @@ enum Output {
     OutputZero
 };
 
-extern "C"
-void process_command(VALU32Bit* top,
-                     Command command,
-                     long command_value) {
-    switch(command) {
-    case ALUControl: {
-        top->ALUControl = command_value;
-        break;
-    }
-    case A: {
-        top->A = command_value;
-        break;
-    }
-    case B: {
-        top->B = command_value;
-        break;
-    }
-    }
-}
-
+static int input[3];
 static int output[2];
 
 extern "C"
+int* get_input_pointer() {
+    return input;
+}
+
+extern "C"
+int* get_output_pointer() {
+    return output;
+}
+
+extern "C"
 void eval(VALU32Bit* top) {
+    top->ALUControl = input[ALUControl];
+    top->A = input[A];
+    top->B = input[B];
     top->eval();
     output[OutputALUResult] = top->ALUResult;
     output[OutputZero] = top->Zero;
@@ -49,11 +43,6 @@ VALU32Bit* create_module() {
 
     Verilated::commandArgs(0, args);
     return new VALU32Bit();
-}
-
-extern "C"
-int* get_output_pointer() {
-    return output;
 }
 
 int main(int argc, char** argv, char** env) {
