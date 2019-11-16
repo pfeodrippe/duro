@@ -29,7 +29,7 @@
 (defn- gen-outputs
   [outputs]
   (->> outputs
-       (mapv #(str (gen-top-member %) " = " (gen-output %) ";"))
+       (mapv #(str (gen-output %) " = " (gen-top-member %) ";"))
        (cons "#define GENERATED_OUTPUTS")
        (str/join " \\\n")))
 
