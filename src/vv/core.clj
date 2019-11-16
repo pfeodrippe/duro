@@ -25,7 +25,7 @@
                                         (fn [i output]
                                           [i (keyword output)]))
                                        (into {}))}
-                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob36.dylib")]
+                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob40.dylib")]
     (profile {}
              (every? (fn [{pc-result :ALUResult
                            zero :Zero
