@@ -25,7 +25,7 @@
                                         (fn [i output]
                                           [i output]))
                                        (into {}))}
-                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob34.dylib")]
+                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob36.dylib")]
     (profile {}
              (every? (fn [{pc-result "ALUResult"
                            zero "Zero"
@@ -35,11 +35,14 @@
                         (let [expected-result (- a b)]
                           (and (= pc-result expected-result)
                                (if (zero? expected-result) (= zero 1) (= zero 0))))))
-                     (doall
-                      (for [i (range 600000)]
-                        (let [input {"ALUControl" 2r0110
-                                     "A" (* 2 i)
-                                     "B" (- (* 4 i) 50)}]
-                          (merge input (vv.io/eval jnr-io input))))))))
+                     (try
+                       (doall
+                        (for [i (range 600000)]
+                          (let [input {"ALUControl" 2r0110
+                                       "A" (* 2 i)
+                                       "B" (- (* 4 i) 50)}]
+                            (merge input (vv.io/eval jnr-io input)))))
+                       (finally
+                         (vv.io/jnr-io-destroy jnr-io))))))
 
   ())
