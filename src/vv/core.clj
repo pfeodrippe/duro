@@ -3,7 +3,7 @@
    [clojure.string :as str]
    [clojure.data :as data]
    [vv.io]
-   [vv.parser]
+   [vv.verilator :as verilator]
    [taoensso.tufte :as tufte :refer (defnp p profiled profile)]))
 
 (tufte/add-basic-println-handler!
@@ -12,8 +12,8 @@
 
 (comment
 
-  (let [{:keys [:inputs :outputs]} (vv.parser/module-interface
-                                    "obj_dir/VALU32Bit.xml")
+  (let [{:keys [:inputs :outputs]} (:interface (verilator/gen-dynamic-lib
+                                                "ALU32Bit.v"))
         jnr-io (vv.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed

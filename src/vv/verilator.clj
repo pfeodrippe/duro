@@ -132,4 +132,6 @@
       (apply sh/sh
              ["bash" "-c"
               (format "gcc -shared -o %s *.o -lstdc++" lib-name)]))
-    lib-path))
+    {:interface interface
+     :lib-path lib-path
+     :lib-folder (:path dir)}))
