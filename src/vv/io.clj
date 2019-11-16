@@ -33,12 +33,13 @@
            (p :waiting
               (while (not= (.getInt ^jnr.ffi.Pointer eval-flags-ptr 0) 0)))
            (p :ff-2
-              (->> in-id->response
-                   (map (fn [[id attr]]
-                                (p :ff-1
-                                   [attr (p :get-int
-                                            (.getInt ^jnr.ffi.Pointer output-ptr (* id 4)))])))
-                   (into {})))))))
+              (let [t-map (transient {})]
+                (doseq [i in-id->response]
+                  (assoc! t-map
+                          (val i)
+                          (p :get-int
+                             (.getInt ^jnr.ffi.Pointer output-ptr (* (key i) 4)))))
+                (into {} (persistent! t-map))))))))
 
 (defn jnr-io
   [params lib-path]
