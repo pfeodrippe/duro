@@ -47,4 +47,34 @@
                        (finally
                          (vv.io/jnr-io-destroy jnr-io))))))
 
+  (let [{:keys [:interface :lib-path :lib-folder]}
+        (verilator/gen-dynamic-lib "ProgramCounter.v")
+
+        _ (println :lib-folder lib-folder)
+        {:keys [:inputs :outputs]} interface
+        jnr-io (vv.io/jnr-io
+                {:request->out-id (->> inputs
+                                       (map-indexed
+                                        (fn [i input]
+                                          [(keyword input) i]))
+                                       (into {}))
+                 :in-id->response (->> outputs
+                                       (map-indexed
+                                        (fn [i output]
+                                          [i (keyword output)]))
+                                       (into {}))}
+                lib-path)]
+    (profile {}
+             (try
+               (doall
+                (for [i (range 20)]
+                  (let [input {:PCNext i
+                               :PCWrite 1
+                               :Reset 0
+                               :Clk 1}]
+                    (vv.io/eval jnr-io {:Clk 0})
+                    (merge input (p :vvv (vv.io/eval jnr-io input))))))
+               (finally
+                 (vv.io/jnr-io-destroy jnr-io)))))
+
   ())
