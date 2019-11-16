@@ -77,4 +77,45 @@
                (finally
                  (vv.io/jnr-io-destroy jnr-io)))))
 
+  (let [{:keys [:interface :lib-path :lib-folder]}
+        (verilator/gen-dynamic-lib "mpyop.v")
+
+        _ (println :lib-folder lib-folder)
+        {:keys [:inputs :outputs]} interface
+        jnr-io (vv.io/jnr-io
+                {:request->out-id (->> inputs
+                                       (map-indexed
+                                        (fn [i input]
+                                          [(keyword input) i]))
+                                       (into {}))
+                 :in-id->response (->> outputs
+                                       (map-indexed
+                                        (fn [i output]
+                                          [i (keyword output)]))
+                                       (into {}))}
+                lib-path)]
+    (profile {}
+               (try
+                 (doall
+                  (doto jnr-io
+                    (vv.io/eval {:i_stb 0 :i_reset 1})
+                    (vv.io/eval {:i_stb 0 :i_reset 0})
+                    (vv.io/tick)
+                    (vv.io/eval {:i_stb 0 :i_op 0})
+                    (vv.io/eval {:i_stb 1
+                                 :i_op 2r00
+                                 :i_a 10
+                                 :i_b 5}))
+                  #_(for [i (range 6)]
+                      (let [input {:i_op 2r00
+                                   :i_reset 0
+                                   :i_stb 1
+                                   :i_a i
+                                   :i_b (* 3 i)
+                                   :i_clk 1}]
+                        (vv.io/eval jnr-io {:i_clk 0})
+                        (merge input (p :vvv (vv.io/eval jnr-io input))))))
+                 (finally
+                   (vv.io/jnr-io-destroy jnr-io)))))
+
   ())
