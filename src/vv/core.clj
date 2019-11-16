@@ -25,7 +25,7 @@
                                         (fn [i output]
                                           [i output]))
                                        (into {}))}
-                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob29.dylib")]
+                "/Users/feodrippe/dev/verilog-ex/obj_dir/libfob33.dylib")]
     (profile {}
              (every? (fn [{pc-result "ALUResult"
                            zero "Zero"
@@ -35,7 +35,7 @@
                          (and (= pc-result expected-result)
                               (if (zero? expected-result) (= zero 1) (= zero 0)))))
                      (doall
-                      (for [i (range 100000)]
+                      (for [i (range 600000)]
                         (let [input {"ALUControl" 2r0110
                                      "A" (* 2 i)
                                      "B" (- (* 4 i) 50)}]

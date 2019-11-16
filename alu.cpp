@@ -4,8 +4,7 @@
 enum Command {
     ALUControl,
     A,
-    B,
-    Eval
+    B
 };
 
 enum Output {
@@ -30,11 +29,16 @@ void process_command(VALU32Bit* top,
         top->B = command_value;
         break;
     }
-    case Eval: {
-        top->eval();
-        break;
     }
-    }
+}
+
+static int output[2];
+
+extern "C"
+void eval(VALU32Bit* top) {
+    top->eval();
+    output[OutputALUResult] = top->ALUResult;
+    output[OutputZero] = top->Zero;
 }
 
 extern "C"
@@ -48,11 +52,8 @@ VALU32Bit* create_module() {
 }
 
 extern "C"
-int* read_module(VALU32Bit* top) {
-    static int m[2];
-    m[OutputALUResult] = top->ALUResult;
-    m[OutputZero] = top->Zero;
-    return m;
+int* get_output_pointer() {
+    return output;
 }
 
 int main(int argc, char** argv, char** env) {

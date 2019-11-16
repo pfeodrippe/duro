@@ -9,29 +9,29 @@
 (defprotocol VerilatorIO
   (eval [this input-data]))
 
+(definterface NativeLibInterface
+  (^jnr.ffi.Pointer create_module [])
+  (^int process_command
+   [^jnr.ffi.Pointer top ^int command ^long command_value])
+  (^jnr.ffi.Pointer read_module [^jnr.ffi.Pointer top])
+  (^int eval [^jnr.ffi.Pointer top])
+  (^jnr.ffi.Pointer get_output_pointer []))
+
 (defrecord JnrIO
-    [native-lib top request->out-id in-id->response]
+    [native-lib top output-ptr request->out-id in-id->response]
     VerilatorIO
     (eval [this input-data]
       (try
         (doseq [[op arg] input-data]
           (p op (.process_command native-lib top (request->out-id op) arg)))
-        ;; eval
-        (p :eval (.process_command native-lib top (count request->out-id) 0))
+        (p :eval (.eval native-lib top))
         ;; read data
-        (let [outputs (p :outputs (.read_module native-lib top))]
-          (p :parse-out
-             (->> in-id->response
-                  (mapv (fn [[id attr]]
-                          [attr (p :get-int
-                                   (.getInt ^jnr.ffi.Pointer outputs (* id 4)))]))
-                  (into {})))))))
-
-(definterface NativeLibInterface
-  (^jnr.ffi.Pointer create_module [])
-  (^int process_command
-   [^jnr.ffi.Pointer top ^int command ^long command_value])
-  (^jnr.ffi.Pointer read_module [^jnr.ffi.Pointer top]))
+        (p :parse-out
+           (->> in-id->response
+                (mapv (fn [[id attr]]
+                        [attr (p :get-int
+                                 (.getInt ^jnr.ffi.Pointer output-ptr (* id 4)))]))
+                (into {}))))))
 
 (defn jnr-io
   [params lib-path]
@@ -45,5 +45,9 @@
                      (str/split #"lib")
                      last)
         native-lib (.load (LibraryLoader/create NativeLibInterface) lib-name)
-        top (.create_module native-lib)]
-    (map->JnrIO (assoc params :top top :native-lib native-lib))))
+        top (.create_module native-lib)
+        output-ptr (.get_output_pointer native-lib)]
+    (map->JnrIO (assoc params
+                       :top top
+                       :native-lib native-lib
+                       :output-ptr output-ptr))))
