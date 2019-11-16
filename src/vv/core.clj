@@ -31,17 +31,16 @@
                            zero "Zero"
                            a "A"
                            b "B"}]
-                       (p :test
-                        (let [expected-result (- a b)]
-                          (and (= pc-result expected-result)
-                               (if (zero? expected-result) (= zero 1) (= zero 0))))))
+                       (let [expected-result (- a b)]
+                         (and (= pc-result expected-result)
+                              (if (zero? expected-result) (= zero 1) (= zero 0)))))
                      (try
                        (doall
                         (for [i (range 600000)]
                           (let [input {"ALUControl" 2r0110
                                        "A" (* 2 i)
                                        "B" (- (* 4 i) 50)}]
-                            (merge input (vv.io/eval jnr-io input)))))
+                            (merge input (p :vvv (vv.io/eval jnr-io input))))))
                        (finally
                          (vv.io/jnr-io-destroy jnr-io))))))
 
