@@ -30,16 +30,15 @@
            (.putInt ^jnr.ffi.Pointer eval-flags-ptr 0 1))
         ;; read data
         (p :parse-out
-           (p :waiting
-              (while (not= (.getInt ^jnr.ffi.Pointer eval-flags-ptr 0) 0)))
-           (p :ff-2
-              (let [t-map (transient {})]
-                (doseq [i in-id->response]
-                  (assoc! t-map
-                          (val i)
-                          (p :get-int
-                             (.getInt ^jnr.ffi.Pointer output-ptr (* (key i) 4)))))
-                (into {} (persistent! t-map))))))))
+           (p :waiting (while (not= (.getInt ^jnr.ffi.Pointer eval-flags-ptr 0) 0)))
+           #_{:ALUResult (.getInt ^jnr.ffi.Pointer output-ptr 0)
+            :Zero (.getInt ^jnr.ffi.Pointer output-ptr 4)}
+           (let [t-map (transient {})]
+             (doseq [i in-id->response]
+               (assoc! t-map
+                       (val i)
+                       (.getInt ^jnr.ffi.Pointer output-ptr (* (key i) 4))))
+             (into {} (persistent! t-map)))))))
 
 (defn jnr-io
   [params lib-path]
