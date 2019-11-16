@@ -50,11 +50,13 @@
 (defn gen-header-string
   [{:keys [:inputs :outputs :module-name]}]
   (->> [(str "#include "  "\"V" module-name ".h\"")
+        (str "#define TOP_CLASS " "V" module-name)
+        (str "#define INPUT_SIZE " (count inputs))
+        (str "#define OUTPUT_SIZE " (count outputs))
         (gen-inputs inputs)
         (gen-outputs outputs)
         (gen-input-enum inputs)
-        (gen-output-enum outputs)
-        (str "#define TOP_CLASS " "V" module-name)]
+        (gen-output-enum outputs)]
        (str/join "\n\n")))
 
 (defn- parse-str [s]

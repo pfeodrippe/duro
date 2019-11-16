@@ -78,7 +78,7 @@
                  (vv.io/jnr-io-destroy jnr-io)))))
 
   (let [{:keys [:interface :lib-path :lib-folder]}
-        (verilator/gen-dynamic-lib "mpyop.v")
+        (verilator/gen-dynamic-lib "div.v")
 
         _ (println :lib-folder lib-folder)
         {:keys [:inputs :outputs]} interface
@@ -93,29 +93,34 @@
                                         (fn [i output]
                                           [i (keyword output)]))
                                        (into {}))}
-                lib-path)]
-    (profile {}
-               (try
-                 (doall
-                  (doto jnr-io
-                    (vv.io/eval {:i_stb 0 :i_reset 1})
-                    (vv.io/eval {:i_stb 0 :i_reset 0})
-                    (vv.io/tick)
-                    (vv.io/eval {:i_stb 0 :i_op 0})
-                    (vv.io/eval {:i_stb 1
-                                 :i_op 2r00
-                                 :i_a 10
-                                 :i_b 5}))
-                  #_(for [i (range 6)]
-                      (let [input {:i_op 2r00
-                                   :i_reset 0
-                                   :i_stb 1
-                                   :i_a i
-                                   :i_b (* 3 i)
-                                   :i_clk 1}]
-                        (vv.io/eval jnr-io {:i_clk 0})
-                        (merge input (p :vvv (vv.io/eval jnr-io input))))))
-                 (finally
-                   (vv.io/jnr-io-destroy jnr-io)))))
+                lib-path)
+        reset (fn []
+               (vv.io/eval jnr-io {:i_reset 1}))
+        tick (fn [input]
+               (vv.io/eval jnr-io {:i_reset 0})
+               (vv.io/eval jnr-io (assoc input :i_clk 1))
+               (vv.io/eval jnr-io {:i_clk 0}))]
+    (try
+      (reset)
+      (tick {:i_wr 1
+               :i_signed 0
+               :i_numerator 125
+               :i_denominator 5})
+      (tick {:i_wr 0
+               :i_signed 0
+               :i_numerator 0
+               :i_denominator 0})
+      #_(doall
+         (for [i (range 6)]
+           (let [input {:i_op 2r00
+                        :i_reset 0
+                        :i_stb 1
+                        :i_a i
+                        :i_b (* 3 i)
+                        :i_clk 1}]
+             (vv.io/eval jnr-io {:i_clk 0})
+             (merge input (p :vvv (vv.io/eval jnr-io input))))))
+      (finally
+        (vv.io/jnr-io-destroy jnr-io))))
 
   ())

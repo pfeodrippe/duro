@@ -1,8 +1,8 @@
 #include "verilated.h"
 #include "generated_template.h"
 
-static int input[3];
-static int output[2];
+static int input[INPUT_SIZE];
+static int output[OUTPUT_SIZE];
 static int eval_flags[2];
 
 extern "C"

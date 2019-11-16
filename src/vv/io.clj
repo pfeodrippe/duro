@@ -54,7 +54,8 @@
         input-ptr (.get_input_pointer native-lib)
         output-ptr (.get_output_pointer native-lib)
         eval-flags-ptr (.get_eval_flags_pointer native-lib)]
-    (future (.eval native-lib top))
+    (future (clojure.pprint/pprint
+             {:FUTURE>>>>>>>>> @(future (.eval native-lib top))}))
     (map->JnrIO (assoc params
                        :top top
                        :native-lib native-lib
