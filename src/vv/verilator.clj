@@ -65,32 +65,43 @@
 
 (defn read-module-xml
   [path]
-  (let [parsed-xml (parse-str (slurp path))
-        inputs (xml-> parsed-xml
-                      :verilator_xml
-                      :netlist
-                      :module
-                      (attr= :topModule "1")
-                      :var
-                      (attr= :vartype "logic")
-                      (attr= :dir "input")
-                      (attr :name))
-        outputs (xml-> parsed-xml
-                       :verilator_xml
-                       :netlist
-                       :module
-                       (attr= :topModule "1")
-                       :var
-                       (attr= :vartype "logic")
-                       (attr= :dir "output")
-                       (attr :name))
-        module-name (first
-                     (xml-> parsed-xml
-                            :verilator_xml
-                            :netlist
-                            :module
-                            (attr= :topModule "1")
-                            (attr :name)))]
+  ;; TODO: refactor it
+  (let [module-preds [:verilator_xml :netlist :module]
+        input-attr-preds [:var (attr= :vartype "logic")
+                          (attr= :dir "input") (attr :name)]
+        output-attr-preds [:var (attr= :vartype "logic")
+                           (attr= :dir "output") (attr :name)]
+        parsed-xml (parse-str (slurp path))
+        module-name (or
+                     (apply xml1-> parsed-xml
+                            (concat
+                             module-preds
+                             [(attr= :topModule "1")
+                              (attr :name)]))
+                     (apply xml1-> parsed-xml
+                            (concat
+                             module-preds
+                             [(attr :name)])))
+        inputs (or (seq
+                    (apply xml-> parsed-xml
+                           (concat
+                            module-preds
+                            [(attr= :topModule "1")]
+                            input-attr-preds)))
+                   (apply xml-> parsed-xml
+                          (concat
+                           module-preds
+                           input-attr-preds)))
+        outputs (or (seq
+                     (apply xml-> parsed-xml
+                            (concat
+                             module-preds
+                             [(attr= :topModule "1")]
+                             output-attr-preds)))
+                    (apply xml-> parsed-xml
+                           (concat
+                            module-preds
+                            output-attr-preds)))]
     {:inputs inputs
      :outputs outputs
      :module-name module-name}))
