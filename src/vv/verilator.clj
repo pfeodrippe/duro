@@ -138,3 +138,5 @@
     {:interface interface
      :lib-path lib-path
      :lib-folder (:path dir)}))
+
+(def memo-gen-dynamic-lib (memoize gen-dynamic-lib))
