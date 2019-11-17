@@ -70,6 +70,7 @@
                       :verilator_xml
                       :netlist
                       :module
+                      (attr= :topModule "1")
                       :var
                       (attr= :vartype "logic")
                       (attr= :dir "input")
@@ -78,6 +79,7 @@
                        :verilator_xml
                        :netlist
                        :module
+                       (attr= :topModule "1")
                        :var
                        (attr= :vartype "logic")
                        (attr= :dir "output")
@@ -87,20 +89,24 @@
                             :verilator_xml
                             :netlist
                             :module
+                            (attr= :topModule "1")
                             (attr :name)))]
     {:inputs inputs
      :outputs outputs
      :module-name module-name}))
 
 (defn- read-verilog-interface
-  [mod-path]
+  [mod-path options]
   (let [dir (bean (fs/temp-dir "vv"))
         xml-path (str (:path dir) "/mod.xml")]
-    (apply sh/sh
-           ["verilator" "-Wno-STMTDLY"
-            "--xml-output" xml-path
-            "-Mdir" (:path dir)
-            mod-path])
+    (println
+     (apply sh/sh
+            (concat
+             ["verilator" "-Wno-STMTDLY"
+              "--xml-output" xml-path
+              "-Mdir" (:path dir)
+              mod-path]
+             (build-verilator-args options))))
     (read-module-xml xml-path)))
 
 (defn- rand-str [length]
@@ -108,35 +114,48 @@
        (take length)
        (apply str)))
 
+(defn- build-verilator-args
+  [{:keys [:module-dirs]}]
+  (mapcat (fn [dir]
+            ["-y" dir])
+          module-dirs))
+
 (defn gen-dynamic-lib
-  [mod-path]
-  (let [dir (bean (fs/temp-dir "vv"))
-        interface (read-verilog-interface mod-path)
-        header-str (gen-header-string interface)
-        top-path (str (:path dir) "/top.cpp")
-        lib-name (format "lib%s.dylib" (rand-str 5))
-        lib-path (str (:path dir) "/" lib-name)]
-    (fs/copy "template.cpp" top-path)
-    (spit (str (:path dir) "/generated_template.h") header-str)
-    ;; generate verilator files
-    (apply sh/sh
-           ["verilator" "-Wno-STMTDLY"
-            "--cc" mod-path
-            "-Mdir" (:path dir)
-            "--exe" top-path])
-    ;; make verilator
-    (apply sh/sh
-           ["make" "-j"
-            "-C" (:path dir)
-            "-f" (str "V" (:module-name interface) ".mk")
-            (str "V" (:module-name interface))])
-    ;; create dynamic lib
-    (sh/with-sh-dir (:path dir)
+  ([mod-path]
+   (gen-dynamic-lib mod-path {}))
+  ([mod-path {:keys [:debug] :as options}]
+   (let [dir (bean (fs/temp-dir "vv"))
+         interface (read-verilog-interface mod-path options)
+         header-str (gen-header-string interface)
+         top-path (str (:path dir) "/top.cpp")
+         lib-name (format "lib%s.dylib" (rand-str 5))
+         lib-path (str (:path dir) "/" lib-name)]
+     (fs/copy "template.cpp" top-path)
+     (spit (str (:path dir) "/generated_template.h") header-str)
+     ;; generate verilator files
+     (println
       (apply sh/sh
-             ["bash" "-c"
-              (format "gcc -shared -o %s *.o -lstdc++" lib-name)]))
-    {:interface interface
-     :lib-path lib-path
-     :lib-folder (:path dir)}))
+             (concat
+              ["verilator" "-Wno-STMTDLY"
+               "--cc" mod-path
+               "-Mdir" (:path dir)
+               "--exe" top-path]
+              (build-verilator-args options))))
+     ;; make verilator
+     (println
+      (apply sh/sh
+             ["make" "-j"
+              "-C" (:path dir)
+              "-f" (str "V" (:module-name interface) ".mk")
+              (str "V" (:module-name interface))]))
+     ;; create dynamic lib
+     (println
+      (sh/with-sh-dir (:path dir)
+        (apply sh/sh
+               ["bash" "-c"
+                (format "gcc -shared -o %s *.o -lstdc++" lib-name)])))
+     {:interface interface
+      :lib-path lib-path
+      :lib-folder (:path dir)})))
 
 (def memo-gen-dynamic-lib (memoize gen-dynamic-lib))
