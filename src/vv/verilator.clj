@@ -71,6 +71,9 @@
                           (attr= :dir "input") (attr :name)]
         output-attr-preds [:var (attr= :vartype "logic")
                            (attr= :dir "output") (attr :name)]
+        local-signals-attr-preds [:var
+                                  (fn [loc] (nil? (attr loc :dir)))
+                                  (attr :name)]
         parsed-xml (parse-str (slurp path))
         module-name (or
                      (apply xml1-> parsed-xml
@@ -101,35 +104,49 @@
                     (apply xml-> parsed-xml
                            (concat
                             module-preds
-                            output-attr-preds)))]
+                            output-attr-preds)))
+        local-signals (or (seq
+                           (apply xml-> parsed-xml
+                                  (concat
+                                   module-preds
+                                   [(attr= :topModule "1")]
+                                   local-signals-attr-preds)))
+                          (apply xml-> parsed-xml
+                                 (concat
+                                  module-preds
+                                  local-signals-attr-preds)))]
     {:inputs inputs
      :outputs outputs
+     :local-signals local-signals
      :module-name module-name}))
-
-(defn- read-verilog-interface
-  [mod-path options]
-  (let [dir (bean (fs/temp-dir "vv"))
-        xml-path (str (:path dir) "/mod.xml")]
-    (println
-     (apply sh/sh
-            (concat
-             ["verilator" "-Wno-STMTDLY"
-              "--xml-output" xml-path
-              "-Mdir" (:path dir)
-              mod-path]
-             (build-verilator-args options))))
-    (read-module-xml xml-path)))
-
-(defn- rand-str [length]
-  (->> (repeatedly #(char (+ (rand 26) 97)))
-       (take length)
-       (apply str)))
 
 (defn- build-verilator-args
   [{:keys [:module-dirs]}]
   (mapcat (fn [dir]
             ["-y" dir])
           module-dirs))
+
+(defn- read-verilog-interface
+  ([mod-path]
+   (read-verilog-interface mod-path {}))
+  ([mod-path options]
+   (let [dir (bean (fs/temp-dir "vv"))
+         xml-path (str (:path dir) "/mod.xml")]
+     (println :xml-path xml-path)
+     (println
+      (apply sh/sh
+             (concat
+              ["verilator" "-Wno-STMTDLY"
+               "--xml-output" xml-path
+               "-Mdir" (:path dir)
+               mod-path]
+              (build-verilator-args options))))
+     (read-module-xml xml-path))))
+
+(defn- rand-str [length]
+  (->> (repeatedly #(char (+ (rand 26) 97)))
+       (take length)
+       (apply str)))
 
 (defn gen-dynamic-lib
   ([mod-path]

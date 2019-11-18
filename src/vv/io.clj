@@ -66,7 +66,3 @@
 (defn jnr-io-destroy
   [{:keys [:eval-flags-ptr]}]
   (.putInt eval-flags-ptr 4 0))
-
-(defn tick
-  [io]
-  (eval io {}))
