@@ -33,7 +33,7 @@
              (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) arg)))
         (doseq [[op arg] local-signal]
           (p :put-int
-             (.putInt ^jnr.ffi.Pointer local-signal-ptr (* (request->out-id op) 4) arg)))
+             (.putInt ^jnr.ffi.Pointer local-signal-ptr (* (local-signal->id op) 4) arg)))
         (p :eval
            (.putInt ^jnr.ffi.Pointer eval-flags-ptr 0 1))
         ;; read data

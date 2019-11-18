@@ -159,18 +159,18 @@
                  :local-signal->id (->> local-signals
                                         (map-indexed
                                          (fn [i s]
-                                           [i (keyword "zip.l" s)]))
+                                           [(keyword "zip.l" s) i]))
                                         (into {}))}
                 lib-path)
         reset (fn []
-                (vv.io/eval jnr-io {:i_reset 1}))
+                (vv.io/eval jnr-io {:zip.i/i_reset 1}))
         tick (fn [input]
-               (vv.io/eval jnr-io {:i_reset 0})
-               (vv.io/eval jnr-io (assoc input :i_clk 1))
-               (vv.io/eval jnr-io {:i_clk 0}))]
+               (vv.io/eval jnr-io {:zip.i/i_reset 0})
+               (vv.io/eval jnr-io (assoc input :zip.i/i_clk 1))
+               (vv.io/eval jnr-io {:zip.i/i_clk 0}))]
     (try
-      jnr-io
-      #_(reset)
+      (reset)
+      (vv.io/eval jnr-io {} {:zip.l/cpu_halt 1})
       (finally
         (vv.io/jnr-io-destroy jnr-io))))
 
