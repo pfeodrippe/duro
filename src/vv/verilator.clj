@@ -11,6 +11,10 @@
   [k]
   (str "top->" (name k)))
 
+(defn- gen-top-local-member
+  [module-name k]
+  (str "top->" module-name "__DOT__" (name k)))
+
 (defn- gen-input
   [k]
   (str "input[input_" (name k) "]"))
@@ -18,6 +22,10 @@
 (defn- gen-output
   [k]
   (str "output[output_" (name k) "]"))
+
+(defn- gen-local-signal
+  [k]
+  (str "local_signal[local_signal_" (name k) "]"))
 
 (defn- gen-inputs
   [inputs]
@@ -31,6 +39,20 @@
   (->> outputs
        (mapv #(str (gen-output %) " = " (gen-top-member %) ";"))
        (cons "#define GENERATED_OUTPUTS")
+       (str/join " \\\n")))
+
+(defn- gen-local-signal-inputs
+  [module-name local-signals]
+  (->> local-signals
+       (mapv #(str (gen-top-local-member module-name %) " = " (gen-local-signal %) ";"))
+       (cons "#define GENERATED_LOCAL_SIGNAL_INPUTS")
+       (str/join " \\\n")))
+
+(defn- gen-local-signal-outputs
+  [module-name local-signals]
+  (->> local-signals
+       (mapv #(str (gen-local-signal %) " = " (gen-top-local-member module-name %) ";"))
+       (cons "#define GENERATED_LOCAL_SIGNAL_OUTPUTS")
        (str/join " \\\n")))
 
 (defn- gen-input-enum
@@ -47,16 +69,27 @@
             (str/join ",\n"))
        "\n};"))
 
+(defn- gen-local-signal-enum
+  [local-signals]
+  (str "enum LocalSignal {\n"
+       (->> (mapv #(str "local_signal_" %) local-signals)
+            (str/join ",\n"))
+       "\n};"))
+
 (defn gen-header-string
-  [{:keys [:inputs :outputs :module-name]}]
+  [{:keys [:inputs :outputs :local-signals :module-name]}]
   (->> [(str "#include "  "\"V" module-name ".h\"")
         (str "#define TOP_CLASS " "V" module-name)
         (str "#define INPUT_SIZE " (count inputs))
         (str "#define OUTPUT_SIZE " (count outputs))
+        (str "#define LOCAL_SIGNAL_SIZE " (count local-signals))
         (gen-inputs inputs)
         (gen-outputs outputs)
+        (gen-local-signal-inputs module-name local-signals)
+        (gen-local-signal-outputs module-name local-signals)
         (gen-input-enum inputs)
-        (gen-output-enum outputs)]
+        (gen-output-enum outputs)
+        (gen-local-signal-enum local-signals)]
        (str/join "\n\n")))
 
 (defn- parse-str [s]
@@ -151,7 +184,7 @@
 (defn gen-dynamic-lib
   ([mod-path]
    (gen-dynamic-lib mod-path {}))
-  ([mod-path {:keys [:debug] :as options}]
+  ([mod-path {:keys [:mod-debug] :as options}]
    (let [dir (bean (fs/temp-dir "vv"))
          interface (read-verilog-interface mod-path options)
          header-str (gen-header-string interface)

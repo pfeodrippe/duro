@@ -15,7 +15,8 @@
   (^jnr.ffi.Pointer get_input_pointer [])
   (^jnr.ffi.Pointer get_output_pointer [])
   (^jnr.ffi.Pointer get_eval_flags_pointer [])
-  (^int eval [^jnr.ffi.Pointer top]))
+  (^int eval [^jnr.ffi.Pointer top])
+  (^int eval_with_debug [^jnr.ffi.Pointer top]))
 
 (defrecord JnrIO
     [native-lib top input-ptr output-ptr
@@ -55,7 +56,7 @@
         output-ptr (.get_output_pointer native-lib)
         eval-flags-ptr (.get_eval_flags_pointer native-lib)]
     (future (clojure.pprint/pprint
-             {:FUTURE>>>>>>>>> @(future (.eval native-lib top))}))
+             {:FUTURE>>>>>>>>> @(future (.eval_with_debug native-lib top))}))
     (map->JnrIO (assoc params
                        :top top
                        :native-lib native-lib

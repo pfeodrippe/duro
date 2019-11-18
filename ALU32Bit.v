@@ -41,7 +41,6 @@ module ALU32Bit(ALUControl, A, B, ALUResult, Zero);
 
    integer         temp,i,x;
    reg [31:0]      y;
-   reg             sign;
    output  reg [31:0] ALUResult;	// answer
    output  reg        Zero;	    // Zero=1 if ALUResult == 0
 
