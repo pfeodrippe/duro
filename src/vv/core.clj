@@ -16,33 +16,38 @@
         (verilator/gen-dynamic-lib "ALU32Bit.v")
 
         _ (println :lib-folder lib-folder)
-        {:keys [:inputs :outputs]} interface
+        {:keys [:inputs :outputs :local-signals]} interface
         jnr-io (vv.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
                                         (fn [i input]
-                                          [(keyword input) i]))
+                                          [(keyword "alu" input) i]))
                                        (into {}))
                  :in-id->response (->> outputs
                                        (map-indexed
                                         (fn [i output]
-                                          [i (keyword output)]))
-                                       (into {}))}
+                                          [i (keyword "alu" output)]))
+                                       (into {}))
+                 :local-signal->id (->> local-signals
+                                        (map-indexed
+                                         (fn [i output]
+                                           [(keyword "alu.local" output) i]))
+                                        (into {}))}
                 lib-path)]
     (profile {}
-             (every? (fn [{pc-result :ALUResult
-                           zero :Zero
-                           a :A
-                           b :B}]
+             (every? (fn [{pc-result :alu/ALUResult
+                           zero :alu/Zero
+                           a :alu/A
+                           b :alu/B}]
                        (let [expected-result (- a b)]
                          (and (= pc-result expected-result)
                               (if (zero? expected-result) (= zero 1) (= zero 0)))))
                      (try
                        (doall
                         (for [i (range 600000)]
-                          (let [input {:ALUControl 2r0110
-                                       :A (* 2 i)
-                                       :B (- (* 4 i) 50)}]
+                          (let [input {:alu/ALUControl 2r0110
+                                       :alu/A (* 2 i)
+                                       :alu/B (- (* 4 i) 50)}]
                             (merge input (p :vvv (vv.io/eval jnr-io input))))))
                        (finally
                          (vv.io/jnr-io-destroy jnr-io))))))
@@ -132,8 +137,8 @@
          (vv.io/jnr-io-destroy jnr-io)))))
 
   (let [{:keys [:interface :lib-path :lib-folder]}
-        (verilator/gen-dynamic-lib
-         "zipcpu/rtl/core/zipcpu.v"
+        (verilator/memo-gen-dynamic-lib
+         "zipcpu/rtl/zipsystem.v"
          {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
                         "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]})
 
@@ -159,6 +164,7 @@
                (vv.io/eval jnr-io {:i_clk 0}))]
     (try
       jnr-io
+      #_(reset)
       (finally
         (vv.io/jnr-io-destroy jnr-io))))
 
