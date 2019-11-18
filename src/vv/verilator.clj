@@ -184,7 +184,7 @@
 (defn gen-dynamic-lib
   ([mod-path]
    (gen-dynamic-lib mod-path {}))
-  ([mod-path {:keys [:mod-debug] :as options}]
+  ([mod-path {:keys [:mod-debug?] :as options}]
    (let [dir (bean (fs/temp-dir "vv"))
          interface (read-verilog-interface mod-path options)
          header-str (gen-header-string interface)
@@ -201,7 +201,8 @@
                "--cc" mod-path
                "-Mdir" (:path dir)
                "--exe" top-path]
-              (build-verilator-args options))))
+              (build-verilator-args options)
+              (when mod-debug? ["--public-flat-rw"]))))
      ;; make verilator
      (println
       (apply sh/sh

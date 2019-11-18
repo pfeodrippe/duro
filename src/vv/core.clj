@@ -137,24 +137,30 @@
          (vv.io/jnr-io-destroy jnr-io)))))
 
   (let [{:keys [:interface :lib-path :lib-folder]}
-        (verilator/memo-gen-dynamic-lib
+        (verilator/gen-dynamic-lib
          "zipcpu/rtl/zipsystem.v"
          {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
-                        "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]})
+                        "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
+          :mod-debug? true})
 
         _ (println :lib-folder lib-folder)
-        {:keys [:inputs :outputs]} interface
+        {:keys [:inputs :outputs :local-signals]} interface
         jnr-io (vv.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
                                         (fn [i input]
-                                          [(keyword input) i]))
+                                          [(keyword "zip.i" input) i]))
                                        (into {}))
                  :in-id->response (->> outputs
                                        (map-indexed
                                         (fn [i output]
-                                          [i (keyword output)]))
-                                       (into {}))}
+                                          [i (keyword "zip.o" output)]))
+                                       (into {}))
+                 :local-signal->id (->> local-signals
+                                        (map-indexed
+                                         (fn [i s]
+                                           [i (keyword "zip.l" s)]))
+                                        (into {}))}
                 lib-path)
         reset (fn []
                 (vv.io/eval jnr-io {:i_reset 1}))
