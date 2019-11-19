@@ -170,7 +170,29 @@
                (vv.io/eval jnr-io {:zip.i/i_clk 0}))]
     (try
       (reset)
-      (vv.io/eval jnr-io {} {:zip.l/cpu_halt 1})
+      (let [cmd-reg 0
+            cmd-halt (bit-shift-left 1 10)
+            cmd-reset (bit-shift-left 1 6)
+            cpu-s-pc 15
+            cmd-data 4
+            lgramlen 28
+            rambase (bit-shift-left 1 lgramlen)
+            ramlen (bit-shift-left 1 lgramlen)
+            ramwords (bit-shift-left ramlen 2)
+            wb-write (fn [a v other]
+                       (vv.io/eval jnr-io
+                                   {:zip.i/i_dbg_cyc 1
+                                    :zip.i/i_dbg_stb 1
+                                    :zip.i/i_dbg_we 1
+                                    :zip.i/i_dbg_addr (bit-and (bit-shift-right a 2) 1)
+                                    :zip.i/i_dbg_data v}
+                                   other)
+                       (vv.io/eval jnr-io
+                                   {:zip.i/i_dbg_stb 0}
+                                   other))]
+        (wb-write cmd-reg
+                  (bit-or cmd-halt cmd-reset 15)
+                  {:zip.l/cpu_halt 1}))
       (finally
         (vv.io/jnr-io-destroy jnr-io))))
 
