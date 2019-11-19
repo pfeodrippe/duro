@@ -2,7 +2,7 @@
   (:require
    [clojure.zip :as zip]
    [clojure.xml :as xml]
-   [clojure.data.zip.xml :refer [xml-> xml1-> attr attr= text]]
+   [clojure.data.zip.xml :refer [xml-> xml1-> attr attr= tag= text]]
    [clojure.string :as str]
    [me.raynes.fs :as fs]
    [clojure.java.shell :as sh]))
@@ -147,11 +147,41 @@
                           (apply xml-> parsed-xml
                                  (concat
                                   module-preds
-                                  local-signals-attr-preds)))]
-    {:inputs inputs
+                                  local-signals-attr-preds)))
+        heirs (reduce (fn [acc i]
+                        (let [name (apply xml->
+                                       (concat
+                                        [parsed-xml
+                                         :verilator_xml
+                                         :cells
+                                         :cell]
+                                        (conj (vec (repeat i zip/next))
+                                              (attr :submodname))))
+                              hier (apply xml->
+                                       (concat
+                                        [parsed-xml
+                                         :verilator_xml
+                                         :cells
+                                         :cell]
+                                        (conj (vec (repeat i zip/next))
+                                              (attr :hier))))]
+                          (if (seq name)
+                            (conj acc [(keyword (first name))
+                                       (keyword (first hier))])
+                            (reduced acc))))
+                      []
+                      (range))]
+    {:heirs (into {} heirs)
+     :inputs inputs
      :outputs outputs
      :local-signals local-signals
      :module-name module-name}))
+
+#_(read-verilog-interface
+ "zipcpu/rtl/zipsystem.v"
+ {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
+                "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
+  :mod-debug? true})
 
 (defn- build-verilator-args
   [{:keys [:module-dirs]}]
