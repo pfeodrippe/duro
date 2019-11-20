@@ -96,9 +96,8 @@
   (zip/xml-zip (xml/parse (new org.xml.sax.InputSource
                                (new java.io.StringReader s)))))
 
-(defn read-module-xml
-  [path]
-  ;; TODO: refactor it
+(defn extract-module-signals
+  [zipper module-name]
   (let [module-preds [:verilator_xml :netlist :module]
         input-attr-preds [:var (attr= :vartype "logic")
                           (attr= :dir "input") (attr :name)]
@@ -107,81 +106,66 @@
         local-signals-attr-preds [:var
                                   (fn [loc] (nil? (attr loc :dir)))
                                   (attr :name)]
-        parsed-xml (parse-str (slurp path))
-        module-name (or
-                     (apply xml1-> parsed-xml
-                            (concat
-                             module-preds
-                             [(attr= :topModule "1")
-                              (attr :name)]))
-                     (apply xml1-> parsed-xml
-                            (concat
-                             module-preds
-                             [(attr :name)])))
-        inputs (or (seq
-                    (apply xml-> parsed-xml
-                           (concat
-                            module-preds
-                            [(attr= :topModule "1")]
-                            input-attr-preds)))
-                   (apply xml-> parsed-xml
-                          (concat
-                           module-preds
-                           input-attr-preds)))
-        outputs (or (seq
-                     (apply xml-> parsed-xml
-                            (concat
-                             module-preds
-                             [(attr= :topModule "1")]
-                             output-attr-preds)))
-                    (apply xml-> parsed-xml
-                           (concat
-                            module-preds
-                            output-attr-preds)))
-        local-signals (or (seq
-                           (apply xml-> parsed-xml
-                                  (concat
-                                   module-preds
-                                   [(attr= :topModule "1")]
-                                   local-signals-attr-preds)))
-                          (apply xml-> parsed-xml
-                                 (concat
-                                  module-preds
-                                  local-signals-attr-preds)))
-        heirs (reduce (fn [acc i]
+        inputs (apply xml-> zipper
+                      (concat
+                       module-preds
+                       [(attr= :name module-name)]
+                       input-attr-preds))
+        outputs (apply xml-> zipper
+                       (concat
+                        module-preds
+                        [(attr= :name module-name)]
+                        output-attr-preds))
+        local-signals (apply xml-> zipper
+                             (concat
+                              module-preds
+                              [(attr= :name module-name)]
+                              local-signals-attr-preds))]
+    {:inputs inputs
+     :outputs outputs
+     :local-signals local-signals}))
+
+(defn read-module-xml
+  [path]
+  ;; TODO: refactor it
+  (let [zipper (parse-str (slurp path))
+        name->hier (reduce (fn [acc i]
                         (let [name (apply xml->
-                                       (concat
-                                        [parsed-xml
-                                         :verilator_xml
-                                         :cells
-                                         :cell]
-                                        (conj (vec (repeat i zip/next))
-                                              (attr :submodname))))
+                                          (concat
+                                           [zipper
+                                            :verilator_xml
+                                            :cells
+                                            :cell]
+                                           (conj (vec (repeat i zip/next))
+                                                 (attr :submodname))))
                               hier (apply xml->
-                                       (concat
-                                        [parsed-xml
-                                         :verilator_xml
-                                         :cells
-                                         :cell]
-                                        (conj (vec (repeat i zip/next))
-                                              (attr :hier))))]
+                                          (concat
+                                           [zipper
+                                            :verilator_xml
+                                            :cells
+                                            :cell]
+                                           (conj (vec (repeat i zip/next))
+                                                 (attr :hier))))]
                           (if (seq name)
                             (conj acc [(keyword (first name))
                                        (keyword (first hier))])
-                            (reduced acc))))
+                            (reduced (into {} acc)))))
                       []
                       (range))]
-    {:heirs (into {} heirs)
-     :inputs inputs
-     :outputs outputs
-     :local-signals local-signals
-     :module-name module-name}))
+    (->> name->hier
+         (mapv (fn [[n hier]]
+                 [hier (extract-module-signals zipper (name n))]))
+         (into {}))))
 
 #_(read-verilog-interface
  "zipcpu/rtl/zipsystem.v"
  {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
                 "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
   :mod-debug? true})
+
+#_(read-verilog-interface
+   "ALU32Bit.v"
+   {:mod-debug? false})
 
 (defn- build-verilator-args
   [{:keys [:module-dirs]}]
