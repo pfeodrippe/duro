@@ -13,7 +13,7 @@
 (comment
 
   (let [{:keys [:top-interface :lib-path :lib-folder]}
-        (verilator/gen-dynamic-lib "ALU32Bit.v")
+        (verilator/memo-gen-dynamic-lib "ALU32Bit.v")
 
         _ (println :lib-folder lib-folder)
         {:keys [:inputs :outputs :local-signals]} top-interface
@@ -28,11 +28,11 @@
                                         (fn [i output]
                                           [i (keyword "alu" output)]))
                                        (into {}))
-                 :local-signal->id (->> local-signals
-                                        (map-indexed
-                                         (fn [i output]
-                                           [(keyword "alu.local" output) i]))
-                                        (into {}))}
+                 :local-signal->id nil #_(->> local-signals
+                                              (map-indexed
+                                               (fn [i output]
+                                                 [(keyword "alu.local" output) i]))
+                                              (into {}))}
                 lib-path)]
     (profile {}
              (every? (fn [{pc-result :alu/ALUResult
@@ -213,7 +213,8 @@
                                    other))]
         (wb-write cmd-reg
                   (bit-or cmd-halt cmd-reset 15)
-                  {:zip.l/cpu_halt 1}))
+                  {:zip.l/cpu_halt 1})
+        #_(vv.io/get-submodule-local-signal jnr-io 0))
       (finally
         (vv.io/jnr-io-destroy jnr-io))))
 

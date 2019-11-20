@@ -8,15 +8,18 @@
    (jnr.ffi LibraryLoader Pointer)))
 
 (defprotocol VerilatorIO
-  (eval [this input-data] [this input-data local-signal]))
+  (eval [this input-data] [this input-data local-signal])
+  (set-submodule-local-signal [this sig arg])
+  (get-submodule-local-signal [this sig]))
 
 (definterface NativeLibInterface
   (^jnr.ffi.Pointer create_module [])
-  (^jnr.ffi.Pointer read_module [^jnr.ffi.Pointer top])
   (^jnr.ffi.Pointer get_input_pointer [])
   (^jnr.ffi.Pointer get_output_pointer [])
   (^jnr.ffi.Pointer get_local_signal_pointer [])
   (^jnr.ffi.Pointer get_eval_flags_pointer [])
+  (^int set_submodule_local_signal [^jnr.ffi.Pointer top ^int sig ^int arg])
+  (^int get_submodule_local_signal [^jnr.ffi.Pointer top ^int sig])
   (^int eval [^jnr.ffi.Pointer top])
   (^int eval_with_debug [^jnr.ffi.Pointer top]))
 
@@ -52,7 +55,11 @@
                                (assoc acc
                                       (val v)
                                       (.getInt ^jnr.ffi.Pointer local-signal-ptr (* (key v) 4))))
-                             {})))))))
+                             {}))))))
+    (set-submodule-local-signal [_this sig arg]
+      (.set_submodule_local_signal native-lib top sig arg))
+    (get-submodule-local-signal [_this sig]
+      (.get_submodule_local_signal native-lib top sig)))
 
 (defn jnr-io
   [params lib-path]

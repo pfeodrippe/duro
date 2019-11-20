@@ -158,13 +158,11 @@
 
 (defn gen-submodules-header-string
   [interfaces verilator-top-header]
-  (->> (medley/remove-vals :top-module? interfaces)
-       (mapv
-        (fn [[module {:keys [:inputs :outputs :local-signals]}]]
-          (->> [(gen-local-signal-cases-inputs interfaces verilator-top-header)
-                (gen-local-signal-cases-outputs interfaces verilator-top-header)]
-               (str/join "\n\n"))))
-       (str/join "\n")))
+  (->> [(gen-local-signal-cases-inputs
+         (medley/remove-vals :top-module? interfaces) verilator-top-header)
+        (gen-local-signal-cases-outputs
+         (medley/remove-vals :top-module? interfaces) verilator-top-header)]
+       (str/join "\n\n")))
 
 (defn- parse-str [s]
   (zip/xml-zip (xml/parse (new org.xml.sax.InputSource
