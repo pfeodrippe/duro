@@ -110,7 +110,7 @@
        (cons "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS")
        (str/join " \\\n")))
 
-(defn gen-header-string
+(defn gen-top-header-string
   [interfaces]
   (->> (medley/filter-vals :top-module? interfaces)
        (mapv
@@ -120,6 +120,8 @@
                 (str "#define INPUT_SIZE " (count inputs))
                 (str "#define OUTPUT_SIZE " (count outputs))
                 (str "#define LOCAL_SIGNAL_SIZE " (count local-signals))
+                (str "#define GENERATED_SUBMODULE_SIGNAL_INPUTS 0;")
+                (str "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS return 0;")
                 (gen-inputs inputs)
                 (gen-outputs outputs)
                 (gen-local-signal-inputs (name module) local-signals)
@@ -248,7 +250,7 @@
   ([mod-path {:keys [:mod-debug?] :as options}]
    (let [dir (bean (fs/temp-dir "vv"))
          interfaces (read-verilog-interface mod-path options)
-         header-str (gen-header-string interfaces)
+         header-str (gen-top-header-string interfaces)
          top-path (str (:path dir) "/top.cpp")
          lib-name (format "lib%s.dylib" (rand-str 5))
          lib-path (str (:path dir) "/" lib-name)]
@@ -278,6 +280,9 @@
                ["bash" "-c"
                 (format "gcc -shared -o %s *.o -lstdc++" lib-name)])))
      {:interfaces interfaces
+      :top-interface (->> (vals interfaces)
+                          (filter :top-module?)
+                          first)
       :lib-path lib-path
       :lib-folder (:path dir)})))
 

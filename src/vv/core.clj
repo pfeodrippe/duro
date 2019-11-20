@@ -12,11 +12,11 @@
 
 (comment
 
-  (let [{:keys [:interface :lib-path :lib-folder]}
+  (let [{:keys [:top-interface :lib-path :lib-folder]}
         (verilator/gen-dynamic-lib "ALU32Bit.v")
 
         _ (println :lib-folder lib-folder)
-        {:keys [:inputs :outputs :local-signals]} interface
+        {:keys [:inputs :outputs :local-signals]} top-interface
         jnr-io (vv.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
@@ -136,7 +136,7 @@
        (finally
          (vv.io/jnr-io-destroy jnr-io)))))
 
-  (let [{:keys [:interface :lib-path :lib-folder]}
+  (let [{:keys [:top-interface :lib-path :lib-folder]}
         (verilator/gen-dynamic-lib
          "zipcpu/rtl/zipsystem.v"
          {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
@@ -144,7 +144,7 @@
           :mod-debug? true})
 
         _ (println :lib-folder lib-folder)
-        {:keys [:inputs :outputs :local-signals]} interface
+        {:keys [:inputs :outputs :local-signals]} top-interface
         jnr-io (vv.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
