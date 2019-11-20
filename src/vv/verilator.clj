@@ -13,8 +13,9 @@
   (str "top->" (name k)))
 
 (defn- gen-top-local-member
-  [module-name k]
-  (str "top->" module-name "__DOT__" (name k)))
+  [module-name sig]
+  (-> (str "top->" (name module-name) "__DOT__" (name sig))
+      (str/replace #"\." "__DOT__")))
 
 (defn- gen-input
   [k]
@@ -81,16 +82,16 @@
   [interfaces]
   (->> (medley/filter-vals :top-module? interfaces)
        (mapv
-        (fn [{:keys [:inputs :outputs :local-signals :module-name]}]
-          (->> [(str "#include "  "\"V" module-name ".h\"")
-                (str "#define TOP_CLASS " "V" module-name)
+        (fn [[module {:keys [:inputs :outputs :local-signals]}]]
+          (->> [(str "#include "  "\"V" (name module) ".h\"")
+                (str "#define TOP_CLASS " "V" (name module))
                 (str "#define INPUT_SIZE " (count inputs))
                 (str "#define OUTPUT_SIZE " (count outputs))
                 (str "#define LOCAL_SIGNAL_SIZE " (count local-signals))
                 (gen-inputs inputs)
                 (gen-outputs outputs)
-                (gen-local-signal-inputs module-name local-signals)
-                (gen-local-signal-outputs module-name local-signals)
+                (gen-local-signal-inputs (name module) local-signals)
+                (gen-local-signal-outputs (name module) local-signals)
                 (gen-input-enum inputs)
                 (gen-output-enum outputs)
                 (gen-local-signal-enum local-signals)]
@@ -155,8 +156,8 @@
                                  (conj acc [(keyword (first name))
                                             (keyword (first hier))])
                                  (reduced acc))))
-                      []
-                      (range))]
+                           []
+                           (range))]
     (->> name->hier
          (map-indexed (fn [i [n hier]]
                         (if (zero? i)   ; top module?
@@ -164,6 +165,35 @@
                                     (assoc :top-module? true))]
                           [hier (extract-module-signals zipper (name n))])))
          (into {}))))
+
+(println
+ (let [n (first vvv)
+       signals (apply concat (vals (last vvv)))]
+   (->> (concat
+         ["switch (op) {"]
+         (mapv (fn [sig]
+                 (->> [(str "case \"" (name n) "." (name sig) "\":")
+                       (str (gen-top-local-member n sig) " = arg;")
+                       "break;"]
+                      (str/join " \\\n")))
+               signals)
+         ["}"])
+        (cons "#define GENERATED_SUBMODULE_SIGNAL_INPUTS")
+        (str/join " \\\n"))))
+
+(println
+ (let [n (first vvv)
+       signals (apply concat (vals (last vvv)))]
+   (->> (concat
+         ["switch (op) {"]
+         (mapv (fn [sig]
+                 (->> [(str "case \"" (name n) "." (name sig) "\":")
+                       (str "return " (gen-top-local-member n sig) ";")]
+                      (str/join " \\\n")))
+               signals)
+         ["}"])
+        (cons "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS")
+        (str/join " \\\n"))))
 
 #_(read-verilog-interface
  "zipcpu/rtl/zipsystem.v"

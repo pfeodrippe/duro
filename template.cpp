@@ -27,6 +27,16 @@ int* get_eval_flags_pointer() {
 }
 
 extern "C"
+void set_submodule_local_signal(TOP_CLASS* top) {
+    GENERATED_SUBMODULE_SIGNAL_INPUTS
+}
+
+extern "C"
+int get_submodule_local_signal(TOP_CLASS* top) {
+    GENERATED_SUBMODULE_SIGNAL_OUTPUTS
+}
+
+extern "C"
 void eval(TOP_CLASS* top) {
     while (eval_flags[1] != 0) {
         if (eval_flags[0] != 0) {
