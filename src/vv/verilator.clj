@@ -247,7 +247,8 @@
          (map-indexed (fn [i [n hier]]
                         (if (zero? i)   ; top module?
                           [hier (-> (extract-module-signals zipper (name n))
-                                    (assoc :top-module? true))]
+                                    (assoc :top-module? true
+                                           :index i))]
                           [hier (-> (extract-module-signals zipper (name n))
                                     (assoc :index i))])))
          (into {}))))

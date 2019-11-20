@@ -157,8 +157,8 @@
                (vv.io/eval jnr-io {:i_clk 0}))]
     jnr-io)
 
-  (let [{:keys [:top-interface :lib-path :lib-folder]}
-        (verilator/gen-dynamic-lib
+  (let [{:keys [:top-interface :lib-path :lib-folder :interfaces]}
+        (verilator/memo-gen-dynamic-lib
          "zipcpu/rtl/zipsystem.v"
          {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
                         "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
@@ -166,6 +166,18 @@
 
         _ (println :lib-folder lib-folder)
         {:keys [:inputs :outputs :local-signals]} top-interface
+        signal->id (->> interfaces
+                        (mapv
+                         (fn [[n {:keys [:index] :as signals}]]
+                           (map-indexed
+                            (fn [i input]
+                              [(keyword (name n) input)
+                               (+ (bit-shift-left index 16) i)])
+                            (apply concat
+                                   ((juxt :inputs :outputs :local-signals)
+                                    signals)))))
+                        (apply concat)
+                        (into {}))
         jnr-io (vv.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
@@ -213,8 +225,9 @@
                                    other))]
         (wb-write cmd-reg
                   (bit-or cmd-halt cmd-reset 15)
-                  {:zip.l/cpu_halt 1})
-        #_(vv.io/get-submodule-local-signal jnr-io 0))
+                  {:zip.l/cpu_halt 0})
+        (vv.io/get-submodule-local-signal jnr-io (signal->id
+                                                  :zipsystem.thecpu/i_halt)))
       (finally
         (vv.io/jnr-io-destroy jnr-io))))
 
