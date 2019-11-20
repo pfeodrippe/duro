@@ -131,24 +131,28 @@
        (str/join " \\\n")))
 
 (defn gen-top-header-string
-  [interfaces]
+  [interfaces {:keys [:mod-debug?]}]
   (->> (medley/filter-vals :top-module? interfaces)
        (mapv
         (fn [[module {:keys [:inputs :outputs :local-signals]}]]
-          (->> [(str "#include "  "\"V" (name module) ".h\"")
-                (str "#define TOP_CLASS " "V" (name module))
-                (str "#define INPUT_SIZE " (count inputs))
-                (str "#define OUTPUT_SIZE " (count outputs))
-                (str "#define LOCAL_SIGNAL_SIZE " (count local-signals))
-                (str "#define GENERATED_SUBMODULE_SIGNAL_INPUTS 0;")
-                (str "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS return 0;")
-                (gen-inputs inputs)
-                (gen-outputs outputs)
-                (gen-local-signal-inputs (name module) local-signals)
-                (gen-local-signal-outputs (name module) local-signals)
-                (gen-input-enum inputs)
-                (gen-output-enum outputs)
-                (gen-local-signal-enum local-signals)]
+          (->> (concat
+                [(str "#include "  "\"V" (name module) ".h\"")
+                 (str "#define TOP_CLASS " "V" (name module))
+                 (str "#define INPUT_SIZE " (count inputs))
+                 (str "#define OUTPUT_SIZE " (count outputs))
+                 (str "#define LOCAL_SIGNAL_SIZE " (count local-signals))
+                 "#define GENERATED_LOCAL_SIGNAL_INPUTS 0;"
+                 "#define GENERATED_LOCAL_SIGNAL_OUTPUTS 0;"
+                 "#define GENERATED_SUBMODULE_SIGNAL_INPUTS 0;"
+                 "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS return 0;"
+                 (gen-inputs inputs)
+                 (gen-outputs outputs)
+                 (gen-input-enum inputs)
+                 (gen-output-enum outputs)]
+                (when mod-debug?
+                  [(gen-local-signal-inputs (name module) local-signals)
+                   (gen-local-signal-outputs (name module) local-signals)
+                   (gen-local-signal-enum local-signals)]))
                (str/join "\n\n"))))
        first))
 
@@ -313,7 +317,7 @@
                      "--exe" top-path]
                     (build-verilator-args options)
                     (when mod-debug? ["--public-flat-rw"]))))
-         header-str (cond-> (gen-top-header-string interfaces)
+         header-str (cond-> (gen-top-header-string interfaces options)
                       mod-debug?
                       (str "\n\n"
                            (gen-submodules-header-string
