@@ -82,11 +82,13 @@
                (finally
                  (vv.io/jnr-io-destroy jnr-io)))))
 
-  (let [{:keys [:interface :lib-path :lib-folder]}
-        (verilator/memo-gen-dynamic-lib "zipcpu/rtl/core/div.v")
+  (let [{:keys [:top-interface :lib-path :lib-folder]}
+        (verilator/memo-gen-dynamic-lib
+         "zipcpu/rtl/core/div.v"
+         {:mod-debug? true})
 
         _ (println :lib-folder lib-folder)
-        {:keys [:inputs :outputs]} interface
+        {:keys [:inputs :outputs]} top-interface
         jnr-io (vv.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
@@ -123,18 +125,37 @@
                (recur (tick {})
                       (inc i)))
            output))
-       #_(doall
-          (for [i (range 6)]
-            (let [input {:i_op 2r00
-                         :i_reset 0
-                         :i_stb 1
-                         :i_a i
-                         :i_b (* 3 i)
-                         :i_clk 1}]
-              (vv.io/eval jnr-io {:i_clk 0})
-              (merge input (p :vvv (vv.io/eval jnr-io input))))))
        (finally
          (vv.io/jnr-io-destroy jnr-io)))))
+
+  (let [{:keys [:top-interface :lib-path :lib-folder]}
+        (verilator/gen-dynamic-lib
+         "zipcpu/rtl/core/dcache.v"
+         {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
+                        "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
+          :mod-debug? true})
+
+        _ (println :lib-folder lib-folder)
+        {:keys [:inputs :outputs]} top-interface
+        jnr-io (vv.io/jnr-io
+                {:request->out-id (->> inputs
+                                       (map-indexed
+                                        (fn [i input]
+                                          [(keyword input) i]))
+                                       (into {}))
+                 :in-id->response (->> outputs
+                                       (map-indexed
+                                        (fn [i output]
+                                          [i (keyword output)]))
+                                       (into {}))}
+                lib-path)
+        reset (fn []
+                (vv.io/eval jnr-io {:i_reset 1}))
+        tick (fn [input]
+               (vv.io/eval jnr-io {:i_reset 0})
+               (vv.io/eval jnr-io (assoc input :i_clk 1))
+               (vv.io/eval jnr-io {:i_clk 0}))]
+    jnr-io)
 
   (let [{:keys [:top-interface :lib-path :lib-folder]}
         (verilator/gen-dynamic-lib

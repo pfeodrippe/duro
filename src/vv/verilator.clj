@@ -81,9 +81,9 @@
 (defn- gen-local-signal-cases
   [interfaces f]
   (concat
-   ["switch (op) {"]
+   ["switch (sig) {"]
    (mapcat (fn [[n signals]]
-             (mapv (f n) (apply concat (vals signals))))
+             (map-indexed (f n) (apply concat (vals signals))))
            (medley/remove-vals :top-module? interfaces))
    ["}"]))
 
@@ -91,8 +91,8 @@
   [interfaces]
   (->> (gen-local-signal-cases interfaces
         (fn [n]
-          (fn [sig]
-            (->> [(str "case \"" (name n) "." (name sig) "\":")
+          (fn [idx sig]
+            (->> [(str "case " idx ":")
                   (str (gen-top-local-member n sig) " = arg;")
                   "break;"]
                  (str/join " \\\n")))))
@@ -103,8 +103,8 @@
   [interfaces]
   (->> (gen-local-signal-cases interfaces
         (fn [n]
-          (fn [sig]
-            (->> [(str "case \"" (name n) "." (name sig) "\":")
+          (fn [idx sig]
+            (->> [(str "case " idx ":")
                   (str "return " (gen-top-local-member n sig) ";")]
                  (str/join " \\\n")))))
        (cons "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS")
@@ -132,6 +132,16 @@
                (str/join "\n\n"))))
        first))
 
+(defn gen-submodules-header-string
+  [interfaces]
+  (->> (medley/remove-vals :top-module? interfaces)
+       (mapv
+        (fn [[module {:keys [:inputs :outputs :local-signals]}]]
+          (->> [(gen-local-signal-cases-inputs interfaces)
+                (gen-local-signal-cases-outputs interfaces)]
+               (str/join "\n\n"))))
+       (str/join "\n")))
+
 (defn- parse-str [s]
   (zip/xml-zip (xml/parse (new org.xml.sax.InputSource
                                (new java.io.StringReader s)))))
@@ -144,7 +154,9 @@
         output-attr-preds [:var (attr= :vartype "logic")
                            (attr= :dir "output") (attr :name)]
         local-signals-attr-preds [:var
-                                  (fn [loc] (nil? (attr loc :dir)))
+                                  (fn [loc]
+                                    (and (nil? (attr loc :dir))
+                                         (not (empty? (attr loc :vartype)))))
                                   (attr :name)]
         inputs (apply xml-> zipper
                       (concat
@@ -195,7 +207,21 @@
                                             (keyword (first hier))])
                                  (reduced acc))))
                            []
-                           (range))]
+                           (range))
+        type-table (->> (xml-> zipper
+                               :verilator_xml
+                               :netlist
+                               :typetable
+                               :basicdtype
+                               (juxt (attr :fl)
+                                     (attr :id)
+                                     (attr :name)
+                                     (attr :left)
+                                     (attr :right)))
+                        (partition 5)
+                        (mapv #(zipmap [:fl :id :name :left :right] %))
+                        (group-by :id)
+                        (medley/map-vals first))]
     (->> name->hier
          (map-indexed (fn [i [n hier]]
                         (if (zero? i)   ; top module?
@@ -203,6 +229,9 @@
                                     (assoc :top-module? true))]
                           [hier (extract-module-signals zipper (name n))])))
          (into {}))))
+
+#_(read-module-xml
+   "/var/folders/xl/0gx4mcfd1qv1wvcxvcntqzfw0000gn/T/vv1574259829767-3231516971/mod.xml")
 
 #_
 (def xxx (read-verilog-interface
@@ -250,7 +279,9 @@
   ([mod-path {:keys [:mod-debug?] :as options}]
    (let [dir (bean (fs/temp-dir "vv"))
          interfaces (read-verilog-interface mod-path options)
-         header-str (gen-top-header-string interfaces)
+         header-str (cond-> (gen-top-header-string interfaces)
+                      mod-debug? (str "\n\n" (gen-submodules-header-string
+                                              interfaces)))
          top-path (str (:path dir) "/top.cpp")
          lib-name (format "lib%s.dylib" (rand-str 5))
          lib-path (str (:path dir) "/" lib-name)]

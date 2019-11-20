@@ -27,12 +27,12 @@ int* get_eval_flags_pointer() {
 }
 
 extern "C"
-void set_submodule_local_signal(TOP_CLASS* top) {
+void set_submodule_local_signal(TOP_CLASS* top, int sig, int arg) {
     GENERATED_SUBMODULE_SIGNAL_INPUTS
 }
 
 extern "C"
-int get_submodule_local_signal(TOP_CLASS* top) {
+int get_submodule_local_signal(TOP_CLASS* top, int sig) {
     GENERATED_SUBMODULE_SIGNAL_OUTPUTS
 }
 
