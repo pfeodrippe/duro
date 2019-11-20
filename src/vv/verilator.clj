@@ -78,6 +78,15 @@
             (str/join ",\n"))
        "\n};"))
 
+(defn gen-local-signal-cases
+  [interfaces f]
+  (concat
+   ["switch (op) {"]
+   (mapcat (fn [[n signals]]
+             (mapv (f n) (apply concat (vals signals))))
+           (medley/remove-vals :top-module? interfaces))
+   ["}"]))
+
 (defn gen-header-string
   [interfaces]
   (->> (medley/filter-vals :top-module? interfaces)
@@ -167,39 +176,34 @@
          (into {}))))
 
 (println
- (let [n (first vvv)
-       signals (apply concat (vals (last vvv)))]
-   (->> (concat
-         ["switch (op) {"]
-         (mapv (fn [sig]
-                 (->> [(str "case \"" (name n) "." (name sig) "\":")
-                       (str (gen-top-local-member n sig) " = arg;")
-                       "break;"]
-                      (str/join " \\\n")))
-               signals)
-         ["}"])
-        (cons "#define GENERATED_SUBMODULE_SIGNAL_INPUTS")
-        (str/join " \\\n"))))
+ (->> (gen-local-signal-cases
+       xxx
+       (fn [n]
+         (fn [sig]
+           (->> [(str "case \"" (name n) "." (name sig) "\":")
+                 (str (gen-top-local-member n sig) " = arg;")
+                 "break;"]
+                (str/join " \\\n")))))
+      (cons "#define GENERATED_SUBMODULE_SIGNAL_INPUTS")
+      (str/join " \\\n")))
 
 (println
- (let [n (first vvv)
-       signals (apply concat (vals (last vvv)))]
-   (->> (concat
-         ["switch (op) {"]
-         (mapv (fn [sig]
-                 (->> [(str "case \"" (name n) "." (name sig) "\":")
-                       (str "return " (gen-top-local-member n sig) ";")]
-                      (str/join " \\\n")))
-               signals)
-         ["}"])
-        (cons "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS")
-        (str/join " \\\n"))))
+ (->> (gen-local-signal-cases
+       xxx
+       (fn [n]
+         (fn [sig]
+           (->> [(str "case \"" (name n) "." (name sig) "\":")
+                 (str "return " (gen-top-local-member n sig) ";")]
+                (str/join " \\\n")))))
+      (cons "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS")
+      (str/join " \\\n")))
 
-#_(read-verilog-interface
- "zipcpu/rtl/zipsystem.v"
- {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
-                "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
-  :mod-debug? true})
+#_
+(def xxx (read-verilog-interface
+          "zipcpu/rtl/zipsystem.v"
+          {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
+                         "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
+           :mod-debug? true}))
 
 #_(gen-header-string
    (read-verilog-interface
