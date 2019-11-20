@@ -222,12 +222,25 @@
                                    other)
                        (vv.io/eval jnr-io
                                    {:zip.i/i_dbg_stb 0}
-                                   other))]
+                                   other))
+            local-signal #(vv.io/get-submodule-local-signal jnr-io
+                           (signal->id
+                            %))]
         (wb-write cmd-reg
                   (bit-or cmd-halt cmd-reset 15)
                   {:zip.l/cpu_halt 0})
-        (vv.io/get-submodule-local-signal jnr-io (signal->id
-                                                  :zipsystem.thecpu/i_halt)))
+        (wb-write cmd-data rambase {})
+        (wb-write cmd-reg 15 {})
+        (loop [output (tick {})
+               i 0]
+          (if (<= i 1000)
+            (do (println
+                 {:cpu-ipc (local-signal :zipsystem.thecpu/ipc)
+                  :cpu-upc (local-signal :zipsystem.thecpu/upc)
+                  :alu-pc (local-signal :zipsystem.thecpu/alu_pc)})
+                (recur (tick {})
+                       (inc i)))
+            output)))
       (finally
         (vv.io/jnr-io-destroy jnr-io))))
 
