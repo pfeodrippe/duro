@@ -43,9 +43,9 @@
                    {}
                    in-id->response))))
     (set-local-signal [_this sig arg]
-      (.set_local_signal native-lib top sig arg))
+      (p :set-local-signal (.set_local_signal native-lib top sig arg)))
     (get-local-signal [_this sig]
-      (.get_local_signal native-lib top sig)))
+      (p :get-local-signal (.get_local_signal native-lib top sig))))
 
 (defn jnr-io
   [params lib-path]

@@ -181,7 +181,7 @@
     jnr-io)
 
   (let [{:keys [:top-interface :lib-path :lib-folder :interfaces]}
-        (verilator/gen-dynamic-lib
+        (verilator/memo-gen-dynamic-lib
          "zipcpu/rtl/zipsystem.v"
          {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
                         "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
@@ -235,47 +235,48 @@
                 (vv.io/eval jnr-io {:zip.i/i_reset 0})
                 (vv.io/eval jnr-io (assoc input :zip.i/i_clk 1))
                 (vv.io/eval jnr-io {:zip.i/i_clk 0})))]
-    (try
-      (reset)
-      (let [cmd-reg 0
-            cmd-halt (bit-shift-left 1 10)
-            cmd-reset (bit-shift-left 1 6)
-            cpu-s-pc 15
-            cmd-data 4
-            lgramlen 28
-            rambase (bit-shift-left 1 lgramlen)
-            ramlen (bit-shift-left 1 lgramlen)
-            ramwords (bit-shift-left ramlen 2)
-            wb-write (fn [a v]
-                       (tick {:zip.i/i_dbg_cyc 1
-                              :zip.i/i_dbg_stb 1
-                              :zip.i/i_dbg_we 1
-                              :zip.i/i_dbg_addr
-                              (bit-and (bit-shift-right a 2) 1)
+    (profile {}
+     (try
+       (reset)
+       (let [cmd-reg 0
+             cmd-halt (bit-shift-left 1 10)
+             cmd-reset (bit-shift-left 1 6)
+             cpu-s-pc 15
+             cmd-data 4
+             lgramlen 28
+             rambase (bit-shift-left 1 lgramlen)
+             ramlen (bit-shift-left 1 lgramlen)
+             ramwords (bit-shift-left ramlen 2)
+             wb-write (fn [a v]
+                        (tick {:zip.i/i_dbg_cyc 1
+                               :zip.i/i_dbg_stb 1
+                               :zip.i/i_dbg_we 1
+                               :zip.i/i_dbg_addr
+                               (bit-and (bit-shift-right a 2) 1)
 
-                              :zip.i/i_dbg_data v})
-                       (tick {:zip.i/i_dbg_stb 0})
-                       (tick {:zip.i/i_dbg_cyc 0
-                              :zip.i/i_dbg_stb 0}))
-            get-local-signal #(vv.io/get-local-signal
-                               jnr-io (signal->id %))
-            set-local-signal #(vv.io/set-local-signal
-                               jnr-io (signal->id %1) %2)]
-        (set-local-signal :zipsystem.l/cpu_halt 0)
-        (wb-write cmd-reg (bit-or cmd-halt cmd-reset 15))
-        (wb-write cmd-data rambase)
-        (wb-write cmd-reg 15)
-        (loop [output (tick {})
-               i 0]
-          (if (<= i 100)
-            (do (println
-                 {:cpu-ipc (get-local-signal :zipsystem.thecpu.l/ipc)
-                  :cpu-upc (get-local-signal :zipsystem.thecpu.l/upc)
-                  :alu-pc (get-local-signal :zipsystem.thecpu.l/alu_pc)})
-                (recur (tick {})
-                       (inc i)))
-            output)))
-      (finally
-        (vv.io/jnr-io-destroy jnr-io))))
+                               :zip.i/i_dbg_data v})
+                        (tick {:zip.i/i_dbg_stb 0})
+                        (tick {:zip.i/i_dbg_cyc 0
+                               :zip.i/i_dbg_stb 0}))
+             get-local-signal #(vv.io/get-local-signal
+                                jnr-io (signal->id %))
+             set-local-signal #(vv.io/set-local-signal
+                                jnr-io (signal->id %1) %2)]
+         (set-local-signal :zipsystem.l/cpu_halt 0)
+         (wb-write cmd-reg (bit-or cmd-halt cmd-reset 15))
+         (wb-write cmd-data rambase)
+         (wb-write cmd-reg 15)
+         (loop [output (tick {})
+                i 0]
+           (if (<= i 100)
+             (do (println
+                  {:cpu-ipc (get-local-signal :zipsystem.thecpu.l/ipc)
+                   :cpu-upc (get-local-signal :zipsystem.thecpu.l/upc)
+                   :alu-pc (get-local-signal :zipsystem.thecpu.l/alu_pc)})
+                 (recur (tick {})
+                        (inc i)))
+             output)))
+       (finally
+         (vv.io/jnr-io-destroy jnr-io)))))
 
   ())
