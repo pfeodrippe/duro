@@ -78,7 +78,7 @@
             (str/join ",\n"))
        "\n};"))
 
-(defn gen-local-signal-cases
+(defn- gen-local-signal-cases
   [interfaces f]
   (concat
    ["switch (op) {"]
@@ -86,6 +86,29 @@
              (mapv (f n) (apply concat (vals signals))))
            (medley/remove-vals :top-module? interfaces))
    ["}"]))
+
+(defn gen-local-signal-cases-inputs
+  [interfaces]
+  (->> (gen-local-signal-cases interfaces
+        (fn [n]
+          (fn [sig]
+            (->> [(str "case \"" (name n) "." (name sig) "\":")
+                  (str (gen-top-local-member n sig) " = arg;")
+                  "break;"]
+                 (str/join " \\\n")))))
+       (cons "#define GENERATED_SUBMODULE_SIGNAL_INPUTS")
+       (str/join " \\\n")))
+
+(defn gen-local-signal-cases-outputs
+  [interfaces]
+  (->> (gen-local-signal-cases interfaces
+        (fn [n]
+          (fn [sig]
+            (->> [(str "case \"" (name n) "." (name sig) "\":")
+                  (str "return " (gen-top-local-member n sig) ";")]
+                 (str/join " \\\n")))))
+       (cons "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS")
+       (str/join " \\\n")))
 
 (defn gen-header-string
   [interfaces]
@@ -174,29 +197,6 @@
                                     (assoc :top-module? true))]
                           [hier (extract-module-signals zipper (name n))])))
          (into {}))))
-
-(println
- (->> (gen-local-signal-cases
-       xxx
-       (fn [n]
-         (fn [sig]
-           (->> [(str "case \"" (name n) "." (name sig) "\":")
-                 (str (gen-top-local-member n sig) " = arg;")
-                 "break;"]
-                (str/join " \\\n")))))
-      (cons "#define GENERATED_SUBMODULE_SIGNAL_INPUTS")
-      (str/join " \\\n")))
-
-(println
- (->> (gen-local-signal-cases
-       xxx
-       (fn [n]
-         (fn [sig]
-           (->> [(str "case \"" (name n) "." (name sig) "\":")
-                 (str "return " (gen-top-local-member n sig) ";")]
-                (str/join " \\\n")))))
-      (cons "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS")
-      (str/join " \\\n")))
 
 #_
 (def xxx (read-verilog-interface
