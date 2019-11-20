@@ -12,9 +12,14 @@
   [k]
   (str "top->" (name k)))
 
+(defn- gen-local-reference
+  [module-name sig]
+  (-> (str (name module-name) "__DOT__" (name sig))
+      (str/replace #"\." "__DOT__")))
+
 (defn- gen-top-local-member
   [module-name sig]
-  (-> (str "top->" (name module-name) "__DOT__" (name sig))
+  (-> (str "top->" (gen-local-reference module-name sig))
       (str/replace #"\." "__DOT__")))
 
 (defn- gen-input
@@ -82,31 +87,46 @@
   [interfaces f]
   (concat
    ["switch (sig) {"]
-   (mapcat (fn [[n signals]]
-             (map-indexed (f n) (apply concat (vals signals))))
-           (medley/remove-vals :top-module? interfaces))
+   (concat
+    (map-indexed
+     (fn [i [n signals]]
+       (->> (map-indexed (f i n) (apply concat (vals signals)))
+            (str/join " \\\n")))
+     (medley/remove-vals :top-module? interfaces)))
    ["}"]))
 
 (defn gen-local-signal-cases-inputs
-  [interfaces]
-  (->> (gen-local-signal-cases interfaces
-        (fn [n]
-          (fn [idx sig]
-            (->> [(str "case " idx ":")
-                  (str (gen-top-local-member n sig) " = arg;")
-                  "break;"]
-                 (str/join " \\\n")))))
+  [interfaces verilator-top-header]
+  (->> (gen-local-signal-cases
+        interfaces
+        (fn [i n]
+          (fn [j sig]
+            (if (str/includes? verilator-top-header
+                               (str (gen-local-reference n sig) ","))
+              (->> [(str "case " (+ (bit-shift-left i 16) j) ":")
+                    (str (gen-top-local-member n sig) " = arg;")
+                    "break;"]
+                   (str/join " \\\n"))
+              ""))))
        (cons "#define GENERATED_SUBMODULE_SIGNAL_INPUTS")
        (str/join " \\\n")))
 
 (defn gen-local-signal-cases-outputs
-  [interfaces]
-  (->> (gen-local-signal-cases interfaces
-        (fn [n]
-          (fn [idx sig]
-            (->> [(str "case " idx ":")
-                  (str "return " (gen-top-local-member n sig) ";")]
-                 (str/join " \\\n")))))
+  [interfaces verilator-top-header]
+  (->> (gen-local-signal-cases
+        interfaces
+        (fn [i n]
+          (fn [j sig]
+            ;; Checks if the signal exists at generated header file
+            ;; by verilator.
+            ;; e.g. `VL_SIG8(system__DOT__thecpu__DOT__doalu__DOT__k,0,0);`
+            ;; NOTE: the `,` is important.
+            (if (str/includes? verilator-top-header
+                               (str (gen-local-reference n sig) ","))
+              (->> [(str "case " (+ (bit-shift-left i 16) j) ":")
+                    (str "return " (gen-top-local-member n sig) ";")]
+                   (str/join " \\\n"))
+              ""))))
        (cons "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS")
        (str/join " \\\n")))
 
@@ -133,12 +153,12 @@
        first))
 
 (defn gen-submodules-header-string
-  [interfaces]
+  [interfaces verilator-top-header]
   (->> (medley/remove-vals :top-module? interfaces)
        (mapv
         (fn [[module {:keys [:inputs :outputs :local-signals]}]]
-          (->> [(gen-local-signal-cases-inputs interfaces)
-                (gen-local-signal-cases-outputs interfaces)]
+          (->> [(gen-local-signal-cases-inputs interfaces verilator-top-header)
+                (gen-local-signal-cases-outputs interfaces verilator-top-header)]
                (str/join "\n\n"))))
        (str/join "\n")))
 
@@ -279,31 +299,36 @@
   ([mod-path {:keys [:mod-debug?] :as options}]
    (let [dir (bean (fs/temp-dir "vv"))
          interfaces (read-verilog-interface mod-path options)
-         header-str (cond-> (gen-top-header-string interfaces)
-                      mod-debug? (str "\n\n" (gen-submodules-header-string
-                                              interfaces)))
          top-path (str (:path dir) "/top.cpp")
          lib-name (format "lib%s.dylib" (rand-str 5))
-         lib-path (str (:path dir) "/" lib-name)]
-     (fs/copy "template.cpp" top-path)
+         lib-path (str (:path dir) "/" lib-name)
+         _ (fs/copy "template.cpp" top-path)
+         ;; generate verilator files
+         _ (println
+            (apply sh/sh
+                   (concat
+                    ["verilator" "-Wno-STMTDLY"
+                     "--cc" mod-path
+                     "-Mdir" (:path dir)
+                     "--exe" top-path]
+                    (build-verilator-args options)
+                    (when mod-debug? ["--public-flat-rw"]))))
+         header-str (cond-> (gen-top-header-string interfaces)
+                      mod-debug?
+                      (str "\n\n"
+                           (gen-submodules-header-string
+                            interfaces
+                            (slurp
+                             (str (:path dir)
+                                  "/V" (get-top-module-name interfaces) ".h")))))]
      (spit (str (:path dir) "/generated_template.h") header-str)
-     ;; generate verilator files
-     (println
-      (apply sh/sh
-             (concat
-              ["verilator" "-Wno-STMTDLY"
-               "--cc" mod-path
-               "-Mdir" (:path dir)
-               "--exe" top-path]
-              (build-verilator-args options)
-              (when mod-debug? ["--public-flat-rw"]))))
      ;; make verilator
      (println
-      (apply sh/sh
-             ["make" "-j"
-              "-C" (:path dir)
-              "-f" (str "V" (get-top-module-name interfaces) ".mk")
-              (str "V" (get-top-module-name interfaces))]))
+        (apply sh/sh
+               ["make" "-j"
+                "-C" (:path dir)
+                "-f" (str "V" (get-top-module-name interfaces) ".mk")
+                (str "V" (get-top-module-name interfaces))]))
      ;; create dynamic lib
      (println
       (sh/with-sh-dir (:path dir)
