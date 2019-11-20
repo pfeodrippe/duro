@@ -223,7 +223,8 @@
                        (vv.io/eval jnr-io
                                    {:zip.i/i_dbg_stb 0}
                                    other))
-            local-signal #(vv.io/get-submodule-local-signal jnr-io
+            local-signal #(vv.io/get-submodule-local-signal
+                           jnr-io
                            (signal->id
                             %))]
         (wb-write cmd-reg
@@ -233,14 +234,15 @@
         (wb-write cmd-reg 15 {})
         (loop [output (tick {})
                i 0]
-          (if (<= i 1000)
+          (if (<= i 100)
             (do (println
                  {:cpu-ipc (local-signal :zipsystem.thecpu/ipc)
                   :cpu-upc (local-signal :zipsystem.thecpu/upc)
                   :alu-pc (local-signal :zipsystem.thecpu/alu_pc)})
                 (recur (tick {})
                        (inc i)))
-            output)))
+            output))
+        1)
       (finally
         (vv.io/jnr-io-destroy jnr-io))))
 
