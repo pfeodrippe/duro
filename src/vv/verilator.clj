@@ -4,6 +4,7 @@
    [clojure.xml :as xml]
    [clojure.data.zip.xml :refer [xml-> xml1-> attr attr= tag= text]]
    [clojure.string :as str]
+   [medley.core :as medley]
    [me.raynes.fs :as fs]
    [clojure.java.shell :as sh]))
 
@@ -77,20 +78,24 @@
        "\n};"))
 
 (defn gen-header-string
-  [{:keys [:inputs :outputs :local-signals :module-name]}]
-  (->> [(str "#include "  "\"V" module-name ".h\"")
-        (str "#define TOP_CLASS " "V" module-name)
-        (str "#define INPUT_SIZE " (count inputs))
-        (str "#define OUTPUT_SIZE " (count outputs))
-        (str "#define LOCAL_SIGNAL_SIZE " (count local-signals))
-        (gen-inputs inputs)
-        (gen-outputs outputs)
-        (gen-local-signal-inputs module-name local-signals)
-        (gen-local-signal-outputs module-name local-signals)
-        (gen-input-enum inputs)
-        (gen-output-enum outputs)
-        (gen-local-signal-enum local-signals)]
-       (str/join "\n\n")))
+  [interfaces]
+  (->> (medley/filter-vals :top-module? interfaces)
+       (mapv
+        (fn [{:keys [:inputs :outputs :local-signals :module-name]}]
+          (->> [(str "#include "  "\"V" module-name ".h\"")
+                (str "#define TOP_CLASS " "V" module-name)
+                (str "#define INPUT_SIZE " (count inputs))
+                (str "#define OUTPUT_SIZE " (count outputs))
+                (str "#define LOCAL_SIGNAL_SIZE " (count local-signals))
+                (gen-inputs inputs)
+                (gen-outputs outputs)
+                (gen-local-signal-inputs module-name local-signals)
+                (gen-local-signal-outputs module-name local-signals)
+                (gen-input-enum inputs)
+                (gen-output-enum outputs)
+                (gen-local-signal-enum local-signals)]
+               (str/join "\n\n"))))
+       first))
 
 (defn- parse-str [s]
   (zip/xml-zip (xml/parse (new org.xml.sax.InputSource
@@ -130,31 +135,34 @@
   ;; TODO: refactor it
   (let [zipper (parse-str (slurp path))
         name->hier (reduce (fn [acc i]
-                        (let [name (apply xml->
-                                          (concat
-                                           [zipper
-                                            :verilator_xml
-                                            :cells
-                                            :cell]
-                                           (conj (vec (repeat i zip/next))
-                                                 (attr :submodname))))
-                              hier (apply xml->
-                                          (concat
-                                           [zipper
-                                            :verilator_xml
-                                            :cells
-                                            :cell]
-                                           (conj (vec (repeat i zip/next))
-                                                 (attr :hier))))]
-                          (if (seq name)
-                            (conj acc [(keyword (first name))
-                                       (keyword (first hier))])
-                            (reduced (into {} acc)))))
+                             (let [name (apply xml->
+                                               (concat
+                                                [zipper
+                                                 :verilator_xml
+                                                 :cells
+                                                 :cell]
+                                                (conj (vec (repeat i zip/next))
+                                                      (attr :submodname))))
+                                   hier (apply xml->
+                                               (concat
+                                                [zipper
+                                                 :verilator_xml
+                                                 :cells
+                                                 :cell]
+                                                (conj (vec (repeat i zip/next))
+                                                      (attr :hier))))]
+                               (if (seq name)
+                                 (conj acc [(keyword (first name))
+                                            (keyword (first hier))])
+                                 (reduced acc))))
                       []
                       (range))]
     (->> name->hier
-         (mapv (fn [[n hier]]
-                 [hier (extract-module-signals zipper (name n))]))
+         (map-indexed (fn [i [n hier]]
+                        (if (zero? i)   ; top module?
+                          [hier (-> (extract-module-signals zipper (name n))
+                                    (assoc :top-module? true))]
+                          [hier (extract-module-signals zipper (name n))])))
          (into {}))))
 
 #_(read-verilog-interface
@@ -163,9 +171,10 @@
                 "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
   :mod-debug? true})
 
-#_(read-verilog-interface
-   "ALU32Bit.v"
-   {:mod-debug? false})
+#_(gen-header-string
+   (read-verilog-interface
+    "ALU32Bit.v"
+    {:mod-debug? false}))
 
 (defn- build-verilator-args
   [{:keys [:module-dirs]}]
@@ -200,8 +209,8 @@
    (gen-dynamic-lib mod-path {}))
   ([mod-path {:keys [:mod-debug?] :as options}]
    (let [dir (bean (fs/temp-dir "vv"))
-         interface (read-verilog-interface mod-path options)
-         header-str (gen-header-string interface)
+         interfaces (read-verilog-interface mod-path options)
+         header-str (gen-header-string interfaces)
          top-path (str (:path dir) "/top.cpp")
          lib-name (format "lib%s.dylib" (rand-str 5))
          lib-path (str (:path dir) "/" lib-name)]
@@ -222,15 +231,15 @@
       (apply sh/sh
              ["make" "-j"
               "-C" (:path dir)
-              "-f" (str "V" (:module-name interface) ".mk")
-              (str "V" (:module-name interface))]))
+              "-f" (str "V" (:module-name interfaces) ".mk")
+              (str "V" (:module-name interfaces))]))
      ;; create dynamic lib
      (println
       (sh/with-sh-dir (:path dir)
         (apply sh/sh
                ["bash" "-c"
                 (format "gcc -shared -o %s *.o -lstdc++" lib-name)])))
-     {:interface interface
+     {:interfaces interfaces
       :lib-path lib-path
       :lib-folder (:path dir)})))
 
