@@ -48,20 +48,6 @@
        (cons "#define GENERATED_OUTPUTS")
        (str/join " \\\n")))
 
-(defn- gen-local-signal-inputs
-  [module-name local-signals]
-  (->> local-signals
-       (mapv #(str (gen-top-local-member module-name %) " = " (gen-local-signal %) ";"))
-       (cons "#define GENERATED_LOCAL_SIGNAL_INPUTS")
-       (str/join " \\\n")))
-
-(defn- gen-local-signal-outputs
-  [module-name local-signals]
-  (->> local-signals
-       (mapv #(str (gen-local-signal %) " = " (gen-top-local-member module-name %) ";"))
-       (cons "#define GENERATED_LOCAL_SIGNAL_OUTPUTS")
-       (str/join " \\\n")))
-
 (defn- gen-input-enum
   [inputs]
   (str "enum Input {\n"
@@ -76,13 +62,6 @@
             (str/join ",\n"))
        "\n};"))
 
-(defn- gen-local-signal-enum
-  [local-signals]
-  (str "enum LocalSignal {\n"
-       (->> (mapv #(str "local_signal_" %) local-signals)
-            (str/join ",\n"))
-       "\n};"))
-
 (defn- gen-local-signal-cases
   [interfaces f]
   (concat
@@ -93,7 +72,7 @@
                                            ((juxt :inputs :outputs :local-signals)
                                             signals)))
            (str/join " \\\n")))
-    (medley/remove-vals :top-module? interfaces))
+    interfaces)
    ["}"]))
 
 (defn gen-local-signal-cases-inputs
@@ -109,7 +88,7 @@
                     "break;"]
                    (str/join " \\\n"))
               ""))))
-       (cons "#define GENERATED_SUBMODULE_SIGNAL_INPUTS")
+       (cons "#define GENERATED_LOCAL_SIGNAL_INPUTS")
        (str/join " \\\n")))
 
 (defn gen-local-signal-cases-outputs
@@ -128,32 +107,27 @@
                     (str "return " (gen-top-local-member n sig) ";")]
                    (str/join " \\\n"))
               ""))))
-       (cons "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS")
+       (cons "#define GENERATED_LOCAL_SIGNAL_OUTPUTS")
        (str/join " \\\n")))
 
 (defn gen-top-header-string
-  [interfaces {:keys [:mod-debug?]}]
+  [interfaces]
   (->> (medley/filter-vals :top-module? interfaces)
        (mapv
-        (fn [[module {:keys [:inputs :outputs :local-signals]}]]
+        (fn [[module {:keys [:inputs :outputs]}]]
           (->> (concat
                 [(str "#include "  "\"V" (name module) ".h\"")
                  (str "#define TOP_CLASS " "V" (name module))
                  (str "#define INPUT_SIZE " (count inputs))
                  (str "#define OUTPUT_SIZE " (count outputs))
-                 (str "#define LOCAL_SIGNAL_SIZE " (count local-signals))
+                 ;; defaults
                  "#define GENERATED_LOCAL_SIGNAL_INPUTS 0;"
                  "#define GENERATED_LOCAL_SIGNAL_OUTPUTS 0;"
-                 "#define GENERATED_SUBMODULE_SIGNAL_INPUTS 0;"
-                 "#define GENERATED_SUBMODULE_SIGNAL_OUTPUTS return 0;"
+                 ;; gen inputs and outputs
                  (gen-inputs inputs)
                  (gen-outputs outputs)
                  (gen-input-enum inputs)
-                 (gen-output-enum outputs)]
-                (when mod-debug?
-                  [(gen-local-signal-inputs (name module) local-signals)
-                   (gen-local-signal-outputs (name module) local-signals)
-                   (gen-local-signal-enum local-signals)]))
+                 (gen-output-enum outputs)])
                (str/join "\n\n"))))
        first))
 
@@ -253,21 +227,6 @@
                                     (assoc :index i))])))
          (into {}))))
 
-#_(read-module-xml
-   "/var/folders/xl/0gx4mcfd1qv1wvcxvcntqzfw0000gn/T/vv1574259829767-3231516971/mod.xml")
-
-#_
-(def xxx (read-verilog-interface
-          "zipcpu/rtl/zipsystem.v"
-          {:module-dirs ["zipcpu/rtl" "zipcpu/rtl/core"
-                         "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
-           :mod-debug? true}))
-
-#_(gen-local-signal-cases-inputs
-   (read-verilog-interface
-    "ALU32Bit.v"
-    {:mod-debug? true}))
-
 (defn- build-verilator-args
   [{:keys [:module-dirs]}]
   (mapcat (fn [dir]
@@ -316,7 +275,7 @@
                      "--exe" top-path]
                     (build-verilator-args options)
                     (when mod-debug? ["--public-flat-rw"]))))
-         header-str (cond-> (gen-top-header-string interfaces options)
+         header-str (cond-> (gen-top-header-string interfaces)
                       mod-debug?
                       (str "\n\n"
                            (gen-submodules-header-string
