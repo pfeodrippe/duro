@@ -197,10 +197,13 @@
                 lib-path)
         reset (fn []
                 (vv.io/eval jnr-io {:zip.i/i_reset 1}))
-        tick (fn [input]
-               (vv.io/eval jnr-io {:zip.i/i_reset 0})
-               (vv.io/eval jnr-io (assoc input :zip.i/i_clk 1))
-               (vv.io/eval jnr-io {:zip.i/i_clk 0}))]
+        tick (fn tick'
+               ([input]
+                (tick' input {}))
+               ([input other]
+                (vv.io/eval jnr-io {:zip.i/i_reset 0})
+                (vv.io/eval jnr-io (assoc input :zip.i/i_clk 1) other)
+                (vv.io/eval jnr-io {:zip.i/i_clk 0})))]
     (try
       (reset)
       (let [cmd-reg 0
@@ -213,16 +216,17 @@
             ramlen (bit-shift-left 1 lgramlen)
             ramwords (bit-shift-left ramlen 2)
             wb-write (fn [a v other]
-                       (vv.io/eval jnr-io
-                                   {:zip.i/i_dbg_cyc 1
-                                    :zip.i/i_dbg_stb 1
-                                    :zip.i/i_dbg_we 1
-                                    :zip.i/i_dbg_addr (bit-and (bit-shift-right a 2) 1)
-                                    :zip.i/i_dbg_data v}
-                                   other)
-                       (vv.io/eval jnr-io
-                                   {:zip.i/i_dbg_stb 0}
-                                   other))
+                       (tick {:zip.i/i_dbg_cyc 1
+                              :zip.i/i_dbg_stb 1
+                              :zip.i/i_dbg_we 1
+                              :zip.i/i_dbg_addr
+                              (bit-and (bit-shift-right a 2) 1)
+
+                              :zip.i/i_dbg_data v}
+                             other)
+                       (tick {:zip.i/i_dbg_stb 0})
+                       (tick {:zip.i/i_dbg_cyc 0
+                              :zip.i/i_dbg_stb 0}))
             local-signal #(vv.io/get-submodule-local-signal
                            jnr-io
                            (signal->id
@@ -241,8 +245,7 @@
                   :alu-pc (local-signal :zipsystem.thecpu/alu_pc)})
                 (recur (tick {})
                        (inc i)))
-            output))
-        1)
+            output)))
       (finally
         (vv.io/jnr-io-destroy jnr-io))))
 
