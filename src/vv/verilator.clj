@@ -163,6 +163,10 @@
      :outputs outputs
      :local-signals local-signals}))
 
+(defn- get-top-module-name
+  [interfaces]
+  (name (ffirst (medley/filter-vals :top-module? interfaces))))
+
 (defn read-module-xml
   [path]
   ;; TODO: refactor it
@@ -205,10 +209,10 @@
                          "zipcpu/rtl/peripherals" "zipcpu/rtl/ex"]
            :mod-debug? true}))
 
-#_(gen-header-string
+#_(gen-local-signal-cases-inputs
    (read-verilog-interface
     "ALU32Bit.v"
-    {:mod-debug? false}))
+    {:mod-debug? true}))
 
 (defn- build-verilator-args
   [{:keys [:module-dirs]}]
@@ -265,8 +269,8 @@
       (apply sh/sh
              ["make" "-j"
               "-C" (:path dir)
-              "-f" (str "V" (:module-name interfaces) ".mk")
-              (str "V" (:module-name interfaces))]))
+              "-f" (str "V" (get-top-module-name interfaces) ".mk")
+              (str "V" (get-top-module-name interfaces))]))
      ;; create dynamic lib
      (println
       (sh/with-sh-dir (:path dir)
