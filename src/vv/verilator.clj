@@ -87,12 +87,13 @@
   [interfaces f]
   (concat
    ["switch (sig) {"]
-   (concat
-    (map-indexed
-     (fn [i [n signals]]
-       (->> (map-indexed (f i n) (apply concat (vals signals)))
-            (str/join " \\\n")))
-     (medley/remove-vals :top-module? interfaces)))
+   (mapv
+    (fn [[n {:keys [:index] :as signals}]]
+      (->> (map-indexed (f index n) (apply concat
+                                           ((juxt :inputs :outputs :local-signals)
+                                            signals)))
+           (str/join " \\\n")))
+    (medley/remove-vals :top-module? interfaces))
    ["}"]))
 
 (defn gen-local-signal-cases-inputs
@@ -158,10 +159,8 @@
 
 (defn gen-submodules-header-string
   [interfaces verilator-top-header]
-  (->> [(gen-local-signal-cases-inputs
-         (medley/remove-vals :top-module? interfaces) verilator-top-header)
-        (gen-local-signal-cases-outputs
-         (medley/remove-vals :top-module? interfaces) verilator-top-header)]
+  (->> [(gen-local-signal-cases-inputs interfaces verilator-top-header)
+        (gen-local-signal-cases-outputs interfaces verilator-top-header)]
        (str/join "\n\n")))
 
 (defn- parse-str [s]
@@ -249,7 +248,8 @@
                         (if (zero? i)   ; top module?
                           [hier (-> (extract-module-signals zipper (name n))
                                     (assoc :top-module? true))]
-                          [hier (extract-module-signals zipper (name n))])))
+                          [hier (-> (extract-module-signals zipper (name n))
+                                    (assoc :index i))])))
          (into {}))))
 
 #_(read-module-xml
