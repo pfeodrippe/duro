@@ -6,7 +6,8 @@
    [clojure.string :as str]
    [medley.core :as medley]
    [me.raynes.fs :as fs]
-   [clojure.java.shell :as sh]))
+   [clojure.java.shell :as sh]
+   [clojure.java.io :as io]))
 
 (defn- gen-top-member
   [k]
@@ -263,7 +264,8 @@
          top-path (str (:path dir) "/top.cpp")
          lib-name (format "lib%s.dylib" (rand-str 5))
          lib-path (str (:path dir) "/" lib-name)
-         _ (fs/copy "template.cpp" top-path)
+         _ (fs/copy (io/resource "duro/template/verilator-top-module.cpp")
+                    top-path)
          ;; generate verilator files
          _ (println
             (apply sh/sh

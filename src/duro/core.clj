@@ -17,7 +17,7 @@
 
         _ (println :lib-folder lib-folder)
         {:keys [:inputs :outputs :local-signals]} top-interface
-        jnr-io (vv.io/jnr-io
+        jnr-io (duro.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
                                         (fn [i input]
@@ -43,16 +43,16 @@
                           (let [input {:alu/ALUControl 2r0110
                                        :alu/A (* 2 i)
                                        :alu/B (- (* 4 i) 50)}]
-                            (merge input (p :vvv (vv.io/eval jnr-io input))))))
+                            (merge input (p :durov (duro.io/eval jnr-io input))))))
                        (finally
-                         (vv.io/jnr-io-destroy jnr-io))))))
+                         (duro.io/jnr-io-destroy jnr-io))))))
 
   (let [{:keys [:top-interface :lib-path :lib-folder]}
         (verilator/gen-dynamic-lib "ProgramCounter.v")
 
         _ (println :lib-folder lib-folder)
         {:keys [:inputs :outputs]} top-interface
-        jnr-io (vv.io/jnr-io
+        jnr-io (duro.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
                                         (fn [i input]
@@ -72,10 +72,10 @@
                                :PCWrite 1
                                :Reset 0
                                :Clk 1}]
-                    (vv.io/eval jnr-io {:Clk 0})
-                    (merge input (p :vvv (vv.io/eval jnr-io input))))))
+                    (duro.io/eval jnr-io {:Clk 0})
+                    (merge input (p :durov (duro.io/eval jnr-io input))))))
                (finally
-                 (vv.io/jnr-io-destroy jnr-io)))))
+                 (duro.io/jnr-io-destroy jnr-io)))))
 
   (let [{:keys [:top-interface :lib-path :lib-folder :interfaces]}
         (verilator/gen-dynamic-lib
@@ -104,7 +104,7 @@
                                     signals)))))
                         (apply concat)
                         (into {}))
-        jnr-io (vv.io/jnr-io
+        jnr-io (duro.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
                                         (fn [i input]
@@ -117,14 +117,14 @@
                                        (into {}))}
                 lib-path)
         tick (fn [input]
-               (vv.io/eval jnr-io {})
-               (vv.io/eval jnr-io (assoc input :i_clk 1))
-               (vv.io/eval jnr-io {:i_clk 0}))
+               (duro.io/eval jnr-io {})
+               (duro.io/eval jnr-io (assoc input :i_clk 1))
+               (duro.io/eval jnr-io {:i_clk 0}))
         reset (fn []
                 (tick {:i_reset 1}))
-        set-signal #(vv.io/set-local-signal
+        set-signal #(duro.io/set-local-signal
                      jnr-io (signal->id %1) %2)
-        get-signal #(vv.io/get-local-signal
+        get-signal #(duro.io/get-local-signal
                      jnr-io (signal->id %1))]
     (profile
      {}
@@ -149,7 +149,7 @@
                                                   (inc i)))
              :else output))
        (finally
-         (vv.io/jnr-io-destroy jnr-io)))))
+         (duro.io/jnr-io-destroy jnr-io)))))
 
   (let [{:keys [:top-interface :lib-path :lib-folder]}
         (verilator/gen-dynamic-lib
@@ -160,7 +160,7 @@
 
         _ (println :lib-folder lib-folder)
         {:keys [:inputs :outputs]} top-interface
-        jnr-io (vv.io/jnr-io
+        jnr-io (duro.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
                                         (fn [i input]
@@ -173,11 +173,11 @@
                                        (into {}))}
                 lib-path)
         reset (fn []
-                (vv.io/eval jnr-io {:i_reset 1}))
+                (duro.io/eval jnr-io {:i_reset 1}))
         tick (fn [input]
-               (vv.io/eval jnr-io {:i_reset 0})
-               (vv.io/eval jnr-io (assoc input :i_clk 1))
-               (vv.io/eval jnr-io {:i_clk 0}))]
+               (duro.io/eval jnr-io {:i_reset 0})
+               (duro.io/eval jnr-io (assoc input :i_clk 1))
+               (duro.io/eval jnr-io {:i_clk 0}))]
     jnr-io)
 
   (let [{:keys [:top-interface :lib-path :lib-folder :interfaces]}
@@ -209,7 +209,7 @@
                                     signals)))))
                         (apply concat)
                         (into {}))
-        jnr-io (vv.io/jnr-io
+        jnr-io (duro.io/jnr-io
                 {:request->out-id (->> inputs
                                        (map-indexed
                                         (fn [i input]
@@ -227,14 +227,14 @@
                                         (into {}))}
                 lib-path)
         reset (fn []
-                (vv.io/eval jnr-io {:zip.i/i_reset 1}))
+                (duro.io/eval jnr-io {:zip.i/i_reset 1}))
         tick (fn tick'
                ([input]
                 (tick' input {}))
                ([input other]
-                (vv.io/eval jnr-io {:zip.i/i_reset 0})
-                (vv.io/eval jnr-io (assoc input :zip.i/i_clk 1))
-                (vv.io/eval jnr-io {:zip.i/i_clk 0})))]
+                (duro.io/eval jnr-io {:zip.i/i_reset 0})
+                (duro.io/eval jnr-io (assoc input :zip.i/i_clk 1))
+                (duro.io/eval jnr-io {:zip.i/i_clk 0})))]
     (profile {}
      (try
        (reset)
@@ -258,9 +258,9 @@
                         (tick {:zip.i/i_dbg_stb 0})
                         (tick {:zip.i/i_dbg_cyc 0
                                :zip.i/i_dbg_stb 0}))
-             get-local-signal #(vv.io/get-local-signal
+             get-local-signal #(duro.io/get-local-signal
                                 jnr-io (signal->id %))
-             set-local-signal #(vv.io/set-local-signal
+             set-local-signal #(duro.io/set-local-signal
                                 jnr-io (signal->id %1) %2)]
          (set-local-signal :zipsystem.l/cpu_halt 0)
          (wb-write cmd-reg (bit-or cmd-halt cmd-reset 15))
@@ -277,6 +277,6 @@
                         (inc i)))
              output)))
        (finally
-         (vv.io/jnr-io-destroy jnr-io)))))
+         (duro.io/jnr-io-destroy jnr-io)))))
 
   ())
