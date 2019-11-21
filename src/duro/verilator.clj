@@ -1,4 +1,4 @@
-(ns vv.verilator
+(ns duro.verilator
   (:require
    [clojure.zip :as zip]
    [clojure.xml :as xml]
@@ -19,8 +19,7 @@
 
 (defn- gen-top-local-member
   [module-name sig]
-  (-> (str "top->" (gen-local-reference module-name sig))
-      (str/replace #"\." "__DOT__")))
+  (str "top->" (gen-local-reference module-name sig)))
 
 (defn- gen-input
   [k]
@@ -237,7 +236,7 @@
   ([mod-path]
    (read-verilog-interface mod-path {}))
   ([mod-path options]
-   (let [dir (bean (fs/temp-dir "vv"))
+   (let [dir (bean (fs/temp-dir "duro"))
          xml-path (str (:path dir) "/mod.xml")]
      (println :xml-path xml-path)
      (println
@@ -259,7 +258,7 @@
   ([mod-path]
    (gen-dynamic-lib mod-path {}))
   ([mod-path {:keys [:mod-debug?] :as options}]
-   (let [dir (bean (fs/temp-dir "vv"))
+   (let [dir (bean (fs/temp-dir "duro"))
          interfaces (read-verilog-interface mod-path options)
          top-path (str (:path dir) "/top.cpp")
          lib-name (format "lib%s.dylib" (rand-str 5))

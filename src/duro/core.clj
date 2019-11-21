@@ -1,9 +1,9 @@
-(ns vv.core
+(ns duro.core
   (:require
    [clojure.string :as str]
    [clojure.data :as data]
-   [vv.io]
-   [vv.verilator :as verilator]
+   [duro.io]
+   [duro.verilator :as verilator]
    [taoensso.tufte :as tufte :refer (defnp p profiled profile)]))
 
 (tufte/add-basic-println-handler!
