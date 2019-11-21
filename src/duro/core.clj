@@ -61,6 +61,14 @@
       :outputs (vals in-id->response)
       :signals (keys signal->id)})))
 
+(defmacro with-module
+  [top-symbol mod-path options & body]
+  `(let [~top-symbol (:top (create-module ~mod-path ~options))]
+     (try
+       ~@body
+       (finally
+         (duro.io/jnr-io-destroy ~top-symbol)))))
+
 (comment
 
   (let [{:keys [:top-interface :lib-path :lib-folder]}
