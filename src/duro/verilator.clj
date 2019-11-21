@@ -259,7 +259,10 @@
   ([mod-path]
    (gen-dynamic-lib mod-path {}))
   ([mod-path {:keys [:mod-debug?] :as options}]
-   (let [dir (bean (fs/temp-dir "duro"))
+   (let [dir {:path (str (System/getProperty "user.home")
+                         "/.duro-simulation/"
+                         mod-path)}
+         _ (fs/mkdirs (:path dir))
          interfaces (read-verilog-interface mod-path options)
          top-path (str (:path dir) "/top.cpp")
          lib-name (format "lib%s.dylib" (rand-str 5))
@@ -305,5 +308,3 @@
                           first)
       :lib-path lib-path
       :lib-folder (:path dir)})))
-
-(def memo-gen-dynamic-lib (memoize gen-dynamic-lib))
