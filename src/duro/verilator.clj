@@ -299,6 +299,7 @@
                ["bash" "-c"
                 (format "gcc -shared -o %s *.o -lstdc++" lib-name)])))
      {:interfaces interfaces
+      :top-module-name (get-top-module-name interfaces)
       :top-interface (->> (vals interfaces)
                           (filter :top-module?)
                           first)

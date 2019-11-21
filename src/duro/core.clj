@@ -10,6 +10,57 @@
   {:format-pstats-opts {:columns [:n-calls :p50 :mean :clock :total]
                         :format-id-fn name}})
 
+(defn create-module
+  ([mod-path]
+   (create-module mod-path {}))
+  ([mod-path options]
+   (let [{:keys [:top-interface :top-module-name :lib-path
+                 :lib-folder :interfaces]}
+         (verilator/gen-dynamic-lib mod-path options)
+
+         {:keys [:inputs :outputs :local-signals]} top-interface
+         signal->id (->> interfaces
+                         (mapv
+                          (fn [[n {:keys [:index] :as signals}]]
+                            (map-indexed
+                             (fn [i [t input]]
+                               [(keyword (str (name n) "." t) input)
+                                (+ (bit-shift-left index 16) i)])
+                             (apply concat
+                                    ((juxt #(mapv (fn [v]
+                                                    (vector "i" v))
+                                                  (:inputs %))
+                                           #(mapv (fn [v]
+                                                    (vector "o" v))
+                                                  (:outputs %))
+                                           #(mapv (fn [v]
+                                                    (vector "l" v))
+                                                  (:local-signals %)))
+                                     signals)))))
+                         (apply concat)
+                         (into {}))
+         request->out-id (->> inputs
+                              (map-indexed
+                               (fn [i input]
+                                 [(keyword (str top-module-name ".i")
+                                           input) i]))
+                              (into {}))
+         in-id->response (->> outputs
+                              (map-indexed
+                               (fn [i output]
+                                 [i (keyword (str top-module-name ".o")
+                                             output)]))
+                              (into {}))
+         top (duro.io/jnr-io
+              {:request->out-id request->out-id
+               :in-id->response in-id->response
+               :signal->id signal->id}
+              lib-path)]
+     {:top top
+      :inputs (keys request->out-id)
+      :outputs (vals in-id->response)
+      :signals (keys signal->id)})))
+
 (comment
 
   (let [{:keys [:top-interface :lib-path :lib-folder]}
@@ -137,17 +188,17 @@
               :i_numerator 33
               :i_denominator 3})
        (loop [output (tick {:i_wr 0
-                              :i_signed 0
-                              :i_numerator 0
-                              :i_denominator 0})
-                i 0]
-           (cond
-             (> i 50) (throw (ex-info "Errrr!!" {:i i
-                                                 :output output}))
-             (zero? (:o_valid output)) (do (println output)
-                                           (recur (tick {})
-                                                  (inc i)))
-             :else output))
+                            :i_signed 0
+                            :i_numerator 0
+                            :i_denominator 0})
+              i 0]
+         (cond
+           (> i 50) (throw (ex-info "Errrr!!" {:i i
+                                               :output output}))
+           (zero? (:o_valid output)) (do (println output)
+                                         (recur (tick {})
+                                                (inc i)))
+           :else output))
        (finally
          (duro.io/jnr-io-destroy jnr-io)))))
 
@@ -236,47 +287,47 @@
                 (duro.io/eval jnr-io (assoc input :zip.i/i_clk 1))
                 (duro.io/eval jnr-io {:zip.i/i_clk 0})))]
     (profile {}
-     (try
-       (reset)
-       (let [cmd-reg 0
-             cmd-halt (bit-shift-left 1 10)
-             cmd-reset (bit-shift-left 1 6)
-             cpu-s-pc 15
-             cmd-data 4
-             lgramlen 28
-             rambase (bit-shift-left 1 lgramlen)
-             ramlen (bit-shift-left 1 lgramlen)
-             ramwords (bit-shift-left ramlen 2)
-             wb-write (fn [a v]
-                        (tick {:zip.i/i_dbg_cyc 1
-                               :zip.i/i_dbg_stb 1
-                               :zip.i/i_dbg_we 1
-                               :zip.i/i_dbg_addr
-                               (bit-and (bit-shift-right a 2) 1)
+             (try
+               (reset)
+               (let [cmd-reg 0
+                     cmd-halt (bit-shift-left 1 10)
+                     cmd-reset (bit-shift-left 1 6)
+                     cpu-s-pc 15
+                     cmd-data 4
+                     lgramlen 28
+                     rambase (bit-shift-left 1 lgramlen)
+                     ramlen (bit-shift-left 1 lgramlen)
+                     ramwords (bit-shift-left ramlen 2)
+                     wb-write (fn [a v]
+                                (tick {:zip.i/i_dbg_cyc 1
+                                       :zip.i/i_dbg_stb 1
+                                       :zip.i/i_dbg_we 1
+                                       :zip.i/i_dbg_addr
+                                       (bit-and (bit-shift-right a 2) 1)
 
-                               :zip.i/i_dbg_data v})
-                        (tick {:zip.i/i_dbg_stb 0})
-                        (tick {:zip.i/i_dbg_cyc 0
-                               :zip.i/i_dbg_stb 0}))
-             get-local-signal #(duro.io/get-local-signal
-                                jnr-io (signal->id %))
-             set-local-signal #(duro.io/set-local-signal
-                                jnr-io (signal->id %1) %2)]
-         (set-local-signal :zipsystem.l/cpu_halt 0)
-         (wb-write cmd-reg (bit-or cmd-halt cmd-reset 15))
-         (wb-write cmd-data rambase)
-         (wb-write cmd-reg 15)
-         (loop [output (tick {})
-                i 0]
-           (if (<= i 100)
-             (do (println
-                  {:cpu-ipc (get-local-signal :zipsystem.thecpu.l/ipc)
-                   :cpu-upc (get-local-signal :zipsystem.thecpu.l/upc)
-                   :alu-pc (get-local-signal :zipsystem.thecpu.l/alu_pc)})
-                 (recur (tick {})
-                        (inc i)))
-             output)))
-       (finally
-         (duro.io/jnr-io-destroy jnr-io)))))
+                                       :zip.i/i_dbg_data v})
+                                (tick {:zip.i/i_dbg_stb 0})
+                                (tick {:zip.i/i_dbg_cyc 0
+                                       :zip.i/i_dbg_stb 0}))
+                     get-local-signal #(duro.io/get-local-signal
+                                        jnr-io (signal->id %))
+                     set-local-signal #(duro.io/set-local-signal
+                                        jnr-io (signal->id %1) %2)]
+                 (set-local-signal :zipsystem.l/cpu_halt 0)
+                 (wb-write cmd-reg (bit-or cmd-halt cmd-reset 15))
+                 (wb-write cmd-data rambase)
+                 (wb-write cmd-reg 15)
+                 (loop [output (tick {})
+                        i 0]
+                   (if (<= i 100)
+                     (do (println
+                          {:cpu-ipc (get-local-signal :zipsystem.thecpu.l/ipc)
+                           :cpu-upc (get-local-signal :zipsystem.thecpu.l/upc)
+                           :alu-pc (get-local-signal :zipsystem.thecpu.l/alu_pc)})
+                         (recur (tick {})
+                                (inc i)))
+                     output)))
+               (finally
+                 (duro.io/jnr-io-destroy jnr-io)))))
 
   ())
