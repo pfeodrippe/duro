@@ -24,12 +24,13 @@
   (^int eval [^jnr.ffi.Pointer top]))
 
 (defrecord JnrIO [native-lib top input-ptr output-ptr
-                  eval-flags-ptr request->out-id in-id->response]
+                  eval-flags-ptr request->out-id in-id->response
+                  signal->id]
   VerilatorIO
   (input [_this input-data]
     (doseq [[op arg] input-data]
       (p :put-int
-         (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) arg))))
+         (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) (int arg)))))
   (eval [this input-data]
     (input this input-data)
     (p :eval
@@ -44,9 +45,9 @@
                {}
                in-id->response)))
   (set-local-signal [_this sig arg]
-    (p :set-local-signal (.set_local_signal native-lib top sig arg)))
+    (p :set-local-signal (.set_local_signal native-lib top (signal->id sig) arg)))
   (get-local-signal [_this sig]
-    (p :get-local-signal (.get_local_signal native-lib top sig))))
+    (p :get-local-signal (.get_local_signal native-lib top (signal->id sig)))))
 
 (defn jnr-io
   [params lib-path]

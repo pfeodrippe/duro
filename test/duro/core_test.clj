@@ -17,8 +17,9 @@
 
 (defn- resetter
   [top]
-  (fn []
-    (tick top {:div.i/i_reset 1})))
+  (let [tick (ticker top)]
+    (fn []
+      (tick {:div.i/i_reset 1}))))
 
 (defn- inputter
   [top]
@@ -30,21 +31,22 @@
   (= v 1))
 
 (deftest zipcpu-div-test
-  (with-module top "zipcpu/rtl/core/div.v" {}
+  (with-module top "zipcpu/rtl/core/div.v" {:mod-debug? true}
     (let [[tick reset input]
           ((juxt ticker resetter inputter) top)]
       (letfn [(init []
                 (tick {:div.i/i_clk 0})
                 (reset))
               (request-div [n d signed?]
+                (println :signed? (if signed? 1 0))
                 (let [out (tick {:div.i/i_reset 0
                                  :div.i/i_wr 1
                                  :div.i/i_signed (if signed? 1 0)
                                  :div.i/i_numerator n
                                  :div.i/i_denominator d})]
-                  (testing "o_busy should be `1` after div request"
+                  (testing "o_busy should be `1` soon after div request"
                     (is (one? (:div.o/o_busy out))))
-                  (testing "o_valid should be `0` after div request"
+                  (testing "o_valid should be `0` soon after div request"
                     (is (zero? (:div.o/o_valid out)))))
                 (input {:div.i/i_wr 0
                         :div.i/i_signed 0
@@ -53,9 +55,10 @@
               (div-result []
                 (loop [out (tick)
                        i 0]
+                  (println :out out)
                   (cond
                     (> i 31)
-                    (throw (ex-info "div took longer than 32 cycles, this should never happen"
+                    (throw (ex-info "div took longer than 32 cycles, this should never happen!"
                                     {:i i :out out}))
 
                     (zero? (:div.o/o_valid out))
@@ -65,10 +68,15 @@
 
                     :else out)))]
         (init)
-        (request-div 36 3 true)
-        (let [out (div-result)]
-          (testing "correct quotient"
-            (is (= (:div.o/o_quotient out)
-                   (/ 36 3))))
-          (testing "after div result, o_busy should be `0`"
-            (is (zero? (:div.o/o_busy out)))))))))
+        (are [n d signed?]
+            (do (request-div n d signed?)
+                (let [out (div-result)]
+                  (testing "correct quotient"
+                    (is (= (quot n d) (:div.o/o_quotient out))))
+                  (testing "after div result, o_busy should be `0`"
+                    (is (zero? (:div.o/o_busy out))))))
+
+            36 3 false
+            12 4 false
+            9 10 false
+            64 20 false)))))
