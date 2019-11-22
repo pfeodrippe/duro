@@ -32,6 +32,7 @@
 
 (deftest zipcpu-div-test
   (with-module top "zipcpu/rtl/core/div.v" {:mod-debug? true}
+    ;; Setup
     (let [[tick reset input]
           ((juxt ticker resetter inputter) top)]
       (letfn [(init []
@@ -66,6 +67,8 @@
 
                     :else out)))]
         (init)
+
+        ;; Tests
         (are [n d signed?]
             (do (request-div n d signed?)
                 (let [out (div-result)]
