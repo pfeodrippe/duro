@@ -3,7 +3,8 @@
    [clojure.test :refer [testing is are deftest]]
    [duro.core :as core :refer [with-module]]
    [duro.io]
-   [duro.verilator :as verilator]))
+   [duro.verilator :as verilator]
+   [taoensso.tufte :as tufte :refer (defnp p profiled profile)]))
 
 (defn- ticker
   [top]
@@ -69,14 +70,18 @@
         (init)
 
         ;; Tests
-        (doseq [[n d signed?] [[36 3 false]
-                               [12 4 false]
-                               [9 10 false]
-                               [64 20 false]
-                               [12 -3 true]
-                               [0 -4 true]
-                               [0 0 false]
-                               [1 0 true]]]
+        (doseq [[n d signed?] (concat
+                               [[36 3 false]
+                                [12 4 false]
+                                [9 10 false]
+                                [64 20 false]
+                                [12 -3 true]
+                                [0 -4 true]
+                                [0 0 false]
+                                [1 0 true]]
+                               (mapv (fn [i]
+                                       [(bit-shift-left 1 30) i true])
+                                     (range 320)))]
           (testing {:n n :d d :signed? signed?}
             (do (request-div n d signed?)
                 (let [out (div-result)]
