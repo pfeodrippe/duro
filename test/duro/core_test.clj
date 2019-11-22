@@ -38,7 +38,6 @@
                 (tick {:div.i/i_clk 0})
                 (reset))
               (request-div [n d signed?]
-                (println :signed? (if signed? 1 0))
                 (let [out (tick {:div.i/i_reset 0
                                  :div.i/i_wr 1
                                  :div.i/i_signed (if signed? 1 0)
@@ -55,10 +54,9 @@
               (div-result []
                 (loop [out (tick)
                        i 0]
-                  (println :out out)
                   (cond
-                    (> i 31)
-                    (throw (ex-info "div took longer than 32 cycles, this should never happen!"
+                    (> i 33)
+                    (throw (ex-info "div took longer than 34 cycles, this should never happen!"
                                     {:i i :out out}))
 
                     (zero? (:div.o/o_valid out))
@@ -79,4 +77,5 @@
             36 3 false
             12 4 false
             9 10 false
-            64 20 false)))))
+            64 20 false
+            12 -3 true)))))

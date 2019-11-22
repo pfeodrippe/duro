@@ -30,7 +30,7 @@
   (input [_this input-data]
     (doseq [[op arg] input-data]
       (p :put-int
-         (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) (int arg)))))
+         (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) arg))))
   (eval [this input-data]
     (input this input-data)
     (p :eval
