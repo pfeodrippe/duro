@@ -25,6 +25,10 @@
   (fn [data]
     (duro.io/input top data)))
 
+(defn one?
+  [v]
+  (= v 1))
+
 (deftest zipcpu-div-test
   (with-module top "zipcpu/rtl/core/div.v" {}
     (let [[tick reset input]
@@ -39,9 +43,9 @@
                                  :div.i/i_numerator n
                                  :div.i/i_denominator d})]
                   (testing "o_busy should be `1` after div request"
-                    (is (= (:div.o/o_busy out) 1)))
+                    (is (one? (:div.o/o_busy out))))
                   (testing "o_valid should be `0` after div request"
-                    (is (= (:div.o/o_valid out) 0))))
+                    (is (zero? (:div.o/o_valid out)))))
                 (input {:div.i/i_wr 0
                         :div.i/i_signed 0
                         :div.i/i_numerator 0
@@ -56,7 +60,7 @@
 
                     (zero? (:div.o/o_valid out))
                     (do (testing "o_busy should be `1` while a valid result does not appears"
-                          (is (= (:div.o/o_busy out) 1)))
+                          (is (one? (:div.o/o_busy out))))
                         (recur (tick) (inc i)))
 
                     :else out)))]
