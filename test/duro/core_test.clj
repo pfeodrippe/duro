@@ -70,15 +70,23 @@
 
         ;; Tests
         (are [n d signed?]
-            (do (request-div n d signed?)
-                (let [out (div-result)]
-                  (testing "correct quotient"
-                    (is (= (quot n d) (:div.o/o_quotient out))))
-                  (testing "after div result, o_busy should be `0`"
-                    (is (zero? (:div.o/o_busy out))))))
+            (testing {:n n :d d :signed? signed?}
+              (do (request-div n d signed?)
+                  (let [out (div-result)]
+                    (testing "correct quotient"
+                      (if (zero? d)
+                        (is (one? (:div.o/o_err out)))
+                        (do
+                          (is (zero? (:div.o/o_err out)))
+                          (is (= (quot n d) (:div.o/o_quotient out))))))
+                    (testing "after div result, o_busy should be `0`"
+                      (is (zero? (:div.o/o_busy out)))))))
 
-            36 3 false
-            12 4 false
-            9 10 false
-            64 20 false
-            12 -3 true)))))
+            36  3  false
+            12  4  false
+            9   10 false
+            64  20 false
+            12 -3  true
+            0  -4  true
+            0   0  false
+            1   0  true)))))
