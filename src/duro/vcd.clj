@@ -1,4 +1,5 @@
-(ns duro.vcd)
+(ns duro.vcd
+  (:require [clojure.string :as str]))
 
 (defn gen-section
   [sec body]
@@ -35,3 +36,21 @@
 (defn gen-definitios
   [body]
   [body "$enddefinitions"])
+
+(comment
+
+  (let [{:keys [:date :version :comment :time-scale]}
+        {:date "abx"
+         :version "123"
+         :comment "Juju"
+         :time-scale "1ps"}]
+    (->> (concat
+          (gen-date date)
+          (gen-version version)
+          (gen-comment comment)
+          (gen-time-scale time-scale))
+         (str/join "\n")
+         print))
+  []
+
+  ())
