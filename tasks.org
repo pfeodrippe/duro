@@ -1,3 +1,4 @@
 * Tasks
 ** TODO logic analyzer
 ** TODO verilator caching (xml)
+** TODO benchmark comparison with c++ verilator
