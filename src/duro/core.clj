@@ -19,7 +19,7 @@
          (verilator/gen-dynamic-lib mod-path options)
 
          {:keys [:inputs :outputs :local-signals]} top-interface
-         wire (->> interfaces
+         wires (->> interfaces
                    (mapv
                     (fn [[n {:keys [:index] :as signals}]]
                       (clojure.pprint/pprint {:signals signals})
@@ -59,7 +59,7 @@
          top (duro.io/jnr-io
               {:request->out-id request->out-id
                :in-id->response in-id->response
-               :wire wire}
+               :wires wires}
               lib-path)]
      {:top top
       :interfaces interfaces})))

@@ -7,24 +7,24 @@
 
 (defn gen-date
   [body]
-  (section "$date" body))
+  (gen-section "$date" body))
 
 (defn gen-version
   [body]
-  (section "$version" body))
+  (gen-section "$version" body))
 
 (defn gen-comment
   [body]
-  (section "$comment" body))
+  (gen-section "$comment" body))
 
 (defn gen-time-scale
   [body]
-  (section "$timescale" body))
+  (gen-section "$timescale" body))
 
 (defn gen-var
-  [type bit-size id-code reference]
+  [type bit-size id reference]
   (format "$var %s %d %d %s $end"
-          (name type) bit-size id-code (name reference)))
+          (name type) bit-size id (name reference)))
 
 (defn gen-scope
   [module-name body]
@@ -44,28 +44,19 @@
                   (->> (mapv (fn [[k v]]
                                (str
                                 "b" (Integer/toBinaryString v)
-                                " " (:id-code (wire-info k))))
+                                " " (:id (wire-info k))))
                              logic-values)
                        (str/join "\n"))])
                wire-values)
        (str/join "\n")))
 
 (defn create-vcd-file
-  [file-path wire-values]
+  [file-path wire-info wire-values]
   (let [date (str (new java.util.Date))
         version "Duro dump."
         comment "Generated automatically from duro simulation."
         time-scale "1ps"
         module-name "top"
-        wire-info {:data {:bit-size 2
-                          :id-code \s}
-                   :dado {:bit-size 1
-                          :id-code \a}}
-        wire-values [[12 {:data 2r11
-                          :dado 1}]
-                     [24 {:data 2r00
-                          :dado 0}]
-                     [30 {:dado 1}]]
         header (->> (concat
                      (gen-date date)
                      (gen-version version)
@@ -73,8 +64,8 @@
                      (gen-time-scale time-scale)
                      (gen-scope
                       module-name
-                      (mapv (fn [[wire {:keys [:bit-size :id-code]}]]
-                              (gen-var :wire bit-size id-code wire))
+                      (mapv (fn [[wire {:keys [:bit-size :id]}]]
+                              (gen-var :wire bit-size id wire))
                             wire-info)))
                     (str/join "\n")
                     (gen-definitions))
@@ -89,9 +80,9 @@
         time-scale "1ps"
         module-name "top"
         wire-info {:data {:bit-size 2
-                          :id-code 22}
+                          :id 22}
                    :dado {:bit-size 1
-                          :id-code 21}}
+                          :id 21}}
         wire-values [[12 {:data 2r11
                           :dado 1}]
                      [24 {:data 2r00
@@ -104,8 +95,8 @@
                      (gen-time-scale time-scale)
                      (gen-scope
                       module-name
-                      (mapv (fn [[wire {:keys [:bit-size :id-code]}]]
-                              (gen-var :wire bit-size id-code wire))
+                      (mapv (fn [[wire {:keys [:bit-size :id]}]]
+                              (gen-var :wire bit-size id wire))
                             wire-info)))
                     (str/join "\n")
                     (gen-definitions))

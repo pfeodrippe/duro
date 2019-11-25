@@ -3,24 +3,42 @@
    [clojure.test :refer [testing is are deftest]]
    [duro.core :as core :refer [with-module]]
    [duro.io]
+   [duro.vcd]
    [duro.verilator :as verilator]
    [taoensso.tufte :as tufte :refer (defnp p profiled profile)]))
 
 (defn- ticker
-  [top]
-  (fn tick
-    ([] (tick {}))
-    ([data]
-     (doto top
-       (duro.io/eval {})
-       (duro.io/eval (assoc data :div.i/i_clk 1)))
-     (duro.io/eval top {:div.i/i_clk 0}))))
-
-(defn- resetter
-  [top]
-  (let [tick (ticker top)]
-    (fn []
-      (tick {:div.i/i_reset 1}))))
+  ([top]
+   (ticker top {}))
+  ([top {:keys [:trace?]}]
+   (let [counter (atom 0)
+         wire-values (atom [])
+         dump #(swap! wire-values conj
+                      [% (->> (keys (:wires top))
+                              (mapv (fn [wire]
+                                      [wire (duro.io/get-local-signal
+                                             top wire)]))
+                              (into {}))])]
+     (clojure.pprint/pprint {:wires (:wires top)})
+     [wire-values
+      (if trace?
+        (fn tick
+          ([] (tick {}))
+          ([data]
+           (swap! counter inc)
+           (duro.io/eval top {})
+           (dump (- (* 10 @counter) 2))
+           (duro.io/eval top (assoc data :div.i/i_clk 1))
+           (dump (* 10 @counter))
+           (let [out (duro.io/eval top {:div.i/i_clk 0})]
+             (dump (+ 5 (* 10 @counter)))
+             out)))
+        (fn tick
+          ([] (tick {}))
+          ([data]
+           (duro.io/eval top {})
+           (duro.io/eval top (assoc data :div.i/i_clk 1))
+           (duro.io/eval top {:div.i/i_clk 0}))))])))
 
 (defn- inputter
   [top]
@@ -35,11 +53,11 @@
   (with-module module "zipcpu/rtl/core/div.v" {:mod-debug? true}
     ;; Setup
     (let [{:keys [:top :interfaces]} module
-          [tick reset input]
-          ((juxt ticker resetter inputter) top)]
+          [[wire-values tick] input]
+          ((juxt #(ticker % {:trace? true}) inputter) top)]
       (letfn [(init []
                 (tick {:div.i/i_clk 0})
-                (reset))
+                (tick {:div.i/i_reset 1}))
               (request-div [n d signed?]
                 (let [out (tick {:div.i/i_reset 0
                                  :div.i/i_wr 1
@@ -83,7 +101,7 @@
                                  [1 0 true]]
                                 (mapv (fn [i]
                                         [(bit-shift-left 1 30) i true])
-                                      (range 3)))]
+                                      (range 320)))]
            (testing {:n n :d d :signed? signed?}
              (do (request-div n d signed?)
                  (let [out (div-result)]
@@ -95,4 +113,4 @@
                          (is (= (quot n d) (:div.o/o_quotient out))))))
                    (testing "after div result, o_busy should be `0`"
                      (is (zero? (:div.o/o_busy out)))))))))
-        top))))
+        (duro.vcd/create-vcd-file "jambo.vcd" (:wires top) @wire-values)))))
