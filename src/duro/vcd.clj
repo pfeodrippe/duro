@@ -23,7 +23,7 @@
 
 (defn gen-var
   [type bit-size id-code reference]
-  (format "$var %s %d %c %s $end"
+  (format "$var %s %d %d %s $end"
           (name type) bit-size id-code (name reference)))
 
 (defn gen-scope
@@ -89,9 +89,9 @@
         time-scale "1ps"
         module-name "top"
         wire-info {:data {:bit-size 2
-                          :id-code \s}
+                          :id-code 22}
                    :dado {:bit-size 1
-                          :id-code \a}}
+                          :id-code 21}}
         wire-values [[12 {:data 2r11
                           :dado 1}]
                      [24 {:data 2r00
