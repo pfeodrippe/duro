@@ -37,6 +37,19 @@
   [body]
   (str body "\n$enddefinitions $end\n"))
 
+(defn gen-timeline
+  [wire->id-code wire-values]
+  (->> (mapcat (fn [[ts logic-values]]
+                 [(str "#" ts)
+                  (->> (mapv (fn [[k v]]
+                               (str
+                                "b" (Integer/toBinaryString v)
+                                " " (wire->id-code k)))
+                             logic-values)
+                       (str/join "\n"))])
+               wire-values)
+       (str/join "\n")))
+
 (comment
 
   (let [{:keys [:date :version :comment :time-scale :module-name]}
@@ -58,21 +71,13 @@
                     (str/join "\n")
                     (gen-definitions))
 
-        timeline (->> (mapcat (fn [[ts logic-values]]
-                                [(str "#" ts)
-                                 (->> (mapv (fn [[k v]]
-                                              (str
-                                               "b" (Integer/toBinaryString v)
-                                               " " ({:data \s
-                                                     :dado \a} k)))
-                                            logic-values)
-                                      (str/join "\n"))])
-                              [[12 {:data 2r11
-                                    :dado 1}]
-                               [24 {:data 2r00
-                                    :dado 0}]
-                               [30 {:dado 1}]])
-                      (str/join "\n"))]
-    (spit "uba2.vcd" (str header timeline)))
+        timeline (gen-timeline {:data \s
+                                :dado \a}
+                               [[12 {:data 2r11
+                                     :dado 1}]
+                                [24 {:data 2r00
+                                     :dado 0}]
+                                [30 {:dado 1}]])]
+    (spit "uba3.vcd" (str header timeline)))
 
   ())
