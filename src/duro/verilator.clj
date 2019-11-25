@@ -15,7 +15,7 @@
 
 (defn- gen-local-reference
   [module-name sig]
-  (-> (str (name module-name) "__DOT__" (name sig))
+  (-> (str (name module-name) "__DOT__" (name (:name sig)))
       (str/replace #"\." "__DOT__")))
 
 (defn- gen-top-local-member
@@ -37,28 +37,28 @@
 (defn- gen-inputs
   [inputs]
   (->> inputs
-       (mapv #(str (gen-top-member %) " = " (gen-input %) ";"))
+       (mapv #(str (gen-top-member (:name %)) " = " (gen-input (:name %)) ";"))
        (cons "#define GENERATED_INPUTS")
        (str/join " \\\n")))
 
 (defn- gen-outputs
   [outputs]
   (->> outputs
-       (mapv #(str (gen-output %) " = " (gen-top-member %) ";"))
+       (mapv #(str (gen-output (:name %)) " = " (gen-top-member (:name %)) ";"))
        (cons "#define GENERATED_OUTPUTS")
        (str/join " \\\n")))
 
 (defn- gen-input-enum
   [inputs]
   (str "enum Input {\n"
-       (->> (mapv #(str "input_" %) inputs)
+       (->> (mapv #(str "input_" (:name %)) inputs)
             (str/join ",\n"))
        "\n};"))
 
 (defn- gen-output-enum
   [outputs]
   (str "enum Output {\n"
-       (->> (mapv #(str "output_" %) outputs)
+       (->> (mapv #(str "output_" (:name %)) outputs)
             (str/join ",\n"))
        "\n};"))
 
@@ -145,14 +145,16 @@
   [zipper module-name]
   (let [module-preds [:verilator_xml :netlist :module]
         input-attr-preds [:var (attr= :vartype "logic")
-                          (attr= :dir "input") (attr :name)]
+                          (attr= :dir "input")
+                          (juxt (attr :name) (attr :dtype_id))]
         output-attr-preds [:var (attr= :vartype "logic")
-                           (attr= :dir "output") (attr :name)]
+                           (attr= :dir "output")
+                           (juxt (attr :name) (attr :dtype_id))]
         local-signals-attr-preds [:var
                                   (fn [loc]
                                     (and (nil? (attr loc :dir))
                                          (not (empty? (attr loc :vartype)))))
-                                  (attr :name)]
+                                  (juxt (attr :name) (attr :dtype_id))]
         inputs (apply xml-> zipper
                       (concat
                        module-preds
@@ -167,10 +169,12 @@
                              (concat
                               module-preds
                               [(attr= :name module-name)]
-                              local-signals-attr-preds))]
-    {:inputs inputs
-     :outputs outputs
-     :local-signals local-signals}))
+                              local-signals-attr-preds))
+        zip #(->> (partition 2 %)
+                  (mapv (fn [v] (zipmap [:name :dtype_id] v))))]
+    {:inputs (zip inputs)
+     :outputs (zip outputs)
+     :local-signals (zip local-signals)}))
 
 (defn- get-top-module-name
   [interfaces]
@@ -217,6 +221,19 @@
                         (mapv #(zipmap [:fl :id :name :left :right] %))
                         (group-by :id)
                         (medley/map-vals first))]
+    (clojure.pprint/pprint
+     {:aa
+      (->> name->hier
+           (map-indexed (fn [i [n hier]]
+                          (if (zero? i) ; top module?
+                            [hier (-> (extract-module-signals zipper (name n))
+                                      (assoc :top-module? true
+                                             :index i))]
+                            [hier (-> (extract-module-signals zipper (name n))
+                                      (assoc :index i))])))
+           (into {}))
+      :typ type-table})
+
     (->> name->hier
          (map-indexed (fn [i [n hier]]
                         (if (zero? i)   ; top module?

@@ -24,7 +24,7 @@
                           (fn [[n {:keys [:index] :as signals}]]
                             (map-indexed
                              (fn [i [t input]]
-                               [(keyword (str (name n) "." t) input)
+                               [(keyword (str (name n) "." t) (:name input))
                                 (+ (bit-shift-left index 16) i)])
                              (apply concat
                                     ((juxt #(mapv (fn [v]
@@ -43,13 +43,13 @@
                               (map-indexed
                                (fn [i input]
                                  [(keyword (str top-module-name ".i")
-                                           input) i]))
+                                           (:name input)) i]))
                               (into {}))
          in-id->response (->> outputs
                               (map-indexed
                                (fn [i output]
                                  [i (keyword (str top-module-name ".o")
-                                             output)]))
+                                             (:name output))]))
                               (into {}))
          top (duro.io/jnr-io
               {:request->out-id request->out-id
@@ -62,12 +62,13 @@
       :signals (keys signal->id)})))
 
 (defmacro with-module
-  [top-symbol mod-path options & body]
-  `(let [~top-symbol (:top (create-module ~mod-path ~options))]
+  [top-signals mod-path options & body]
+  `(let [~top-signals (create-module ~mod-path ~options)
+         top# (:top ~top-signals)]
      (try
        ~@body
        (finally
-         (duro.io/jnr-io-destroy ~top-symbol)))))
+         (duro.io/jnr-io-destroy top#)))))
 
 (comment
 
