@@ -32,9 +32,9 @@
   (= v 1))
 
 (deftest zipcpu-div-test
-  (with-module top-signals "zipcpu/rtl/core/div.v" {:mod-debug? true}
+  (with-module module "zipcpu/rtl/core/div.v" {:mod-debug? true}
     ;; Setup
-    (let [{:keys [:top]} top-signals
+    (let [{:keys [:top :interfaces]} module
           [tick reset input]
           ((juxt ticker resetter inputter) top)]
       (letfn [(init []
@@ -72,26 +72,27 @@
 
         ;; Tests
         (time
-           (doseq [[n d signed?] (concat
-                                  [[36 3 false]
-                                   [12 4 false]
-                                   [9 10 false]
-                                   [64 20 false]
-                                   [12 -3 true]
-                                   [0 -4 true]
-                                   [0 0 false]
-                                   [1 0 true]]
-                                  (mapv (fn [i]
-                                          [(bit-shift-left 1 30) i true])
-                                        (range 3)))]
-             (testing {:n n :d d :signed? signed?}
-               (do (request-div n d signed?)
-                   (let [out (div-result)]
-                     (testing "correct quotient"
-                       (if (zero? d)
-                         (is (one? (:div.o/o_err out)))
-                         (do
-                           (is (zero? (:div.o/o_err out)))
-                           (is (= (quot n d) (:div.o/o_quotient out))))))
-                     (testing "after div result, o_busy should be `0`"
-                       (is (zero? (:div.o/o_busy out)))))))))))))
+         (doseq [[n d signed?] (concat
+                                [[36 3 false]
+                                 [12 4 false]
+                                 [9 10 false]
+                                 [64 20 false]
+                                 [12 -3 true]
+                                 [0 -4 true]
+                                 [0 0 false]
+                                 [1 0 true]]
+                                (mapv (fn [i]
+                                        [(bit-shift-left 1 30) i true])
+                                      (range 3)))]
+           (testing {:n n :d d :signed? signed?}
+             (do (request-div n d signed?)
+                 (let [out (div-result)]
+                   (testing "correct quotient"
+                     (if (zero? d)
+                       (is (one? (:div.o/o_err out)))
+                       (do
+                         (is (zero? (:div.o/o_err out)))
+                         (is (= (quot n d) (:div.o/o_quotient out))))))
+                   (testing "after div result, o_busy should be `0`"
+                     (is (zero? (:div.o/o_busy out)))))))))
+        top))))

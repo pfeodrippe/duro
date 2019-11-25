@@ -142,7 +142,7 @@
                                (new java.io.StringReader s)))))
 
 (defn extract-module-signals
-  [zipper module-name]
+  [zipper module-name type-table]
   (let [module-preds [:verilator_xml :netlist :module]
         input-attr-preds [:var (attr= :vartype "logic")
                           (attr= :dir "input")
@@ -171,7 +171,9 @@
                               [(attr= :name module-name)]
                               local-signals-attr-preds))
         zip #(->> (partition 2 %)
-                  (mapv (fn [v] (zipmap [:name :dtype_id] v))))]
+                  (mapv (fn [[name dtype-id]]
+                          {:name name
+                           :type (type-table dtype-id)})))]
     {:inputs (zip inputs)
      :outputs (zip outputs)
      :local-signals (zip local-signals)}))
@@ -221,26 +223,13 @@
                         (mapv #(zipmap [:fl :id :name :left :right] %))
                         (group-by :id)
                         (medley/map-vals first))]
-    (clojure.pprint/pprint
-     {:aa
-      (->> name->hier
-           (map-indexed (fn [i [n hier]]
-                          (if (zero? i) ; top module?
-                            [hier (-> (extract-module-signals zipper (name n))
-                                      (assoc :top-module? true
-                                             :index i))]
-                            [hier (-> (extract-module-signals zipper (name n))
-                                      (assoc :index i))])))
-           (into {}))
-      :typ type-table})
-
     (->> name->hier
          (map-indexed (fn [i [n hier]]
                         (if (zero? i)   ; top module?
-                          [hier (-> (extract-module-signals zipper (name n))
+                          [hier (-> (extract-module-signals zipper (name n) type-table)
                                     (assoc :top-module? true
                                            :index i))]
-                          [hier (-> (extract-module-signals zipper (name n))
+                          [hier (-> (extract-module-signals zipper (name n) type-table)
                                     (assoc :index i))])))
          (into {}))))
 

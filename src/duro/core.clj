@@ -19,26 +19,31 @@
          (verilator/gen-dynamic-lib mod-path options)
 
          {:keys [:inputs :outputs :local-signals]} top-interface
-         signal->id (->> interfaces
-                         (mapv
-                          (fn [[n {:keys [:index] :as signals}]]
-                            (map-indexed
-                             (fn [i [t input]]
-                               [(keyword (str (name n) "." t) (:name input))
-                                (+ (bit-shift-left index 16) i)])
-                             (apply concat
-                                    ((juxt #(mapv (fn [v]
-                                                    (vector "i" v))
-                                                  (:inputs %))
-                                           #(mapv (fn [v]
-                                                    (vector "o" v))
-                                                  (:outputs %))
-                                           #(mapv (fn [v]
-                                                    (vector "l" v))
-                                                  (:local-signals %)))
-                                     signals)))))
-                         (apply concat)
-                         (into {}))
+         wire (->> interfaces
+                   (mapv
+                    (fn [[n {:keys [:index] :as signals}]]
+                      (clojure.pprint/pprint {:signals signals})
+                      (map-indexed
+                       (fn [i [t input]]
+                         [(keyword (str (name n) "." t) (:name input))
+                          {:bit-size (or (some-> (get-in input [:type :left])
+                                                 Integer/parseInt
+                                                 inc)
+                                         1)
+                           :id (+ (bit-shift-left index 16) i)}])
+                       (apply concat
+                              ((juxt #(mapv (fn [v]
+                                              (vector "i" v))
+                                            (:inputs %))
+                                     #(mapv (fn [v]
+                                              (vector "o" v))
+                                            (:outputs %))
+                                     #(mapv (fn [v]
+                                              (vector "l" v))
+                                            (:local-signals %)))
+                               signals)))))
+                   (apply concat)
+                   (into {}))
          request->out-id (->> inputs
                               (map-indexed
                                (fn [i input]
@@ -54,17 +59,15 @@
          top (duro.io/jnr-io
               {:request->out-id request->out-id
                :in-id->response in-id->response
-               :signal->id signal->id}
+               :wire wire}
               lib-path)]
      {:top top
-      :inputs (keys request->out-id)
-      :outputs (vals in-id->response)
-      :signals (keys signal->id)})))
+      :interfaces interfaces})))
 
 (defmacro with-module
-  [top-signals mod-path options & body]
-  `(let [~top-signals (create-module ~mod-path ~options)
-         top# (:top ~top-signals)]
+  [module mod-path options & body]
+  `(let [~module (create-module ~mod-path ~options)
+         top# (:top ~module)]
      (try
        ~@body
        (finally

@@ -25,7 +25,7 @@
 
 (defrecord JnrIO [native-lib top input-ptr output-ptr
                   eval-flags-ptr request->out-id in-id->response
-                  signal->id]
+                  wire]
   VerilatorIO
   (input [_this input-data]
     (doseq [[op arg] input-data]
@@ -45,9 +45,9 @@
                {}
                in-id->response)))
   (set-local-signal [_this sig arg]
-    (p :set-local-signal (.set_local_signal native-lib top (signal->id sig) arg)))
+    (p :set-local-signal (.set_local_signal native-lib top (:id (wire sig)) arg)))
   (get-local-signal [_this sig]
-    (p :get-local-signal (.get_local_signal native-lib top (signal->id sig)))))
+    (p :get-local-signal (.get_local_signal native-lib top (:id (wire sig))))))
 
 (defn jnr-io
   [params lib-path]
