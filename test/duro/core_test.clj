@@ -19,7 +19,6 @@
                                       [wire (duro.io/get-local-signal
                                              top wire)]))
                               (into {}))])]
-     (clojure.pprint/pprint {:wires (:wires top)})
      [wire-values
       (if trace?
         (fn tick
