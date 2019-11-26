@@ -53,7 +53,7 @@
     ;; Setup
     (let [{:keys [:top :interfaces]} module
           [[wire-values tick] input]
-          ((juxt #(ticker % {:trace? true}) inputter) top)]
+          ((juxt #(ticker % {:trace? false}) inputter) top)]
       (letfn [(init []
                 (tick {:div.i/i_clk 0})
                 (tick {:div.i/i_reset 1}))
@@ -64,9 +64,9 @@
                                  :div.i/i_numerator n
                                  :div.i/i_denominator d})]
                   (testing "o_busy should be `1` soon after div request"
-                    (is (one? (:div.o/o_busy out))))
+                    (assert (one? (:div.o/o_busy out))))
                   (testing "o_valid should be `0` soon after div request"
-                    (is (zero? (:div.o/o_valid out)))))
+                    (assert (zero? (:div.o/o_valid out)))))
                 (input {:div.i/i_wr 0
                         :div.i/i_signed 0
                         :div.i/i_numerator 0
@@ -81,7 +81,7 @@
 
                     (zero? (:div.o/o_valid out))
                     (do (testing "o_busy should be `1` while a valid result does not appears"
-                          (is (one? (:div.o/o_busy out))))
+                          (assert (one? (:div.o/o_busy out))))
                         (recur (tick) (inc i)))
 
                     :else out)))]
@@ -100,7 +100,7 @@
                                  [1 0 true]]
                                 (mapv (fn [i]
                                         [(bit-shift-left 1 30) i true])
-                                      (range 320)))]
+                                      (range 32000)))]
            (testing {:n n :d d :signed? signed?}
              (do (request-div n d signed?)
                  (let [out (div-result)]
@@ -108,8 +108,8 @@
                      (if (zero? d)
                        (is (one? (:div.o/o_err out)))
                        (do
-                         (is (zero? (:div.o/o_err out)))
+                         (assert (zero? (:div.o/o_err out)))
                          (is (= (quot n d) (:div.o/o_quotient out))))))
                    (testing "after div result, o_busy should be `0`"
-                     (is (zero? (:div.o/o_busy out)))))))))
-        (duro.vcd/create-vcd-file "jambo.vcd" (:wires top) @wire-values)))))
+                     (assert (zero? (:div.o/o_busy out)))))))))
+        #_(duro.vcd/create-vcd-file "jambo.vcd" (:wires top) @wire-values)))))
