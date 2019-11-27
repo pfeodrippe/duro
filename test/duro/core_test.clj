@@ -35,7 +35,7 @@
   (fn [data]
     (duro.io/input top data)))
 
-(defn one?
+(defn- one?
   [v]
   (= v 1))
 
