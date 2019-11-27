@@ -55,10 +55,10 @@
                                  :div.i/i_signed (if signed? 1 0)
                                  :div.i/i_numerator n
                                  :div.i/i_denominator d})]
-                  (testing "o_busy should be `1` soon after div request"
-                    (assert (one? (:div.o/o_busy out))))
-                  (testing "o_valid should be `0` soon after div request"
-                    (assert (zero? (:div.o/o_valid out)))))
+                  (assert (one? (:div.o/o_busy out))
+                          "o_busy should be `1` soon after div request")
+                  (assert (zero? (:div.o/o_valid out))
+                          "o_valid should be `0` soon after div request"))
                 (input {:div.i/i_wr 0
                         :div.i/i_signed 0
                         :div.i/i_numerator 0
@@ -72,8 +72,8 @@
                                     {:i i :out out}))
 
                     (zero? (:div.o/o_valid out))
-                    (do (testing "o_busy should be `1` while a valid result does not appears"
-                          (assert (one? (:div.o/o_busy out))))
+                    (do (assert (one? (:div.o/o_busy out))
+                                "o_busy should be `1` while a valid result does not appears")
                         (recur (tick) (inc i)))
 
                     :else out)))]
@@ -102,5 +102,5 @@
                        (do
                          (assert (zero? (:div.o/o_err out)))
                          (is (= (quot n d) (:div.o/o_quotient out))))))
-                   (testing "after div result, o_busy should be `0`"
-                     (assert (zero? (:div.o/o_busy out)))))))))))))
+                   (assert (zero? (:div.o/o_busy out))
+                           "after div result, o_busy should be `0`"))))))))))
