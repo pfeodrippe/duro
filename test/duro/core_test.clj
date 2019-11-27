@@ -8,28 +8,27 @@
 
 ;; some helper functions
 (defn- ticker
-  [clk]
-  (fn [top]
-    (if (core/tracing? top)
-      (let [counter (atom 0)]
-        (fn tick
-          ([] (tick {}))
-          ([data]
-           (swap! counter inc)
-           (doto top
-             (duro.io/eval {})
-             (duro.core/dump-values (- (* 10 @counter) 2))
-             (duro.io/eval (assoc data clk 1))
-             (duro.core/dump-values (* 10 @counter)))
-           (let [out (duro.io/eval top {clk 0})]
-             (duro.core/dump-values top (+ 5 (* 10 @counter)))
-             out))))
+  [top clk]
+  (if (core/tracing? top)
+    (let [counter (atom 0)]
       (fn tick
         ([] (tick {}))
         ([data]
-         (duro.io/eval top {})
-         (duro.io/eval top (assoc data clk 1))
-         (duro.io/eval top {clk 0}))))))
+         (swap! counter inc)
+         (doto top
+           (duro.io/eval {})
+           (duro.core/dump-values (- (* 10 @counter) 2))
+           (duro.io/eval (assoc data clk 1))
+           (duro.core/dump-values (* 10 @counter)))
+         (let [out (duro.io/eval top {clk 0})]
+           (duro.core/dump-values top (+ 5 (* 10 @counter)))
+           out))))
+    (fn tick
+      ([] (tick {}))
+      ([data]
+       (duro.io/eval top {})
+       (duro.io/eval top (assoc data clk 1))
+       (duro.io/eval top {clk 0})))))
 
 (defn- inputter
   [top]
@@ -47,7 +46,7 @@
                                                :trace-path "janoa.vcd"}
     ;; setup
     (let [{:keys [:top :interfaces]} module
-          tick ((ticker :div.i/i_clk) top)
+          tick (ticker top :div.i/i_clk)
           input (inputter top)]
       (letfn [(init []
                 (tick {:div.i/i_clk 0})
