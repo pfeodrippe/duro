@@ -76,6 +76,10 @@
             (:trace-path ~options) (:wires top#) @(:wire-values top#)))
          (duro.io/jnr-io-destroy top#)))))
 
+(defn tracing?
+  [top]
+  (boolean (:wire-values top)))
+
 (comment
 
   (let [{:keys [:top-interface :lib-path :lib-folder]}

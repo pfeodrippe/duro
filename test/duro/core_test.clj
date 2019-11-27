@@ -7,29 +7,27 @@
    [duro.verilator :as verilator]))
 
 (defn- ticker
-  ([top]
-   (ticker top {}))
-  ([top {:keys [:trace?]}]
-   (let [counter (atom 0)
-         dump (:dump-fn top)]
-     (if trace?
-       (fn tick
-         ([] (tick {}))
-         ([data]
-          (swap! counter inc)
-          (duro.io/eval top {})
-          (dump (- (* 10 @counter) 2))
-          (duro.io/eval top (assoc data :div.i/i_clk 1))
-          (dump (* 10 @counter))
-          (let [out (duro.io/eval top {:div.i/i_clk 0})]
-            (dump (+ 5 (* 10 @counter)))
-            out)))
-       (fn tick
-         ([] (tick {}))
-         ([data]
-          (duro.io/eval top {})
-          (duro.io/eval top (assoc data :div.i/i_clk 1))
-          (duro.io/eval top {:div.i/i_clk 0})))))))
+  [top]
+  (if (core/tracing? top)
+    (let [counter (atom 0)
+          dump (:dump-fn top)]
+      (fn tick
+        ([] (tick {}))
+        ([data]
+         (swap! counter inc)
+         (duro.io/eval top {})
+         (dump (- (* 10 @counter) 2))
+         (duro.io/eval top (assoc data :div.i/i_clk 1))
+         (dump (* 10 @counter))
+         (let [out (duro.io/eval top {:div.i/i_clk 0})]
+           (dump (+ 5 (* 10 @counter)))
+           out))))
+    (fn tick
+      ([] (tick {}))
+      ([data]
+       (duro.io/eval top {})
+       (duro.io/eval top (assoc data :div.i/i_clk 1))
+       (duro.io/eval top {:div.i/i_clk 0})))))
 
 (defn- inputter
   [top]
@@ -47,7 +45,7 @@
     ;; Setup
     (let [{:keys [:top :interfaces]} module
           [tick input]
-          ((juxt #(ticker % {:trace? true}) inputter) top)]
+          ((juxt ticker inputter) top)]
       (letfn [(init []
                 (tick {:div.i/i_clk 0})
                 (tick {:div.i/i_reset 1}))
@@ -82,26 +80,27 @@
         (init)
 
         ;; Tests
-        (doseq [[n d signed?] (concat
-                               [[36 3 false]
-                                [12 4 false]
-                                [9 10 false]
-                                [64 20 false]
-                                [12 -3 true]
-                                [0 -4 true]
-                                [0 0 false]
-                                [1 0 true]]
-                               (mapv (fn [i]
-                                       [(bit-shift-left 1 30) i true])
-                                     (range 320)))]
-          (testing {:n n :d d :signed? signed?}
-            (do (request-div n d signed?)
-                (let [out (div-result)]
-                  (testing "correct quotient"
-                    (if (zero? d)
-                      (is (one? (:div.o/o_err out)))
-                      (do
-                        (assert (zero? (:div.o/o_err out)))
-                        (is (= (quot n d) (:div.o/o_quotient out))))))
-                  (testing "after div result, o_busy should be `0`"
-                    (assert (zero? (:div.o/o_busy out))))))))))))
+        (time
+         (doseq [[n d signed?] (concat
+                                [[36 3 false]
+                                 [12 4 false]
+                                 [9 10 false]
+                                 [64 20 false]
+                                 [12 -3 true]
+                                 [0 -4 true]
+                                 [0 0 false]
+                                 [1 0 true]]
+                                (mapv (fn [i]
+                                        [(bit-shift-left 1 30) i true])
+                                      (range 32)))]
+           (testing {:n n :d d :signed? signed?}
+             (do (request-div n d signed?)
+                 (let [out (div-result)]
+                   (testing "correct quotient"
+                     (if (zero? d)
+                       (is (one? (:div.o/o_err out)))
+                       (do
+                         (assert (zero? (:div.o/o_err out)))
+                         (is (= (quot n d) (:div.o/o_quotient out))))))
+                   (testing "after div result, o_busy should be `0`"
+                     (assert (zero? (:div.o/o_busy out)))))))))))))
