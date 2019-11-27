@@ -8,27 +8,28 @@
 
 ;; some helper functions
 (defn- ticker
-  [top]
-  (if (core/tracing? top)
-    (let [counter (atom 0)]
+  [i-clk-wire]
+  (fn [top]
+    (if (core/tracing? top)
+      (let [counter (atom 0)]
+        (fn tick
+          ([] (tick {}))
+          ([data]
+           (swap! counter inc)
+           (doto top
+             (duro.io/eval {})
+             (duro.core/dump-values (- (* 10 @counter) 2))
+             (duro.io/eval (assoc data i-clk-wire 1))
+             (duro.core/dump-values (* 10 @counter)))
+           (let [out (duro.io/eval top {i-clk-wire 0})]
+             (duro.core/dump-values top (+ 5 (* 10 @counter)))
+             out))))
       (fn tick
         ([] (tick {}))
         ([data]
-         (swap! counter inc)
-         (doto top
-           (duro.io/eval {})
-           (duro.core/dump-values (- (* 10 @counter) 2))
-           (duro.io/eval (assoc data :div.i/i_clk 1))
-           (duro.core/dump-values (* 10 @counter)))
-         (let [out (duro.io/eval top {:div.i/i_clk 0})]
-           (duro.core/dump-values top (+ 5 (* 10 @counter)))
-           out))))
-    (fn tick
-      ([] (tick {}))
-      ([data]
-       (duro.io/eval top {})
-       (duro.io/eval top (assoc data :div.i/i_clk 1))
-       (duro.io/eval top {:div.i/i_clk 0})))))
+         (duro.io/eval top {})
+         (duro.io/eval top (assoc data i-clk-wire 1))
+         (duro.io/eval top {i-clk-wire 0}))))))
 
 (defn- inputter
   [top]
@@ -46,7 +47,7 @@
                                                :trace-path "janoa.vcd"}
     ;; setup
     (let [{:keys [:top :interfaces]} module
-          [tick input] ((juxt ticker inputter) top)]
+          [tick input] ((juxt (ticker :div.i/i_clk) inputter) top)]
       (letfn [(init []
                 (tick {:div.i/i_clk 0})
                 (tick {:div.i/i_reset 1}))
