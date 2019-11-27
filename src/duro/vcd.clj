@@ -74,7 +74,7 @@
         timeline (gen-timeline wire-info wire-values)]
     (spit file-path (str header timeline))))
 
-(defn build-dump-fn
+(defn build-dumper
   [top]
   (let [wire-values (atom [])
         dump-fn #(swap! wire-values conj

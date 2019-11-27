@@ -3,46 +3,45 @@
    [clojure.string :as str]
    [clojure.data :as data]
    [duro.io]
-   [duro.verilator :as verilator]
-   [taoensso.tufte :as tufte :refer (defnp p profiled profile)]))
-
-(tufte/add-basic-println-handler!
-  {:format-pstats-opts {:columns [:n-calls :p50 :mean :clock :total]
-                        :format-id-fn name}})
+   [duro.verilator :as verilator]))
 
 (defn create-module
   ([mod-path]
    (create-module mod-path {}))
   ([mod-path {:keys [:trace?] :as options}]
-   (let [{:keys [:top-interface :top-module-name :lib-path
+   (let [options (cond-> options
+                   ;; force `:mod-debug?` when tracing
+                   trace? (assoc :mod-debug? true))
+
+         {:keys [:top-interface :top-module-name :lib-path
                  :lib-folder :interfaces]}
          (verilator/gen-dynamic-lib mod-path options)
 
          {:keys [:inputs :outputs :local-signals]} top-interface
          wires (->> interfaces
-                   (mapv
-                    (fn [[n {:keys [:index] :as signals}]]
-                      (map-indexed
-                       (fn [i [t input]]
-                         [(keyword (str (name n) "." t) (:name input))
-                          {:bit-size (or (some-> (get-in input [:type :left])
-                                                 Integer/parseInt
-                                                 inc)
-                                         1)
-                           :id (+ (bit-shift-left index 16) i)}])
-                       (apply concat
-                              ((juxt #(mapv (fn [v]
-                                              (vector "i" v))
-                                            (:inputs %))
-                                     #(mapv (fn [v]
-                                              (vector "o" v))
-                                            (:outputs %))
-                                     #(mapv (fn [v]
-                                              (vector "l" v))
-                                            (:local-signals %)))
-                               signals)))))
-                   (apply concat)
-                   (into {}))
+                    (mapv
+                     (fn [[n {:keys [:index] :as signals}]]
+                       (map-indexed
+                        (fn [i [t input]]
+                          [(keyword (str (name n) "." t) (:name input))
+                           {:bit-size (or (some-> (get-in input [:type :left])
+                                                  Integer/parseInt
+                                                  inc)
+                                          1)
+                            :id (+ (bit-shift-left index 16) i)}])
+                        (apply concat
+                               ((juxt #(mapv (fn [v]
+                                               (vector "i" v))
+                                             (:inputs %))
+                                      #(mapv (fn [v]
+                                               (vector "o" v))
+                                             (:outputs %))
+                                      #(mapv (fn [v]
+                                               (vector "l" v))
+                                             (:local-signals %)))
+                                signals)))))
+                    (apply concat)
+                    (into {}))
          request->out-id (->> inputs
                               (map-indexed
                                (fn [i input]
@@ -61,7 +60,7 @@
                :wires wires}
               lib-path)]
      {:top (cond-> top
-             (:trace? options) (merge (duro.vcd/build-dump-fn top)))
+             trace? (merge (duro.vcd/build-dumper top)))
       :interfaces interfaces})))
 
 (defmacro with-module
@@ -79,6 +78,10 @@
 (defn tracing?
   [top]
   (boolean (:wire-values top)))
+
+(defn dump-values
+  [top ts]
+  ((:dump-fn top) ts))
 
 (comment
 

@@ -9,18 +9,18 @@
 (defn- ticker
   [top]
   (if (core/tracing? top)
-    (let [counter (atom 0)
-          dump (:dump-fn top)]
+    (let [counter (atom 0)]
       (fn tick
         ([] (tick {}))
         ([data]
          (swap! counter inc)
-         (duro.io/eval top {})
-         (dump (- (* 10 @counter) 2))
-         (duro.io/eval top (assoc data :div.i/i_clk 1))
-         (dump (* 10 @counter))
+         (doto top
+           (duro.io/eval {})
+           (duro.core/dump-values (- (* 10 @counter) 2))
+           (duro.io/eval (assoc data :div.i/i_clk 1))
+           (duro.core/dump-values (* 10 @counter)))
          (let [out (duro.io/eval top {:div.i/i_clk 0})]
-           (dump (+ 5 (* 10 @counter)))
+           (duro.core/dump-values top (+ 5 (* 10 @counter)))
            out))))
     (fn tick
       ([] (tick {}))
@@ -39,7 +39,7 @@
   (= v 1))
 
 (deftest zipcpu-div-test
-  (with-module module "zipcpu/rtl/core/div.v" {:mod-debug? true
+  (with-module module "zipcpu/rtl/core/div.v" {:mod-debug? false
                                                :trace? true
                                                :trace-path "janoa.vcd"}
     ;; Setup
