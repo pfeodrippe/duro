@@ -64,7 +64,7 @@
                         :div.i/i_signed 0
                         :div.i/i_numerator 0
                         :div.i/i_denominator 0}))
-              (div-result []
+              (wait-div-result []
                 (loop [out (tick)
                        i 0]
                   (cond
@@ -95,7 +95,7 @@
                                      (range 32)))]
           (testing {:n n :d d :signed? signed?}
             (do (request-div n d signed?)
-                (let [out (div-result)]
+                (let [out (wait-div-result)]
                   (testing "correct quotient"
                     (if (zero? d)
                       (is (one? (:div.o/o_err out)))
