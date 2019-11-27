@@ -13,7 +13,7 @@
 (defn create-module
   ([mod-path]
    (create-module mod-path {}))
-  ([mod-path options]
+  ([mod-path {:keys [:trace?] :as options}]
    (let [{:keys [:top-interface :top-module-name :lib-path
                  :lib-folder :interfaces]}
          (verilator/gen-dynamic-lib mod-path options)
@@ -22,7 +22,6 @@
          wires (->> interfaces
                    (mapv
                     (fn [[n {:keys [:index] :as signals}]]
-                      (clojure.pprint/pprint {:signals signals})
                       (map-indexed
                        (fn [i [t input]]
                          [(keyword (str (name n) "." t) (:name input))
@@ -61,7 +60,8 @@
                :in-id->response in-id->response
                :wires wires}
               lib-path)]
-     {:top top
+     {:top (cond-> top
+             (:trace? options) (merge (duro.vcd/build-dump-fn top)))
       :interfaces interfaces})))
 
 (defmacro with-module
@@ -71,6 +71,9 @@
      (try
        ~@body
        (finally
+         (when (:trace? ~options)
+           (duro.vcd/create-vcd-file
+            (:trace-path ~options) (:wires top#) @(:wire-values top#)))
          (duro.io/jnr-io-destroy top#)))))
 
 (comment

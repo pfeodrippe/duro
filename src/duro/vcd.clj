@@ -1,43 +1,45 @@
 (ns duro.vcd
-  (:require [clojure.string :as str]))
+  (:require
+   [clojure.string :as str]
+   [duro.io]))
 
-(defn gen-section
+(defn- gen-section
   [sec body]
   [sec body "$end"])
 
-(defn gen-date
+(defn- gen-date
   [body]
   (gen-section "$date" body))
 
-(defn gen-version
+(defn- gen-version
   [body]
   (gen-section "$version" body))
 
-(defn gen-comment
+(defn- gen-comment
   [body]
   (gen-section "$comment" body))
 
-(defn gen-time-scale
+(defn- gen-time-scale
   [body]
   (gen-section "$timescale" body))
 
-(defn gen-var
+(defn- gen-var
   [type bit-size id reference]
   (format "$var %s %d %d %s $end"
           (name type) bit-size id (name reference)))
 
-(defn gen-scope
+(defn- gen-scope
   [module-name body]
   (concat
    [(format "$scope module %s $end" module-name)]
    body
    ["$upscope $end"]))
 
-(defn gen-definitions
+(defn- gen-definitions
   [body]
   (str body "\n$enddefinitions $end\n"))
 
-(defn gen-timeline
+(defn- gen-timeline
   [wire-info wire-values]
   (->> (mapcat (fn [[ts logic-values]]
                  [(str "#" ts)
@@ -72,35 +74,14 @@
         timeline (gen-timeline wire-info wire-values)]
     (spit file-path (str header timeline))))
 
-(comment
-
-  (let [date (str (new java.util.Date))
-        version "Duro dump."
-        comment "Generated automatically from duro simulation."
-        time-scale "1ps"
-        module-name "top"
-        wire-info {:data {:bit-size 2
-                          :id 22}
-                   :dado {:bit-size 1
-                          :id 21}}
-        wire-values [[12 {:data 2r11
-                          :dado 1}]
-                     [24 {:data 2r00
-                          :dado 0}]
-                     [30 {:dado 1}]]
-        header (->> (concat
-                     (gen-date date)
-                     (gen-version version)
-                     (gen-comment comment)
-                     (gen-time-scale time-scale)
-                     (gen-scope
-                      module-name
-                      (mapv (fn [[wire {:keys [:bit-size :id]}]]
-                              (gen-var :wire bit-size id wire))
-                            wire-info)))
-                    (str/join "\n")
-                    (gen-definitions))
-        timeline (gen-timeline wire-info wire-values)]
-    (spit "uba3.vcd" (str header timeline)))
-
-  ())
+(defn build-dump-fn
+  [top]
+  (let [wire-values (atom [])
+        dump-fn #(swap! wire-values conj
+                        [% (->> (keys (:wires top))
+                                (mapv (fn [wire]
+                                        [wire (duro.io/get-local-signal
+                                               top wire)]))
+                                (into {}))])]
+    {:wire-values wire-values
+     :dump-fn dump-fn}))
