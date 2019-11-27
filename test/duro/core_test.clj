@@ -47,7 +47,8 @@
                                                :trace-path "janoa.vcd"}
     ;; setup
     (let [{:keys [:top :interfaces]} module
-          [tick input] ((juxt (ticker :div.i/i_clk) inputter) top)]
+          tick ((ticker :div.i/i_clk) top)
+          input (inputter top)]
       (letfn [(init []
                 (tick {:div.i/i_clk 0})
                 (tick {:div.i/i_reset 1}))
