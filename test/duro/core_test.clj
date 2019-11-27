@@ -8,7 +8,7 @@
 
 ;; some helper functions
 (defn- ticker
-  [i-clk-wire]
+  [clk]
   (fn [top]
     (if (core/tracing? top)
       (let [counter (atom 0)]
@@ -19,17 +19,17 @@
            (doto top
              (duro.io/eval {})
              (duro.core/dump-values (- (* 10 @counter) 2))
-             (duro.io/eval (assoc data i-clk-wire 1))
+             (duro.io/eval (assoc data clk 1))
              (duro.core/dump-values (* 10 @counter)))
-           (let [out (duro.io/eval top {i-clk-wire 0})]
+           (let [out (duro.io/eval top {clk 0})]
              (duro.core/dump-values top (+ 5 (* 10 @counter)))
              out))))
       (fn tick
         ([] (tick {}))
         ([data]
          (duro.io/eval top {})
-         (duro.io/eval top (assoc data i-clk-wire 1))
-         (duro.io/eval top {i-clk-wire 0}))))))
+         (duro.io/eval top (assoc data clk 1))
+         (duro.io/eval top {clk 0}))))))
 
 (defn- inputter
   [top]
