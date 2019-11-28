@@ -95,13 +95,13 @@
                                        [(bit-shift-left 1 30) i true])
                                      (range 32)))]
           (testing {:n n :d d :signed? signed?}
-            (do (request-div n d signed?)
-                (let [out (wait-div-result)]
-                  (testing "correct quotient"
-                    (if (zero? d)
-                      (is (one? (:div.o/o_err out)))
-                      (do
-                        (assert (zero? (:div.o/o_err out)))
-                        (is (= (quot n d) (:div.o/o_quotient out))))))
-                  (assert (zero? (:div.o/o_busy out))
-                          "after div result, o_busy should be `0`")))))))))
+            (request-div n d signed?)
+            (let [out (wait-div-result)]
+              (testing "correct quotient"
+                (if (zero? d)
+                  (is (one? (:div.o/o_err out)))
+                  (do
+                    (assert (zero? (:div.o/o_err out)))
+                    (is (= (quot n d) (:div.o/o_quotient out))))))
+              (assert (zero? (:div.o/o_busy out))
+                      "after div result, o_busy should be `0`"))))))))
