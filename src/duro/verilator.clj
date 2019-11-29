@@ -151,9 +151,7 @@
                            (attr= :dir "output")
                            (juxt (attr :name) (attr :dtype_id))]
         local-signals-attr-preds [:var
-                                  (fn [loc]
-                                    (and (nil? (attr loc :dir))
-                                         (not (empty? (attr loc :vartype)))))
+                                  (fn [loc] (nil? (attr loc :dir)))
                                   (juxt (attr :name) (attr :dtype_id))]
         inputs (apply xml-> zipper
                       (concat
@@ -174,6 +172,7 @@
                   (mapv (fn [[name dtype-id]]
                           {:name name
                            :type (type-table dtype-id)})))]
+    (clojure.pprint/pprint {module-name local-signals})
     {:inputs (zip inputs)
      :outputs (zip outputs)
      :local-signals (zip local-signals)}))
@@ -209,21 +208,35 @@
                                  (reduced acc))))
                            []
                            (range))
-        type-table (->> (xml-> zipper
-                               :verilator_xml
-                               :netlist
-                               :typetable
-                               :basicdtype
-                               (juxt (attr :fl)
-                                     (attr :id)
-                                     (attr :name)
-                                     (attr :left)
-                                     (attr :right)))
-                        (partition 5)
-                        (mapv #(zipmap [:type :fl :id :name :left :right]
-                                       (cons :basicdtype %)))
-                        (group-by :id)
-                        (medley/map-vals first))]
+        type-table (merge
+                    (->> (xml-> zipper
+                                :verilator_xml
+                                :netlist
+                                :typetable
+                                :basicdtype
+                                (juxt (attr :fl)
+                                      (attr :id)
+                                      (attr :name)
+                                      (attr :left)
+                                      (attr :right)))
+                         (partition 5)
+                         (mapv #(zipmap [:type :fl :id :name :left :right]
+                                        (cons :basicdtype %)))
+                         (group-by :id)
+                         (medley/map-vals first))
+                    (->> (xml-> zipper
+                                :verilator_xml
+                                :netlist
+                                :typetable
+                                :unpackarraydtype
+                                (juxt (attr :fl)
+                                      (attr :id)
+                                      (attr :sub_dtype_id)))
+                         (partition 3)
+                         (mapv #(zipmap [:type :fl :id :sub_dtype_id]
+                                        (cons :unpackarraydtype %)))
+                         (group-by :id)
+                         (medley/map-vals first)))]
     (->> name->hier
          (map-indexed (fn [i [n hier]]
                         (if (zero? i)   ; top module?

@@ -18,17 +18,18 @@
          (verilator/gen-dynamic-lib mod-path options)
 
          {:keys [:inputs :outputs :local-signals]} top-interface
+         top-identifier' (some-> top-identifier name)
          wires (->> interfaces
                     (mapv
                      (fn [[n {:keys [:index] :as signals}]]
                        (map-indexed
                         (fn [i [t input]]
                           [(keyword ; check if it needs to use top-identifier
-                            (str (or (and top-identifier
+                            (str (or (and top-identifier'
                                           (->> (str/split (name n)
                                                           #"\.")
                                                next
-                                               (cons (name top-identifier))
+                                               (cons top-identifier')
                                                (str/join ".")))
                                      (name n))
                                  "." t)
@@ -54,7 +55,7 @@
          request->out-id (->> inputs
                               (map-indexed
                                (fn [i input]
-                                 [(keyword (str (or (name top-identifier)
+                                 [(keyword (str (or top-identifier'
                                                     top-module-name)
                                                 ".i")
                                            (:name input)) i]))
@@ -62,7 +63,7 @@
          in-id->response (->> outputs
                               (map-indexed
                                (fn [i output]
-                                 [i (keyword (str (or (name top-identifier)
+                                 [i (keyword (str (or top-identifier'
                                                       top-module-name)
                                                   ".o")
                                              (:name output))]))
