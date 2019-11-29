@@ -227,10 +227,12 @@
     (->> name->hier
          (map-indexed (fn [i [n hier]]
                         (if (zero? i)   ; top module?
-                          [hier (-> (extract-module-signals zipper (name n) type-table)
+                          [hier (-> (extract-module-signals zipper (name n)
+                                                            type-table)
                                     (assoc :top-module? true
                                            :index i))]
-                          [hier (-> (extract-module-signals zipper (name n) type-table)
+                          [hier (-> (extract-module-signals zipper (name n)
+                                                            type-table)
                                     (assoc :index i))])))
          (into {}))))
 
