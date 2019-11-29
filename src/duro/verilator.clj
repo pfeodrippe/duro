@@ -220,7 +220,8 @@
                                      (attr :left)
                                      (attr :right)))
                         (partition 5)
-                        (mapv #(zipmap [:fl :id :name :left :right] %))
+                        (mapv #(zipmap [:type :fl :id :name :left :right]
+                                       (cons :basicdtype %)))
                         (group-by :id)
                         (medley/map-vals first))]
     (->> name->hier
