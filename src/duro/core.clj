@@ -8,7 +8,7 @@
 (defn create-module
   ([mod-path]
    (create-module mod-path {}))
-  ([mod-path {:keys [:trace?] :as options}]
+  ([mod-path {:keys [:trace? :top-identifier] :as options}]
    (let [options (cond-> options
                    ;; force `:mod-debug?` when tracing
                    trace? (assoc :mod-debug? true))
@@ -23,7 +23,16 @@
                      (fn [[n {:keys [:index] :as signals}]]
                        (map-indexed
                         (fn [i [t input]]
-                          [(keyword (str (name n) "." t) (:name input))
+                          [(keyword ; check if it needs to use top-identifier
+                            (str (or (and top-identifier
+                                          (->> (str/split (name n)
+                                                          #"\.")
+                                               next
+                                               (cons (name top-identifier))
+                                               (str/join ".")))
+                                     (name n))
+                                 "." t)
+                            (:name input))
                            {:bit-size (or (some-> (get-in input [:type :left])
                                                   Integer/parseInt
                                                   inc)
@@ -45,13 +54,17 @@
          request->out-id (->> inputs
                               (map-indexed
                                (fn [i input]
-                                 [(keyword (str top-module-name ".i")
+                                 [(keyword (str (or (name top-identifier)
+                                                    top-module-name)
+                                                ".i")
                                            (:name input)) i]))
                               (into {}))
          in-id->response (->> outputs
                               (map-indexed
                                (fn [i output]
-                                 [i (keyword (str top-module-name ".o")
+                                 [i (keyword (str (or (name top-identifier)
+                                                      top-module-name)
+                                                  ".o")
                                              (:name output))]))
                               (into {}))
          top (duro.io/jnr-io

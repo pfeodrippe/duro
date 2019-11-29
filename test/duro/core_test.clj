@@ -44,10 +44,10 @@
   (with-module module "zipcpu/rtl/core/div.v" {:mod-debug? false
                                                :trace? true
                                                :trace-path "janoa.vcd"}
-    ;; setup
-    (let [{:keys [:top :interfaces]} module
+    (let [{:keys [:top]} module
           tick (ticker top :div.i/i_clk)
           input (inputter top)]
+      ;; setup
       (letfn [(init []
                 (tick {:div.i/i_clk 0})
                 (tick {:div.i/i_reset 1}))
@@ -105,3 +105,20 @@
                     (is (= (quot n d) (:div.o/o_quotient out))))))
               (assert (zero? (:div.o/o_busy out))
                       "after div result, o_busy should be `0`"))))))))
+
+(deftest zipcpu-zipmmu-test
+  (with-module module "zipcpu/bench/rtl/zipmmu_tb.v"
+    {:module-dirs ["zipcpu/rtl/peripherals"
+                   "zipcpu/bench/rtl"]
+     :mod-debug? true
+     :trace? true
+     :trace-path "janoa.vcd"
+     :top-identifier :mmu}
+    (let [{:keys [:top]} module
+            tick (ticker top :mmu.i/i_clk)
+            input (inputter top)]
+        (letfn [(init []
+                  (tick {:mmu.i/i_clk 0})
+                  (tick {:mmu.i/i_reset 1})
+                  (input {:mmu.i/i_reset 0}))]
+          (init)))))
