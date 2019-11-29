@@ -35,6 +35,11 @@
   (fn [data]
     (duro.io/input top data)))
 
+(defn- outputter
+  [top]
+  (fn []
+    (duro.io/output top)))
+
 (defn- one?
   [v]
   (= v 1))
@@ -111,14 +116,39 @@
     {:module-dirs ["zipcpu/rtl/peripherals"
                    "zipcpu/bench/rtl"]
      :mod-debug? true
-     :trace? true
+     :trace? false
      :trace-path "janoa.vcd"
      :top-identifier :mmu}
     (let [{:keys [:top]} module
-            tick (ticker top :mmu.i/i_clk)
-            input (inputter top)]
+          tick (ticker top :mmu.i/i_clk)
+          input (inputter top)
+          output (outputter top)
+          R_CONTROL 0]
         (letfn [(init []
                   (tick {:mmu.i/i_clk 0})
-                  (tick {:mmu.i/i_reset 1})
-                  (input {:mmu.i/i_reset 0}))]
-          (init)))))
+                  (tick {:mmu.i/i_reset 1
+                         :mmu.i/i_ctrl_cyc_stb 0
+                         :mmu.i/i_gie 0
+                         :mmu.i/i_exe 0
+                         :mmu.i/i_wbm_cyc 0
+                         :mmu.i/i_wbm_stb 0})
+                  (input {:mmu.i/i_reset 0}))
+                (wb-tick []
+                  (tick {:mmu.i/i_ctrl_cyc_stb 0
+                         :mmu.i/i_wbm_cyc 0
+                         :mmu.i/i_wbm_stb 0
+                         :mmu.i/i_reset 0}))
+                (setup-read [a]
+                  (input {:mmu.i/i_ctrl_cyc_stb 0
+                          :mmu.i/i_wbm_cyc 0
+                          :mmu.i/i_wbm_stb 0
+                          :mmu.i/i_wb_we 0
+                          :mmu.i/i_wb_addr (bit-shift-right a 2)})
+                  (tick {:mmu.i/i_ctrl_cyc_stb 1})
+                  (input {:mmu.i/i_ctrl_cyc_stb 0})
+                  (try (:mmu.o/o_rtn_data (output))
+                       (finally (tick))))]
+          (init)
+          (tick)
+          (tick)
+          (setup-read R_CONTROL)))))

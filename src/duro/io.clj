@@ -8,6 +8,7 @@
 
 (defprotocol VerilatorIO
   (input [this input-data])
+  (output [this])
   (eval [this input-data])
   (set-local-signal [this sig arg])
   (get-local-signal [this sig]))
@@ -28,6 +29,13 @@
   (input [_this input-data]
     (doseq [[op arg] input-data]
       (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) arg)))
+  (output [_this]
+    (reduce (fn [acc v]
+              (assoc acc
+                     (val v)
+                     (.getInt ^jnr.ffi.Pointer output-ptr (* (key v) 4))))
+            {}
+            in-id->response))
   (eval [this input-data]
     (input this input-data)
     ;; signal to cpp code that it's allowed to eval
@@ -35,12 +43,7 @@
     ;; cpp code will signal to us when eval is done
     (while (not= (.getInt ^jnr.ffi.Pointer eval-flags-ptr 0) 0))
     ;; read data
-    (reduce (fn [acc v]
-              (assoc acc
-                     (val v)
-                     (.getInt ^jnr.ffi.Pointer output-ptr (* (key v) 4))))
-            {}
-            in-id->response))
+    (output this))
   (set-local-signal [_this sig arg]
     (.set_local_signal native-lib top (:id (wires sig)) arg))
   (get-local-signal [_this sig]
