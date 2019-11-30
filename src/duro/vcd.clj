@@ -26,7 +26,7 @@
 (defn- gen-var
   [type bit-size id reference]
   (format "$var %s %d %d %s $end"
-          (name type) bit-size id (name reference)))
+          (name type) bit-size id (subs (str reference) 1)))
 
 (defn- gen-scope
   [module-name body]
