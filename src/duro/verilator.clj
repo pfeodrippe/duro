@@ -68,9 +68,9 @@
    ["switch (sig) {"]
    (mapv
     (fn [[n {:keys [:index] :as signals}]]
-      (->> (map-indexed (f index n) (apply concat
-                                           ((juxt :inputs :outputs :local-signals)
-                                            signals)))
+      (->> (apply concat ((juxt :inputs :outputs :local-signals) signals))
+           (map-indexed (f index n))
+           (remove empty?)
            (str/join " \\\n")))
     interfaces)
    ["}"]))
@@ -110,6 +110,37 @@
        (cons "#define GENERATED_LOCAL_SIGNAL_OUTPUTS")
        (str/join " \\\n")))
 
+(defn gen-array-signal-cases-inputs
+  [interfaces verilator-top-header]
+  (->> (gen-local-signal-cases
+        interfaces
+        (fn [i n]
+          (fn [j sig]
+            (if (str/includes? verilator-top-header
+                               (str (gen-local-reference n sig) "["))
+              (->> [(str "case " (+ (bit-shift-left i 16) j) ":")
+                    (str (gen-top-local-member n sig) "[idx] = arg;")
+                    "break;"]
+                   (str/join " \\\n"))
+              ""))))
+       (cons "#define GENERATED_ARRAY_SIGNAL_INPUTS")
+       (str/join " \\\n")))
+
+(defn gen-array-signal-cases-outputs
+  [interfaces verilator-top-header]
+  (->> (gen-local-signal-cases
+        interfaces
+        (fn [i n]
+          (fn [j sig]
+            (if (str/includes? verilator-top-header
+                               (str (gen-local-reference n sig) "["))
+              (->> [(str "case " (+ (bit-shift-left i 16) j) ":")
+                    (str "return " (gen-top-local-member n sig) "[idx];")]
+                   (str/join " \\\n"))
+              ""))))
+       (cons "#define GENERATED_ARRAY_SIGNAL_OUTPUTS")
+       (str/join " \\\n")))
+
 (defn gen-top-header-string
   [interfaces]
   (->> (medley/filter-vals :top-module? interfaces)
@@ -123,6 +154,8 @@
                  ;; defaults
                  "#define GENERATED_LOCAL_SIGNAL_INPUTS 0;"
                  "#define GENERATED_LOCAL_SIGNAL_OUTPUTS 0;"
+                 "#define GENERATED_ARRAY_SIGNAL_INPUTS 0;"
+                 "#define GENERATED_ARRAY_SIGNAL_OUTPUTS 0;"
                  ;; gen inputs and outputs
                  (gen-inputs inputs)
                  (gen-outputs outputs)
@@ -134,7 +167,9 @@
 (defn gen-submodules-header-string
   [interfaces verilator-top-header]
   (->> [(gen-local-signal-cases-inputs interfaces verilator-top-header)
-        (gen-local-signal-cases-outputs interfaces verilator-top-header)]
+        (gen-local-signal-cases-outputs interfaces verilator-top-header)
+        (gen-array-signal-cases-inputs interfaces verilator-top-header)
+        (gen-array-signal-cases-outputs interfaces verilator-top-header)]
        (str/join "\n\n")))
 
 (defn- parse-str [s]

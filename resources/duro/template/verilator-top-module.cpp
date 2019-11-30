@@ -28,7 +28,18 @@ void set_local_signal(TOP_CLASS* top, int sig, int arg) {
 extern "C"
 int get_local_signal(TOP_CLASS* top, int sig) {
     GENERATED_LOCAL_SIGNAL_OUTPUTS
-    return 10101010;
+    return 10101010; //default
+}
+
+extern "C"
+void set_array_signal(TOP_CLASS* top, int sig, int idx, int arg) {
+    GENERATED_ARRAY_SIGNAL_INPUTS
+}
+
+extern "C"
+int get_array_signal(TOP_CLASS* top, int sig, int idx) {
+    GENERATED_ARRAY_SIGNAL_OUTPUTS
+    return 10101010; //default
 }
 
 extern "C"

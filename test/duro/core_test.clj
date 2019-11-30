@@ -116,7 +116,7 @@
     {:module-dirs ["zipcpu/rtl/peripherals"
                    "zipcpu/bench/rtl"]
      :mod-debug? true
-     :trace? false
+     :trace? true
      :trace-path "janoa.vcd"
      :top-identifier :mmu}
     (let [{:keys [:top]} module
