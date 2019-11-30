@@ -132,7 +132,8 @@
                        :mmu.i/i_exe 0
                        :mmu.i/i_wbm_cyc 0
                        :mmu.i/i_wbm_stb 0})
-                (input {:mmu.i/i_reset 0}))
+                (input {:mmu.i/i_reset 0})
+                (duro.io/set-local-signal top :mmu.ram.l/mem 0 41))
               (wb-tick []
                 (tick {:mmu.i/i_ctrl_cyc_stb 0
                        :mmu.i/i_wbm_cyc 0
