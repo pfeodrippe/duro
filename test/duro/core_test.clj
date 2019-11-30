@@ -152,4 +152,5 @@
         (tick)
         (tick)
         (setup-read R_CONTROL)))
+    (is (= 0 0))
     module))

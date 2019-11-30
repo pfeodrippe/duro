@@ -3,7 +3,8 @@
    [clojure.string :as str]
    [clojure.data :as data]
    [duro.io]
-   [duro.verilator :as verilator]))
+   [duro.verilator :as verilator]
+   [medley.core :as medley]))
 
 (defn create-module
   ([mod-path]
@@ -34,11 +35,18 @@
                                      (name n))
                                  "." t)
                             (:name input))
-                           {:bit-size (or (some-> (get-in input [:type :left])
-                                                  Integer/parseInt
-                                                  inc)
-                                          1)
-                            :id (+ (bit-shift-left index 16) i)}])
+                           (medley/assoc-some
+                            {:bit-size (or (some-> (get-in input [:type :left])
+                                                   Integer/parseInt
+                                                   inc)
+                                           1)
+                             :id (+ (bit-shift-left index 16) i)
+                             :type (get-in input [:type :type])}
+                            :array-size (when (get-in input [:type :range])
+                                          (let [[vlo vhi]
+                                                (get-in input [:type :range])]
+                                            ;; TODO: check if it is correct
+                                            (+ (* vhi 16) vlo 1))))])
                         (apply concat
                                ((juxt #(mapv (fn [v]
                                                (vector "i" v))

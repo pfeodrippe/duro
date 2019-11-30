@@ -172,7 +172,6 @@
                   (mapv (fn [[name dtype-id]]
                           {:name name
                            :type (type-table dtype-id)})))]
-    (clojure.pprint/pprint {module-name local-signals})
     {:inputs (zip inputs)
      :outputs (zip outputs)
      :local-signals (zip local-signals)}))
@@ -208,8 +207,7 @@
                                  (reduced acc))))
                            []
                            (range))
-        type-table (merge
-                    (->> (xml-> zipper
+        basic-table (->> (xml-> zipper
                                 :verilator_xml
                                 :netlist
                                 :typetable
@@ -224,19 +222,38 @@
                                         (cons :basicdtype %)))
                          (group-by :id)
                          (medley/map-vals first))
-                    (->> (xml-> zipper
+        array-table (->> (xml-> zipper
                                 :verilator_xml
                                 :netlist
                                 :typetable
                                 :unpackarraydtype
                                 (juxt (attr :fl)
                                       (attr :id)
-                                      (attr :sub_dtype_id)))
-                         (partition 3)
-                         (mapv #(zipmap [:type :fl :id :sub_dtype_id]
+                                      (attr :sub_dtype_id)
+                                      #(xml-> (zip/next %)
+                                              :range
+                                              :const
+                                              (attr :name))))
+                         (partition 4)
+                         (mapv #(zipmap [:type :fl :id :sub_dtype_id :range]
                                         (cons :unpackarraydtype %)))
+                         (mapv
+                          (fn [m]
+                            (-> m
+                                (update :range
+                                        (fn [[lo hi]]
+                                          (let [;; 32'hxxxx
+                                                [_ vlo] (str/split lo #"'")
+                                                ;; 32'shxxxx
+                                                [_ vhi] (str/split hi #"'")]
+                                            [(Integer/parseInt (subs vlo 1) 16)
+                                             (Integer/parseInt (subs vhi 2) 16)]))))))
                          (group-by :id)
-                         (medley/map-vals first)))]
+                         (medley/map-vals first)
+                         (medley/map-vals
+                          #(merge % (select-keys (basic (:sub_dtype_id %))
+                                                 [:left :right]))))
+        type-table (merge basic-table array-table)]
     (->> name->hier
          (map-indexed (fn [i [n hier]]
                         (if (zero? i)   ; top module?
