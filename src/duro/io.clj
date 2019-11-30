@@ -10,8 +10,8 @@
   (input [this input-data])
   (output [this])
   (eval [this input-data])
-  (set-local-signal [this sig arg])
-  (get-local-signal [this sig]))
+  (set-local-signal [this sig arg] [this sig idx arg])
+  (get-local-signal [this sig] [this sig idx]))
 
 (definterface NativeLibInterface
   (^jnr.ffi.Pointer create_module [])
@@ -20,6 +20,8 @@
   (^jnr.ffi.Pointer get_eval_flags_pointer [])
   (^int set_local_signal [^jnr.ffi.Pointer top ^int sig ^int arg])
   (^int get_local_signal [^jnr.ffi.Pointer top ^int sig])
+  (^int set_array_signal [^jnr.ffi.Pointer top ^int sig ^int idx ^int arg])
+  (^int get_array_signal [^jnr.ffi.Pointer top ^int sig ^int idx])
   (^int eval [^jnr.ffi.Pointer top]))
 
 (defrecord JnrIO [native-lib top input-ptr output-ptr
@@ -44,10 +46,18 @@
     (while (not= (.getInt ^jnr.ffi.Pointer eval-flags-ptr 0) 0))
     ;; read data
     (output this))
-  (set-local-signal [_this sig arg]
-    (.set_local_signal native-lib top (:id (wires sig)) arg))
-  (get-local-signal [_this sig]
-    (.get_local_signal native-lib top (:id (wires sig)))))
+  (set-local-signal [this sig arg]
+    (if (= (:type (wires sig)) :unpackarraydtype)
+      (set-local-signal this sig 0 arg)
+      (.set_local_signal native-lib top (:id (wires sig)) arg)))
+  (get-local-signal [this sig]
+    (if (= (:type (wires sig)) :unpackarraydtype)
+      (get-local-signal this sig 0)
+      (.get_local_signal native-lib top (:id (wires sig)))))
+  (set-local-signal [_this sig idx arg]
+    (.set_array_signal native-lib top (:id (wires sig)) idx arg))
+  (get-local-signal [_this sig idx]
+    (.get_array_signal native-lib top (:id (wires sig)) idx)))
 
 (defn jnr-io
   [params lib-path]
