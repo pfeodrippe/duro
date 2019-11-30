@@ -123,7 +123,8 @@
           tick (ticker top :mmu.i/i_clk)
           input (inputter top)
           output (outputter top)
-          R_CONTROL 0]
+          R_CONTROL 0
+          CONTEXT 0x0fef7]
       (letfn [(init []
                 (tick {:mmu.i/i_clk 0})
                 (tick {:mmu.i/i_reset 1
@@ -133,7 +134,7 @@
                        :mmu.i/i_wbm_cyc 0
                        :mmu.i/i_wbm_stb 0})
                 (input {:mmu.i/i_reset 0})
-                (duro.io/set-local-signal top :mmu.ram.l/mem 0 41))
+                #_(duro.io/set-local-signal top :mmu.ram.l/mem 0 41))
               (wb-tick []
                 (tick {:mmu.i/i_ctrl_cyc_stb 0
                        :mmu.i/i_wbm_cyc 0
@@ -147,11 +148,28 @@
                         :mmu.i/i_wb_addr (bit-shift-right a 2)})
                 (tick {:mmu.i/i_ctrl_cyc_stb 1})
                 (input {:mmu.i/i_ctrl_cyc_stb 0})
-                (try (duro.io/get-local-signal top :mmu.mut.o/o_rtn_data)
-                     (finally (tick))))]
+                (try (:mmu.o/o_rtn_data (output))
+                     #_(duro.io/get-local-signal top :mmu.mut.o/o_rtn_data)
+                     (finally (tick))))
+              (setup-write [a v]
+                (input {:mmu.i/i_ctrl_cyc_stb 0
+                        :mmu.i/i_exe 0
+                        :mmu.i/i_wbm_cyc 0
+                        :mmu.i/i_wbm_stb 0
+                        :mmu.i/i_wb_we 0
+                        :mmu.i/i_wb_addr (bit-shift-right a 2)
+                        :mmu.i/i_wb_data v
+                        :mmu.i/i_wb_sel 15})
+                (tick {:mmu.i/i_ctrl_cyc_stb 1})
+                (input {:mmu.i/i_ctrl_cyc_stb 0})
+                (assert (zero? (:mmu.o/o_rtn_err (output))))
+                (assert (zero? (:mmu.o/o_rtn_miss (output))))
+                (tick))]
         (init)
         (tick)
         (tick)
+        (setup-read R_CONTROL)
+        (setup-write R_CONTROL CONTEXT)
         (setup-read R_CONTROL)))
     #_(is (= 0 0))
     #_(update module :top dissoc :wire-values)))
