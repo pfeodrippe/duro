@@ -15,7 +15,7 @@
                    trace? (assoc :mod-debug? true))
 
          {:keys [:top-interface :top-module-name :lib-path
-                 :lib-folder :interfaces]}
+                 :lib-folder :interfaces :independent-signals]}
          (verilator/gen-dynamic-lib mod-path options)
 
          {:keys [:inputs :outputs :local-signals]} top-interface
@@ -59,7 +59,7 @@
                                              (:local-signals %)))
                                 signals)))))
                     (apply concat)
-                    (into {}))
+                    (into independent-signals))
          request->out-id (->> inputs
                               (map-indexed
                                (fn [i input]

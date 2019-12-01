@@ -185,7 +185,18 @@
      :mod-debug? true
      :trace? true
      :trace-path "mpy.vcd"
-     :top-identifier :mpy}
+     :top-identifier :mpy
+     :independent-signals
+     {:mpy.cpuops.thempy/mpypipe
+      {:type :basicdtype
+       :bit-size 2
+       :representation
+       "cpuops.thempy.IMPY.MPN1.MPN2.MPY3CK.mpypipe"}
+      :eita/porra
+      {:type :basicdtype
+       :bit-size 1
+       :representation
+       "cpuops.i_clk"}}}
     (let [{:keys [:top]} module
           tick (ticker top :mpy.i/i_clk)
           input (inputter top)
@@ -203,12 +214,13 @@
                 (loop [out (tick)
                        i 0]
                   (cond
-                    (> i 10)
+                    ;; 10 is arbitrary number
+                    (>= i 10)
                     (throw (ex-info "clear-ops took longer than 10 cycles"
                                     {:i i :out out}))
 
-                    (and (one? (:mpy.o/o_busy out))
-                         (one? (:mpy.o/o_valid out)))
+                    (or (one? (:mpy.o/o_busy out))
+                        (one? (:mpy.o/o_valid out)))
                     (recur (tick) (inc i))
 
                     :else (tick))))
@@ -225,8 +237,8 @@
                 (loop [out (output)
                        i 0]
                   (cond
-                    (> i 0)
-                    (throw (ex-info "multiplication took longer than 1 cycle"
+                    (>= i 3)
+                    (throw (ex-info "multiplication should take 3 cycles to occur"
                                     {:i i
                                      :operation operation
                                      :a a
@@ -239,9 +251,11 @@
                     :else (:mpy.o/o_c out))))
               (mul-test [a b]
                 (clear-ops)
-                (op 0x0c a b)
+                (op 2r1100 a b)
+                (tick)
+                (tick)
                 (tick))]
         (init)
-        (mul-test 2 7)
+        (mul-test 3 5)
         (output)))
-    #_(update module :top dissoc :wire-values)))
+    (update module :top dissoc :wire-values)))

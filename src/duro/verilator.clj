@@ -15,7 +15,10 @@
 
 (defn- gen-local-reference
   [module-name sig]
-  (-> (str (name module-name) "__DOT__" (name (:name sig)))
+  (-> (str (if (seq (name module-name))
+             (str (name module-name) "__DOT__")
+             "")
+           (name (:name sig)))
       (str/replace #"\." "__DOT__")))
 
 (defn- gen-top-local-member
@@ -61,6 +64,13 @@
        (->> (mapv #(str "output_" (:name %)) outputs)
             (str/join ",\n"))
        "\n};"))
+
+(defn- wrap-in-switch
+  [coll]
+  (concat
+   ["switch (sig) {"]
+   coll
+   ["}"]))
 
 (defn- gen-local-signal-cases
   [interfaces f]
@@ -110,6 +120,31 @@
        (cons "#define GENERATED_LOCAL_SIGNAL_OUTPUTS")
        (str/join " \\\n")))
 
+(defn gen-independent-signal-cases
+  [independent-signals]
+  (->>
+   [(->> (map-indexed
+          (fn [i [sig {:keys [:representation :id]}]]
+            (->> [(str "case " id ":")
+                  (str (gen-top-local-member "" {:name representation}) " = arg;")
+                  "break;"]
+                 (str/join " \\\n")))
+          independent-signals)
+         wrap-in-switch
+         (cons "#define GENERATED_INDEPENDENT_SIGNAL_INPUTS")
+         (str/join " \\\n"))
+    (->> (map-indexed
+          (fn [i [sig {:keys [:representation :id]}]]
+            (->> [(str "case " id ":")
+                  (str "return " (gen-top-local-member "" {:name representation}) ";")
+                  "break;"]
+                 (str/join " \\\n")))
+          independent-signals)
+         wrap-in-switch
+         (cons "#define GENERATED_INDEPENDENT_SIGNAL_OUTPUTS")
+         (str/join " \\\n"))]
+   (str/join " \n\n")))
+
 (defn gen-array-signal-cases-inputs
   [interfaces verilator-top-header]
   (->> (gen-local-signal-cases
@@ -156,6 +191,8 @@
                  "#define GENERATED_LOCAL_SIGNAL_OUTPUTS 0;"
                  "#define GENERATED_ARRAY_SIGNAL_INPUTS 0;"
                  "#define GENERATED_ARRAY_SIGNAL_OUTPUTS 0;"
+                 "#define GENERATED_INDEPENDENT_SIGNAL_INPUTS 0;"
+                 "#define GENERATED_INDEPENDENT_SIGNAL_OUTPUTS 0;"
                  ;; gen inputs and outputs
                  (gen-inputs inputs)
                  (gen-outputs outputs)
@@ -165,11 +202,13 @@
        first))
 
 (defn gen-submodules-header-string
-  [interfaces verilator-top-header]
-  (->> [(gen-local-signal-cases-inputs interfaces verilator-top-header)
-        (gen-local-signal-cases-outputs interfaces verilator-top-header)
-        (gen-array-signal-cases-inputs interfaces verilator-top-header)
-        (gen-array-signal-cases-outputs interfaces verilator-top-header)]
+  [interfaces verilator-top-header independent-signals]
+  (->> (concat
+        [(gen-local-signal-cases-inputs interfaces verilator-top-header)
+         (gen-local-signal-cases-outputs interfaces verilator-top-header)
+         (gen-array-signal-cases-inputs interfaces verilator-top-header)
+         (gen-array-signal-cases-outputs interfaces verilator-top-header)]
+        [(gen-independent-signal-cases independent-signals)])
        (str/join "\n\n")))
 
 (defn- parse-str [s]
@@ -332,12 +371,21 @@
 (defn gen-dynamic-lib
   ([mod-path]
    (gen-dynamic-lib mod-path {}))
-  ([mod-path {:keys [:mod-debug?] :as options}]
+  ([mod-path {:keys [:mod-debug? :independent-signals] :as options}]
    (let [dir {:path (str (System/getProperty "user.home")
                          "/.duro-simulation/"
                          mod-path)}
          _ (fs/mkdirs (:path dir))
          interfaces (read-verilog-interface mod-path options)
+         independent-signals (->> independent-signals
+                                  (map-indexed
+                                   (fn [i [k params]]
+                                     [k (assoc params :id
+                                               (+ (bit-shift-left
+                                                   (count interfaces)
+                                                   16)
+                                                  i))]))
+                                  (into {}))
          top-path (str (:path dir) "/top.cpp")
          lib-name (format "lib%s.dylib" (rand-str 5))
          lib-path (str (:path dir) "/" lib-name)
@@ -360,7 +408,8 @@
                             interfaces
                             (slurp
                              (str (:path dir)
-                                  "/V" (get-top-module-name interfaces) ".h")))))]
+                                  "/V" (get-top-module-name interfaces) ".h"))
+                            independent-signals)))]
      (spit (str (:path dir) "/generated_template.h") header-str)
      ;; make verilator
      (println
@@ -380,5 +429,6 @@
       :top-interface (->> (vals interfaces)
                           (filter :top-module?)
                           first)
+      :independent-signals independent-signals
       :lib-path lib-path
       :lib-folder (:path dir)})))

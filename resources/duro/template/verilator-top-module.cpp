@@ -23,11 +23,13 @@ int* get_eval_flags_pointer() {
 extern "C"
 void set_local_signal(TOP_CLASS* top, int sig, int arg) {
     GENERATED_LOCAL_SIGNAL_INPUTS
+    GENERATED_INDEPENDENT_SIGNAL_INPUTS
 }
 
 extern "C"
 int get_local_signal(TOP_CLASS* top, int sig) {
     GENERATED_LOCAL_SIGNAL_OUTPUTS
+    GENERATED_INDEPENDENT_SIGNAL_OUTPUTS
     return 10101010; //default
 }
 
