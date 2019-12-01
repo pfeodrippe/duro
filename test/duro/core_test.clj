@@ -192,11 +192,31 @@
        :bit-size 2
        :representation
        "cpuops.thempy.IMPY.MPN1.MPN2.MPY3CK.mpypipe"}
-      :eita/porra
+      :muma/la
       {:type :basicdtype
-       :bit-size 1
+       :bit-size 2
        :representation
-       "cpuops.i_clk"}}}
+       "cpuops.thempy.IMPY.MPN1.MPN2.MPY3CK.r_sgn"}
+      :muma/la2
+      {:type :basicdtype
+       :bit-size 64
+       :representation
+       "cpuops.thempy.IMPY.MPN1.MPN2.MPY3CK.r_smpy_result"}
+      :muma/la3
+      {:type :basicdtype
+       :bit-size 64
+       :representation
+       "cpuops.thempy.IMPY.MPN1.MPN2.MPY3CK.r_umpy_result"}
+      :muma/la4
+      {:type :basicdtype
+       :bit-size 32
+       :representation
+       "cpuops.thempy.IMPY.MPN1.MPN2.MPY3CK.r_mpy_a_input"}
+      :muma/la5
+      {:type :basicdtype
+       :bit-size 32
+       :representation
+       "cpuops.thempy.IMPY.MPN1.MPN2.MPY3CK.r_mpy_b_input"}}}
     (let [{:keys [:top]} module
           tick (ticker top :mpy.i/i_clk)
           input (inputter top)
