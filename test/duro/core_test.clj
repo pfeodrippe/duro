@@ -124,17 +124,16 @@
           input (inputter top)
           output (outputter top)
           R_CONTROL 0
+          R_STATUS 4
           CONTEXT 0x0fef7]
       (letfn [(init []
-                (input {:mmu.i/i_reset 1
-                        :mmu.i/i_ctrl_cyc_stb 0
-                        :mmu.i/i_gie 0
-                        :mmu.i/i_exe 0
-                        :mmu.i/i_wbm_cyc 0
-                        :mmu.i/i_wbm_stb 0})
-                (tick)
-                (input {:mmu.i/i_reset 0})
-                #_(duro.io/set-local-signal top :mmu.ram.l/mem 0 41))
+                (tick {:mmu.i/i_reset 1
+                       :mmu.i/i_ctrl_cyc_stb 0
+                       :mmu.i/i_gie 0
+                       :mmu.i/i_exe 0
+                       :mmu.i/i_wbm_cyc 0
+                       :mmu.i/i_wbm_stb 0})
+                (input {:mmu.i/i_reset 0}))
               (wb-tick []
                 (tick {:mmu.i/i_ctrl_cyc_stb 0
                        :mmu.i/i_wbm_cyc 0
@@ -148,6 +147,8 @@
                         :mmu.i/i_wb_addr (bit-shift-right a 2)})
                 (tick {:mmu.i/i_ctrl_cyc_stb 1})
                 (input {:mmu.i/i_ctrl_cyc_stb 0})
+                (tick)
+                (assert (zero? (:mmu.o/o_rtn_ack (output))))
                 (try (:mmu.o/o_rtn_data (output))
                      #_(duro.io/get-local-signal top :mmu.mut.o/o_rtn_data)
                      (finally (tick))))
@@ -156,7 +157,7 @@
                         :mmu.i/i_exe 0
                         :mmu.i/i_wbm_cyc 0
                         :mmu.i/i_wbm_stb 0
-                        :mmu.i/i_wb_we 0
+                        :mmu.i/i_wb_we 1
                         :mmu.i/i_wb_addr (bit-shift-right a 2)
                         :mmu.i/i_wb_data v
                         :mmu.i/i_wb_sel 15})
@@ -164,11 +165,14 @@
                 (input {:mmu.i/i_ctrl_cyc_stb 0})
                 (assert (zero? (:mmu.o/o_rtn_err (output))))
                 (assert (zero? (:mmu.o/o_rtn_miss (output))))
+                (tick)
+                (assert (zero? (:mmu.o/o_rtn_ack (output))))
                 (tick))]
         (init)
-        (tick)
-        (tick)
+        (wb-tick)
+        (wb-tick)
         (setup-read R_CONTROL)
+        (setup-read R_STATUS)
         (setup-write R_CONTROL CONTEXT)
         (setup-read R_CONTROL)))
     #_(is (= 0 0))
