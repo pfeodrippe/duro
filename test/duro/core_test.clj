@@ -203,8 +203,8 @@
                 (loop [out (tick)
                        i 0]
                   (cond
-                    (> i 100)
-                    (throw (ex-info "clear-ops took longer than 100 cycles"
+                    (> i 10)
+                    (throw (ex-info "clear-ops took longer than 10 cycles"
                                     {:i i :out out}))
 
                     (and (one? (:mpy.o/o_busy out))
@@ -225,8 +225,8 @@
                 (loop [out (output)
                        i 0]
                   (cond
-                    (> i 5)
-                    (throw (ex-info "operation took longer than 5 cycles"
+                    (> i 0)
+                    (throw (ex-info "multiplication took longer than 1 cycle"
                                     {:i i
                                      :operation operation
                                      :a a
@@ -234,14 +234,13 @@
                                      :out out}))
 
                     (zero? (:mpy.o/o_valid out))
-                    (do (println :RREC)
-                        (recur (tick) (inc i)))
+                    (recur (tick) (inc i))
 
                     :else (:mpy.o/o_c out))))
               (mul-test [a b]
                 (clear-ops)
                 (op 0x0c a b)
-                #_(tick))]
+                (tick))]
         (init)
         (mul-test 2 7)
         (output)))
