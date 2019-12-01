@@ -286,7 +286,7 @@
                          (group-by :id)
                          (medley/map-vals first)
                          (medley/map-vals
-                          #(merge % (select-keys (basic (:sub_dtype_id %))
+                          #(merge % (select-keys (basic-table (:sub_dtype_id %))
                                                  [:left :right]))))
         type-table (merge basic-table array-table)]
     (->> name->hier
