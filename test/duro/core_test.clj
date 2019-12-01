@@ -271,11 +271,11 @@
                     :else (:mpy.o/o_c out))))
               (mul-test [a b]
                 (clear-ops)
-                (op 2r1100 a b)
+                (op 2r1011 a b)
                 (tick)
                 (tick)
-                (tick))]
+                #_(tick))]
         (init)
         (mul-test 3 5)
         (output)))
-    (update module :top dissoc :wire-values)))
+    #_(update module :top dissoc :wire-values)))
