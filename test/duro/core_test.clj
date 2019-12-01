@@ -214,33 +214,34 @@
                     :else (tick))))
               (op [operation a b]
                 (when (:mpy.o/o_valid (output))
-                  (clear-ops)
-                  (tick {:mpy.i/i_stb 1
-                         :mpy.i/i_op operation
-                         :mpy.i/i_a a
-                         :mpy.i/i_b b})
-                  (input {:mpy.i/i_stb 0
-                          :mpy.i/i_a 0
-                          :mpy.i/i_b 0})
-                  (loop [out (output)
-                         i 0]
-                    (cond
-                      (> i 5)
-                      (throw (ex-info "operation took longer than 5 cycles"
-                                      {:i i
-                                       :operation operation
-                                       :a a
-                                       :b b
-                                       :out out}))
+                  (clear-ops))
+                (tick {:mpy.i/i_stb 1
+                       :mpy.i/i_op operation
+                       :mpy.i/i_a a
+                       :mpy.i/i_b b})
+                (input {:mpy.i/i_stb 0
+                        :mpy.i/i_a 0
+                        :mpy.i/i_b 0})
+                (loop [out (output)
+                       i 0]
+                  (cond
+                    (> i 5)
+                    (throw (ex-info "operation took longer than 5 cycles"
+                                    {:i i
+                                     :operation operation
+                                     :a a
+                                     :b b
+                                     :out out}))
 
-                      (zero? (:mpy.o/o_valid out))
-                      (recur (tick) (inc i))
+                    (zero? (:mpy.o/o_valid out))
+                    (do (println :RREC)
+                        (recur (tick) (inc i)))
 
-                      :else (:mpy.o/o_c out)))))
+                    :else (:mpy.o/o_c out))))
               (mul-test [a b]
                 (clear-ops)
                 (op 0x0c a b)
-                (tick))]
+                #_(tick))]
         (init)
         (mul-test 2 7)
         (output)))
