@@ -272,10 +272,7 @@
               (mul-test [a b]
                 (clear-ops)
                 (op 2r1011 a b)
-                (tick)
-                (tick)
                 #_(tick))]
         (init)
-        (mul-test 3 5)
-        (output)))
+        (is (= 15 (mul-test 3 5)))))
     #_(update module :top dissoc :wire-values)))

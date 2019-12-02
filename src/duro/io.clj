@@ -30,12 +30,12 @@
   VerilatorIO
   (input [_this input-data]
     (doseq [[op arg] input-data]
-      (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 4) arg)))
+      (.putInt ^jnr.ffi.Pointer input-ptr (* (request->out-id op) 8) arg)))
   (output [_this]
     (reduce (fn [acc v]
               (assoc acc
                      (val v)
-                     (.getInt ^jnr.ffi.Pointer output-ptr (* (key v) 4))))
+                     (.getInt ^jnr.ffi.Pointer output-ptr (* (key v) 8))))
             {}
             in-id->response))
   (eval [this input-data]
