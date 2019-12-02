@@ -64,6 +64,8 @@
 //#include "cpudefs.h"
 // #include "twoc.h"
 
+static long long input[6];
+
 class	CPUOPS_TB : public TESTB<Vcpuops> {
 public:
 	// Nothing special to do in a startup.
@@ -77,7 +79,7 @@ public:
 	//
 	void	reset(void) {
 		// m_flash.debug(false);
-		m_core->i_stb = 0;
+		input[4] = 0;
 
 		TESTB<Vcpuops>::reset();
 	}
@@ -183,12 +185,12 @@ public:
 		// but never both.
 		assert((!m_core->o_busy)||(!m_core->o_valid));
 		//
-                m_core->i_a = m_core->i_a;
-                m_core->i_b = m_core->i_b;
-                m_core->i_clk = m_core->i_clk;
-                m_core->i_reset = m_core->i_reset;
-                m_core->i_stb = m_core->i_stb;
-                m_core->i_op = m_core->i_op;
+                m_core->i_a = input[0];
+                m_core->i_b = input[1];
+                m_core->i_clk = input[2];
+                m_core->i_reset = input[3];
+                m_core->i_stb = input[4];
+                m_core->i_op = input[5];
 
                 TESTB<Vcpuops>::tick();
 
@@ -212,8 +214,8 @@ public:
 	// we tick things once more.
 	//
 	void	clear_ops(void) {
-		m_core->i_stb    = 0;
-		m_core->i_op    = 0;
+		input[4]    = 0;
+		input[5]    = 0;
 
 		do {
 			tick();
@@ -238,10 +240,10 @@ public:
 
 		// Set the arguments to the CPUOPS core to get a multiple
 		// started
-		m_core->i_stb    = 1;
-		m_core->i_op    = op;
-		m_core->i_a     = a;
-		m_core->i_b     = b;
+		input[4]    = 1;
+		input[5]    = op;
+		input[0]     = a;
+		input[1]     = b;
 
 		uint64_t now = m_tickcount;
 
@@ -249,9 +251,9 @@ public:
 		tick();
 
 		// Clear the input arguments to the multiply
-		m_core->i_stb    = 0;
-		m_core->i_a     = 0;
-		m_core->i_b     = 0;
+		input[4]    = 0;
+		input[0]     = 0;
+		input[1]     = 0;
 
 		// Wait for the result to be valid
 
