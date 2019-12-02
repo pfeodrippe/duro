@@ -241,7 +241,9 @@ public:
 		// Wait for the result to be valid
 
 		while(!m_core->o_valid) {
-
+                    m_core->i_stb    = 0;
+                    m_core->i_a     = 0;
+                    m_core->i_b     = 0;
 			tick();
                 }
 

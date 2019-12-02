@@ -222,6 +222,7 @@
           input (inputter top)
           output (outputter top)]
       (letfn [(init []
+                (tick {:mpy.i/i_clk 0})
                 (tick {:mpy.i/i_reset 1
                        :mpy.i/i_stb 0})
                 (input {:mpy.i/i_reset 0})
