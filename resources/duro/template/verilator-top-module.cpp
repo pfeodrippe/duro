@@ -3,9 +3,9 @@
 #include <iostream>
 #include <cstdio>
 
-static long long input[INPUT_SIZE];
-static long long output[OUTPUT_SIZE];
-static int eval_flags[2];
+long long input[INPUT_SIZE];
+long long output[OUTPUT_SIZE];
+int eval_flags[2];
 
 extern "C"
 long long* get_input_pointer() {
