@@ -59,6 +59,7 @@ int eval(TOP_CLASS* top) {
             fprintf(fp, "\n\ni_a: %d\n", top->i_a);
             fprintf(fp, "i_b: %d\n", top->i_b);
             fprintf(fp, "o_c: %d\n", top->o_c);
+            fprintf(fp, "i_clk: %d\n", top->i_clk);
             fprintf(fp, "o_busy: %d\n", top->o_busy);
             fprintf(fp, "o_valid: %d\n\n", top->o_valid);
             fprintf(fp, "---------------------------");
@@ -67,6 +68,11 @@ int eval(TOP_CLASS* top) {
     }
     fclose(fp);
     return 9999;
+}
+
+extern "C"
+void only_eval(TOP_CLASS* top) {
+    top->eval();
 }
 
 extern "C"

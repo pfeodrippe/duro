@@ -9,6 +9,7 @@
 (defprotocol VerilatorIO
   (input [this input-data])
   (output [this])
+  (only-eval [this])
   (eval [this input-data])
   (set-local-signal [this sig arg] [this sig idx arg])
   (get-local-signal [this sig] [this sig idx]))
@@ -22,7 +23,8 @@
   (^long get_local_signal [^jnr.ffi.Pointer top ^int sig])
   (^int set_array_signal [^jnr.ffi.Pointer top ^int sig ^int idx ^int arg])
   (^int get_array_signal [^jnr.ffi.Pointer top ^int sig ^int idx])
-  (^int eval [^jnr.ffi.Pointer top]))
+  (^int eval [^jnr.ffi.Pointer top])
+  (^int only_eval [^jnr.ffi.Pointer top]))
 
 (defrecord JnrIO [native-lib top input-ptr output-ptr
                   eval-flags-ptr request->out-id in-id->response
@@ -38,6 +40,8 @@
                      (.getInt ^jnr.ffi.Pointer output-ptr (* (key v) 8))))
             {}
             in-id->response))
+  (only-eval [this]
+    (.only_eval native-lib top))
   (eval [this input-data]
     (input this input-data)
     ;; signal to cpp code that it's allowed to eval

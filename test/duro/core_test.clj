@@ -16,6 +16,7 @@
         ([data]
          (swap! counter inc)
          (doto top
+           #_(duro.io/only-eval)
            (duro.io/eval {})
            (duro.core/dump-values (- (* 10 @counter) 2))
            (duro.io/eval (assoc data clk 1))
@@ -273,7 +274,15 @@
               (mul-test [a b]
                 (clear-ops)
                 (op 2r1011 a b)
-                #_(tick))]
+                (tick)
+                (tick)
+                (tick)
+                (tick)
+                (tick)
+                (tick)
+                (tick)
+                (tick)
+                (tick))]
         (init)
         (is (= 15 (mul-test 3 5)))))
     #_(update module :top dissoc :wire-values)))
