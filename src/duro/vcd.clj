@@ -45,7 +45,7 @@
                  [(str "#" ts)
                   (->> (mapv (fn [[k v]]
                                (str
-                                "b" (Integer/toBinaryString v)
+                                "b" (Long/toBinaryString v)
                                 " " (:id (wire-info k))))
                              logic-values)
                        (str/join "\n"))])
