@@ -112,7 +112,7 @@
                       "after div result, o_busy should be `0`"))))))))
 
 ;; TODO: it isn't working correctly... have to check more
-#_(deftest zipcpu-zipmmu-test
+(deftest zipcpu-zipmmu-test
   (with-module module "zipcpu/bench/rtl/zipmmu_tb.v"
     {:module-dirs ["zipcpu/rtl/peripherals"
                    "zipcpu/bench/rtl"]
@@ -151,7 +151,6 @@
                 (tick)
                 (assert (zero? (:mmu.o/o_rtn_ack (output))))
                 (try (:mmu.o/o_rtn_data (output))
-                     #_(duro.io/get-local-signal top :mmu.mut.o/o_rtn_data)
                      (finally (tick))))
               (setup-write [a v]
                 (input {:mmu.i/i_ctrl_cyc_stb 0
@@ -175,8 +174,8 @@
         (setup-read R_CONTROL)
         (setup-read R_STATUS)
         (setup-write R_CONTROL CONTEXT)
-        (setup-read R_CONTROL)))
-    (update module :top dissoc :wire-values)))
+        (is (= (bit-and (setup-read R_CONTROL) 0x0ffff) CONTEXT))))
+    #_(update module :top dissoc :wire-values)))
 
 (deftest zipcpu-mpy-test
   (with-module module "zipcpu/rtl/core/cpuops.v"
