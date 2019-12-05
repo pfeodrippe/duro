@@ -247,7 +247,7 @@
 
                     :else (tick))))
               (op [operation a b]
-                (when (:mpy.o/o_valid (output))
+                (when (one? (:mpy.o/o_valid (output)))
                   (clear-ops))
                 (tick {:mpy.i/i_stb 1
                        :mpy.i/i_op operation
