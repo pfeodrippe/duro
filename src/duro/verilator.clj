@@ -396,6 +396,7 @@
             (apply sh/sh
                    (concat
                     ["verilator" "-Wno-STMTDLY"
+                     "--trace"
                      "--cc" mod-path
                      "-Mdir" (:path dir)
                      "--exe" top-path]

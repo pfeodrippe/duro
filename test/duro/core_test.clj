@@ -269,12 +269,12 @@
                     (zero? (:mpy.o/o_valid out))
                     (recur (tick) (inc i))
 
-                    :else (:mpy.o/o_c out))))
+                    :else out)))
               (mul-test [a b]
                 (clear-ops)
-                (op 2r1011 a b)
-                (tick)
-                (tick))]
+                (println :ss (op 2r1011 a b))
+                (println :ss2 (tick))
+                (println :ss3 (tick)))]
         (init)
         (is (= 15 (mul-test 3 5)))))
     #_(update module :top dissoc :wire-avlues)))
