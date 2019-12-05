@@ -48,31 +48,15 @@ int get_array_signal(TOP_CLASS* top, int sig, int idx) {
 
 extern "C"
 int eval(TOP_CLASS* top) {
-    using namespace std;
-    FILE *fp;
-    fp = fopen("example.txt","w");
     while (eval_flags[1] != 0) {
         if (eval_flags[0] != 0) {
             GENERATED_INPUTS
             top->eval();
             GENERATED_OUTPUTS
-            fprintf(fp, "\n\ni_a: %d\n", top->i_a);
-            fprintf(fp, "i_b: %d\n", top->i_b);
-            fprintf(fp, "o_c: %d\n", top->o_c);
-            fprintf(fp, "i_clk: %d\n", top->i_clk);
-            fprintf(fp, "o_busy: %d\n", top->o_busy);
-            fprintf(fp, "o_valid: %d\n\n", top->o_valid);
-            fprintf(fp, "---------------------------");
             eval_flags[0] = 0;
         }
     }
-    fclose(fp);
     return 9999;
-}
-
-extern "C"
-void only_eval(TOP_CLASS* top) {
-    top->eval();
 }
 
 extern "C"
