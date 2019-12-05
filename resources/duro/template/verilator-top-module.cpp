@@ -138,7 +138,7 @@ int main(int argc, char** argv, char** env) {
     top->trace(m_trace, 99);
     m_trace->open("jjj.vcd");
 
-    tick(top, m_trace);
+    //tick(top, m_trace);
     reset(top, m_trace);
     tick(top, m_trace);
     tick(top, m_trace);
@@ -147,7 +147,7 @@ int main(int argc, char** argv, char** env) {
     clear_ops(top, m_trace);
 
     top->i_stb    = 1;
-    top->i_op    = 0x0b;
+    top->i_op    = 0x0c;
     top->i_a     = 3;
     top->i_b     = 5;
 
