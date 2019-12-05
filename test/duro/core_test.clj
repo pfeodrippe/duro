@@ -186,6 +186,9 @@
      :trace? true
      :trace-path "mpy.vcd"
      :top-identifier :mpy
+     ;; XXX: With independent signals, you can observe any signal you want
+     ;; that the parser could gather, you also can name it as you desire.
+     ;; It will be traced with the name you gave to it
      :independent-signals
      {:mpy.cpuops.thempy/mpypipe
       {:type :basicdtype
