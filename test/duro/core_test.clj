@@ -272,9 +272,6 @@
                     :else (:mpy.o/o_c out))))
               (mul-test [a b]
                 (clear-ops)
-                (op 2r1011 a b)
-                (tick)
-                (tick))]
+                (op 2r1100 a b))]
         (init)
-        (is (= 15 (mul-test 3 5)))))
-    #_(update module :top dissoc :wire-avlues)))
+        (is (= 15 (mul-test 3 5)))))))
