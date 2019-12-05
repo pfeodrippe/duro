@@ -16,10 +16,9 @@
         ([data]
          (swap! counter inc)
          (doto top
-           #_(duro.io/only-eval)
-           (duro.io/eval {})
+           (duro.io/eval data)
            (duro.core/dump-values (- (* 10 @counter) 2))
-           (duro.io/eval (assoc data clk 1))
+           (duro.io/eval {clk 1})
            (duro.core/dump-values (* 10 @counter)))
          (let [out (duro.io/eval top {clk 0})]
            (duro.core/dump-values top (+ 5 (* 10 @counter)))
@@ -27,8 +26,8 @@
     (fn tick
       ([] (tick {}))
       ([data]
-       (duro.io/eval top {})
-       (duro.io/eval top (assoc data clk 1))
+       (duro.io/eval top data)
+       (duro.io/eval top {clk 1})
        (duro.io/eval top {clk 0})))))
 
 (defn- inputter
@@ -275,14 +274,7 @@
                 (clear-ops)
                 (op 2r1011 a b)
                 (tick)
-                (tick)
-                (tick)
-                (tick)
-                (tick)
-                (tick)
-                (tick)
-                (tick)
                 (tick))]
         (init)
         (is (= 15 (mul-test 3 5)))))
-    #_(update module :top dissoc :wire-values)))
+    #_(update module :top dissoc :wire-avlues)))
