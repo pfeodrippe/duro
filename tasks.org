@@ -1,6 +1,8 @@
 * Tasks
 ** DONE logic analyzer
    CLOSED: [2019-12-08 Sun 13:22]
-** TODO verilator caching (xml)
+** DONE verilator caching (xml)
+   CLOSED: [2019-12-08 Sun 16:02]
 ** TODO benchmark comparison with c++ verilator
-** TODO change at verilog code triggers clojure test
+** DONE change at verilog code triggers clojure test
+   CLOSED: [2019-12-08 Sun 16:00]
