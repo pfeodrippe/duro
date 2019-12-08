@@ -3,6 +3,10 @@
    CLOSED: [2019-12-08 Sun 13:22]
 ** DONE verilator caching (xml)
    CLOSED: [2019-12-08 Sun 16:02]
-** TODO benchmark comparison with c++ verilator
 ** DONE change at verilog code triggers clojure test
    CLOSED: [2019-12-08 Sun 16:00]
+** TODO benchmark comparison with c++ verilator
+** TODO better error handling
+** TODO build zen talk
+
+* Zen Talk
