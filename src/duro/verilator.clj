@@ -439,5 +439,5 @@
    (gen-dynamic-lib mod-path {}))
   ([mod-path options]
    (let [{:keys [:xml-hash]} (read-xml-info mod-path options)]
-     ;; TODO: maybe use select keys at `options`?
+     ;; TODO: maybe use select-keys at `options`?
      (gen-dynamic-lib* mod-path xml-hash options))))
