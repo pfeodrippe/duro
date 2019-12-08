@@ -111,7 +111,6 @@
               (assert (zero? (:div.o/o_busy out))
                       "after div result, o_busy should be `0`"))))))))
 
-;; TODO: it isn't working correctly... have to check more
 (deftest zipcpu-zipmmu-test
   (with-module module "zipcpu/bench/rtl/zipmmu_tb.v"
     {:module-dirs ["zipcpu/rtl/peripherals"

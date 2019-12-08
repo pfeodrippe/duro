@@ -254,7 +254,7 @@
   [interfaces]
   (name (ffirst (medley/filter-vals :top-module? interfaces))))
 
-(defn read-module-xml
+(defn read-module-interfaces
   [path]
   ;; TODO: refactor it
   (let [zipper (parse-str (slurp path))
@@ -346,9 +346,9 @@
             ["-y" dir])
           module-dirs))
 
-(defn- read-verilog-interface
+(defn- read-xml-info
   ([mod-path]
-   (read-verilog-interface mod-path {}))
+   (read-xml-info mod-path {}))
   ([mod-path options]
    (let [dir (bean (fs/temp-dir "duro"))
          xml-path (str (:path dir) "/mod.xml")]
@@ -361,74 +361,83 @@
                "-Mdir" (:path dir)
                mod-path]
               (build-verilator-args options))))
-     (read-module-xml xml-path))))
+     {:xml-path xml-path :xml-hash (hash (slurp xml-path))})))
 
 (defn- rand-str [length]
   (->> (repeatedly #(char (+ (rand 26) 97)))
        (take length)
        (apply str)))
 
-(defn gen-dynamic-lib
-  ([mod-path]
-   (gen-dynamic-lib mod-path {}))
-  ([mod-path {:keys [:mod-debug? :independent-signals] :as options}]
-   (let [dir {:path (str (System/getProperty "user.home")
-                         "/.duro-simulation/"
-                         mod-path)}
-         _ (fs/mkdirs (:path dir))
-         interfaces (read-verilog-interface mod-path options)
-         independent-signals (->> independent-signals
-                                  (map-indexed
-                                   (fn [i [k params]]
-                                     [k (assoc params :id
-                                               (+ (bit-shift-left
-                                                   (count interfaces)
-                                                   16)
-                                                  i))]))
-                                  (into {}))
-         top-path (str (:path dir) "/top.cpp")
-         lib-name (format "lib%s.dylib" (rand-str 5))
-         lib-path (str (:path dir) "/" lib-name)
-         _ (fs/copy (io/resource "duro/template/verilator-top-module.cpp")
-                    top-path)
-         ;; generate verilator files
-         _ (println
-            (apply sh/sh
-                   (concat
-                    ["verilator" "-Wno-STMTDLY"
-                     "--cc" mod-path
-                     "-Mdir" (:path dir)
-                     "--exe" top-path]
-                    (build-verilator-args options)
-                    (when mod-debug? ["--public-flat-rw"]))))
-         header-str (cond-> (gen-top-header-string interfaces)
-                      mod-debug?
-                      (str "\n\n"
-                           (gen-submodules-header-string
-                            interfaces
-                            (slurp
-                             (str (:path dir)
-                                  "/V" (get-top-module-name interfaces) ".h"))
-                            independent-signals)))]
-     (spit (str (:path dir) "/generated_template.h") header-str)
-     ;; make verilator
-     (println
+(def gen-dynamic-lib*
+  "It caches the module with the options and the xml-hash"
+  (memoize
+   (fn [mod-path _xml-hash {:keys [:mod-debug? :independent-signals] :as options}]
+     (let [dir {:path (str (System/getProperty "user.home")
+                           "/.duro-simulation/"
+                           mod-path)}
+           _ (fs/mkdirs (:path dir))
+           {:keys [:xml-path]} (read-xml-info mod-path options)
+           interfaces (read-module-interfaces xml-path)
+           independent-signals (->> independent-signals
+                                    (map-indexed
+                                     (fn [i [k params]]
+                                       [k (assoc params :id
+                                                 (+ (bit-shift-left
+                                                     (count interfaces)
+                                                     16)
+                                                    i))]))
+                                    (into {}))
+           top-path (str (:path dir) "/top.cpp")
+           lib-name (format "lib%s.dylib" (rand-str 5))
+           lib-path (str (:path dir) "/" lib-name)
+           _ (fs/copy (io/resource "duro/template/verilator-top-module.cpp")
+                      top-path)
+           ;; generate verilator files
+           _ (println
+              (apply sh/sh
+                     (concat
+                      ["verilator" "-Wno-STMTDLY"
+                       "--cc" mod-path
+                       "-Mdir" (:path dir)
+                       "--exe" top-path]
+                      (build-verilator-args options)
+                      (when mod-debug? ["--public-flat-rw"]))))
+           header-str (cond-> (gen-top-header-string interfaces)
+                        mod-debug?
+                        (str "\n\n"
+                             (gen-submodules-header-string
+                              interfaces
+                              (slurp
+                               (str (:path dir)
+                                    "/V" (get-top-module-name interfaces) ".h"))
+                              independent-signals)))]
+       (spit (str (:path dir) "/generated_template.h") header-str)
+       ;; make verilator
+       (println
         (apply sh/sh
                ["make" "-j"
                 "-C" (:path dir)
                 "-f" (str "V" (get-top-module-name interfaces) ".mk")
                 (str "V" (get-top-module-name interfaces))]))
-     ;; create dynamic lib
-     (println
-      (sh/with-sh-dir (:path dir)
-        (apply sh/sh
-               ["bash" "-c"
-                (format "gcc -shared -o %s *.o -lstdc++" lib-name)])))
-     {:interfaces interfaces
-      :top-module-name (get-top-module-name interfaces)
-      :top-interface (->> (vals interfaces)
-                          (filter :top-module?)
-                          first)
-      :independent-signals independent-signals
-      :lib-path lib-path
-      :lib-folder (:path dir)})))
+       ;; create dynamic lib
+       (println
+        (sh/with-sh-dir (:path dir)
+          (apply sh/sh
+                 ["bash" "-c"
+                  (format "gcc -shared -o %s *.o -lstdc++" lib-name)])))
+       {:interfaces interfaces
+        :top-module-name (get-top-module-name interfaces)
+        :top-interface (->> (vals interfaces)
+                            (filter :top-module?)
+                            first)
+        :independent-signals independent-signals
+        :lib-path lib-path
+        :lib-folder (:path dir)}))))
+
+(defn gen-dynamic-lib
+  ([mod-path]
+   (gen-dynamic-lib mod-path {}))
+  ([mod-path options]
+   (let [{:keys [:xml-hash]} (read-xml-info mod-path options)]
+     ;; TODO: maybe use select keys at `options`?
+     (gen-dynamic-lib* mod-path xml-hash options))))
