@@ -1,3 +1,5 @@
+clj_cmd = env clj -O:default-options
+
 PHONY: build-verilator
 build-verilator:
 	rm -rf obj_dir
@@ -17,3 +19,7 @@ start-verilator:
 
 start-alu:
 	obj_dir/VALU32Bit
+
+.PHONY: autotest
+autotest:
+	$(clj_cmd) -A:test --watch

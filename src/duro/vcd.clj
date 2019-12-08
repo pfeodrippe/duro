@@ -1,7 +1,6 @@
 (ns duro.vcd
   (:require
-   [clojure.string :as str]
-   [duro.io]))
+   [clojure.string :as str]))
 
 (defn- gen-section
   [sec body]
@@ -73,15 +72,3 @@
                     (gen-definitions))
         timeline (gen-timeline wire-info wire-values)]
     (spit file-path (str header timeline))))
-
-(defn build-dumper
-  [top]
-  (let [wire-values (atom [])
-        dump-fn #(swap! wire-values conj
-                        [% (->> (keys (:wires top))
-                                (mapv (fn [wire]
-                                        [wire (duro.io/get-local-signal
-                                               top wire)]))
-                                (into {}))])]
-    {:wire-values wire-values
-     :dump-fn dump-fn}))

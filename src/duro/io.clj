@@ -2,8 +2,10 @@
   (:refer-clojure :exclude [eval])
   (:require
    [clojure.string :as str]
-   [clojure.set :as set])
+   [clojure.set :as set]
+   duro.jnr)
   (:import
+   (duro.jnr NativeLibInterface)
    (jnr.ffi LibraryLoader Pointer)))
 
 (defprotocol VerilatorIO
@@ -12,17 +14,6 @@
   (eval [this input-data])
   (set-local-signal [this sig arg] [this sig idx arg])
   (get-local-signal [this sig] [this sig idx]))
-
-(definterface NativeLibInterface
-  (^jnr.ffi.Pointer create_module [])
-  (^jnr.ffi.Pointer get_input_pointer [])
-  (^jnr.ffi.Pointer get_output_pointer [])
-  (^jnr.ffi.Pointer get_eval_flags_pointer [])
-  (^int set_local_signal [^jnr.ffi.Pointer top ^int sig ^int arg])
-  (^long get_local_signal [^jnr.ffi.Pointer top ^int sig])
-  (^int set_array_signal [^jnr.ffi.Pointer top ^int sig ^int idx ^int arg])
-  (^int get_array_signal [^jnr.ffi.Pointer top ^int sig ^int idx])
-  (^int eval [^jnr.ffi.Pointer top]))
 
 (defrecord JnrIO [native-lib top input-ptr output-ptr
                   eval-flags-ptr request->out-id in-id->response

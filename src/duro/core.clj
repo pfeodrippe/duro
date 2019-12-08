@@ -6,6 +6,18 @@
    [duro.verilator :as verilator]
    [medley.core :as medley]))
 
+(defn- build-dumper
+  [top]
+  (let [wire-values (atom [])
+        dump-fn #(swap! wire-values conj
+                        [% (->> (keys (:wires top))
+                                (mapv (fn [wire]
+                                        [wire (duro.io/get-local-signal
+                                               top wire)]))
+                                (into {}))])]
+    {:wire-values wire-values
+     :dump-fn dump-fn}))
+
 (defn create-module
   ([mod-path]
    (create-module mod-path {}))
@@ -82,7 +94,7 @@
                :wires wires}
               lib-path)]
      {:top (cond-> top
-             trace? (merge (duro.vcd/build-dumper top)))
+             trace? (merge (build-dumper top)))
       :interfaces interfaces})))
 
 (defmacro with-module
