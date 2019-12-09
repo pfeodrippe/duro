@@ -7,6 +7,7 @@
    CLOSED: [2019-12-08 Sun 16:00]
 ** TODO benchmark comparison with c++ verilator
 ** TODO better error handling
+** TODO add default make/gcc options
 ** TODO build zen talk
 
 * Zen Talk

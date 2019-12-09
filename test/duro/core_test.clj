@@ -276,3 +276,74 @@
                 (op 2r1100 a b))]
         (init)
         (is (= 15 (mul-test 3 5)))))))
+
+(deftest some-test
+  (with-module module "ariane/src/alu.sv"
+    {:module-dirs ["ariane/include"
+                   "ariane/src/riscv-dbg/src"]
+     :module-dependencies ["ariane/include/riscv_pkg.sv"
+                           "ariane/src/riscv-dbg/src/dm_pkg.sv"
+                            "ariane/include/ariane_pkg.sv"]
+     :mod-debug? true
+     :trace? true
+     :trace-path ".vcd"
+     :top-identifier :alu}
+    #_(let [{:keys [:top]} module
+            tick (ticker top :mpy.i/i_clk)
+            input (inputter top)
+            output (outputter top)]
+        (letfn [(init []
+                  (tick {:mpy.i/i_clk 0})
+                  (tick {:mpy.i/i_reset 1
+                         :mpy.i/i_stb 0})
+                  (input {:mpy.i/i_reset 0})
+                  (tick)
+                  (tick)
+                  (tick))
+                (clear-ops []
+                  (input {:mpy.i/i_stb 0
+                          :mpy.i/i_op 0})
+                  (loop [out (tick)
+                         i 0]
+                    (cond
+                      ;; 10 is arbitrary number
+                      (>= i 10)
+                      (throw (ex-info "clear-ops took longer than 10 cycles"
+                                      {:i i :out out}))
+
+                      (or (one? (:mpy.o/o_busy out))
+                          (one? (:mpy.o/o_valid out)))
+                      (recur (tick) (inc i))
+
+                      :else (tick))))
+                (op [operation a b]
+                  (when (one? (:mpy.o/o_valid (output)))
+                    (clear-ops))
+                  (tick {:mpy.i/i_stb 1
+                         :mpy.i/i_op operation
+                         :mpy.i/i_a a
+                         :mpy.i/i_b b})
+                  (input {:mpy.i/i_stb 0
+                          :mpy.i/i_a 0
+                          :mpy.i/i_b 0})
+                  (loop [out (output)
+                         i 0]
+                    (cond
+                      (>= i 3)
+                      (throw (ex-info "multiplication should take 3 cycles to occur"
+                                      {:i i
+                                       :operation operation
+                                       :a a
+                                       :b b
+                                       :out out}))
+
+                      (zero? (:mpy.o/o_valid out))
+                      (recur (tick) (inc i))
+
+                      :else (:mpy.o/o_c out))))
+                (mul-test [a b]
+                  (clear-ops)
+                  (op 2r1100 a b))]
+          (init)
+          (is (= 15 (mul-test 3 5)))))
+    (update module :top dissoc :wire-values)))
