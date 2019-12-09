@@ -12,3 +12,8 @@
 ** TODO build zen talk
 
 * Zen Talk
+** Verilator
+** XML
+** JNR
+** VCD
+** Cache
