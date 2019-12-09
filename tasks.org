@@ -8,6 +8,7 @@
 ** TODO benchmark comparison with c++ verilator
 ** TODO better error handling
 ** TODO add default make/gcc options
+** TODO handle ariane alu input (packed struct)
 ** TODO build zen talk
 
 * Zen Talk
