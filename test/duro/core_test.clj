@@ -277,16 +277,14 @@
         (init)
         (is (= 15 (mul-test 3 5)))))))
 
-(deftest some-test
+(deftest ariane-alu-test
   (with-module module "ariane/src/alu.sv"
-    {:module-dirs ["ariane/include"
-                   "ariane/src/riscv-dbg/src"]
-     :module-dependencies ["ariane/include/riscv_pkg.sv"
+    {:module-dependencies ["ariane/include/riscv_pkg.sv"
                            "ariane/src/riscv-dbg/src/dm_pkg.sv"
-                            "ariane/include/ariane_pkg.sv"]
+                           "ariane/include/ariane_pkg.sv"]
      :mod-debug? true
      :trace? true
-     :trace-path ".vcd"
+     :trace-path "one.vcd"
      :top-identifier :alu}
     #_(let [{:keys [:top]} module
             tick (ticker top :mpy.i/i_clk)
