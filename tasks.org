@@ -12,9 +12,10 @@
 ** TODO build zen talk
 
 * Zen Talk
+** Hardware programming
 ** Verilator
-** XML
 ** JNR
+** XML
 ** VCD
 ** Cache
 ** Test runner
