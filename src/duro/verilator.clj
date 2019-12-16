@@ -342,7 +342,7 @@
                             (-> m
                                 (update :range
                                         (fn [[lo hi]]
-                                          (let [;; 32'hxxxx
+                                          (let [ ;; 32'hxxxx
                                                 [_ vlo] (str/split lo #"'")
                                                 ;; 32'shxxxx
                                                 [_ vhi] (str/split hi #"'")]
@@ -354,6 +354,77 @@
                           #(merge % (select-keys (basic-table (:sub_dtype_id %))
                                                  [:left :right]))))
         type-table (merge basic-table array-table)]
+
+    (def enum-table
+      (->> (xml->
+            zipper
+            :verilator_xml
+            :netlist
+            :typetable
+            :enumdtype
+            (juxt (attr :fl)
+                  (attr :id)
+                  (attr :name)
+                  (attr :sub_dtype_id)
+                  #(->> (xml-> %
+                               :enumitem
+                               (juxt (attr :fl)
+                                     (attr :name)
+                                     (attr :dtype_id)))
+                        (partition 3)
+                        #_(mapv (fn [x]
+                                (zipmap [:type :fl :id :name :sub_dtype_id]
+                                        (cons :memberdtype x))))
+                        #_(group-by :name)
+                        #_(medley/map-vals first)
+                        #_(medley/map-keys keyword)
+                        #_(medley/map-vals
+                         (fn [v]
+                           (merge v
+                                  (select-keys (basic-table (:sub_dtype_id v))
+                                               [:left :right])))))))
+           (partition 5)
+           (mapv (fn [x]
+                   (zipmap [:type :fl :id :name :sub_dtype_id :items]
+                           (cons :enumdtype x))))
+           (group-by :id)
+           (medley/map-vals first)))
+
+    (def sa
+      (->> (xml->
+            zipper
+            :verilator_xml
+            :netlist
+            :typetable
+            :structdtype
+            (juxt (attr :fl)
+                  (attr :id)
+                  (attr :name)
+                  #(->> (xml-> %
+                               :memberdtype
+                               (juxt (attr :fl)
+                                     (attr :id)
+                                     (attr :name)
+                                     (attr :sub_dtype_id)))
+                        (partition 4)
+                        (mapv (fn [x]
+                                (zipmap [:type :fl :id :name :sub_dtype_id]
+                                        (cons :memberdtype x))))
+                        (group-by :name)
+                        (medley/map-vals first)
+                        (medley/map-keys keyword)
+                        (medley/map-vals
+                         (fn [v]
+                           (merge v
+                                  (select-keys (basic-table (:sub_dtype_id v))
+                                               [:left :right])))))))
+           (partition 4)
+           (mapv (fn [x]
+                   (zipmap [:type :fl :id :name :members]
+                           (cons :structdtype x))))
+           (group-by :id)
+           (medley/map-vals first)))
+
     (->> name->hier
          (map-indexed (fn [i [n hier]]
                         (if (zero? i)   ; top module?
