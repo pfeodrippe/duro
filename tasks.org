@@ -13,7 +13,8 @@
 
 * Problems
 - Types are not outputted by the verilog -> xml converter, need to
-  check reftype
+  check reftype. Hun, maybe the type are sequential to the struct,
+  have to check this!
 
 * Zen Talk
 ** Hardware programming
