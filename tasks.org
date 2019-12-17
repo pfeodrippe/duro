@@ -11,6 +11,10 @@
 ** TODO handle ariane alu input (packed struct)
 ** TODO build zen talk
 
+* Problems
+- Types are not outputted by the verilog -> xml converter, need to
+  check reftype
+
 * Zen Talk
 ** Hardware programming
 ** Verilator
