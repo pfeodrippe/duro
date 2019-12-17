@@ -370,25 +370,50 @@
                                :enumitem
                                (juxt (attr :fl)
                                      (attr :name)
-                                     (attr :dtype_id)))
-                        (partition 3)
-                        #_(mapv (fn [x]
-                                (zipmap [:type :fl :id :name :sub_dtype_id]
-                                        (cons :memberdtype x))))
-                        #_(group-by :name)
-                        #_(medley/map-vals first)
-                        #_(medley/map-keys keyword)
-                        #_(medley/map-vals
+                                     (attr :dtype_id)
+                                     (fn [v]
+                                       (->>
+                                        (xml->
+                                         v
+                                         :const
+                                         (juxt (attr :fl)
+                                               (attr :name)
+                                               (attr :dtype_id)))
+                                        (partition 3)
+                                        (mapv (fn [x]
+                                                (zipmap [:type :fl :name :dtype_id]
+                                                        (cons :const x))))
+                                        (mapv
+                                         (fn [x]
+                                           (merge x
+                                                  (select-keys (basic-table
+                                                                (:dtype_id x))
+                                                               [:left :right]))))
+                                        first))))
+                        (partition 4)
+                        (mapv (fn [x]
+                                (zipmap [:type :fl :name :dtype_id :const]
+                                        (cons :enumitem x))))
+                        (group-by :name)
+                        (medley/map-vals first)
+                        (medley/map-keys keyword)
+                        (medley/map-vals
                          (fn [v]
                            (merge v
-                                  (select-keys (basic-table (:sub_dtype_id v))
+                                  (select-keys (basic-table (:dtype_id v))
                                                [:left :right])))))))
            (partition 5)
            (mapv (fn [x]
                    (zipmap [:type :fl :id :name :sub_dtype_id :items]
                            (cons :enumdtype x))))
            (group-by :id)
-           (medley/map-vals first)))
+           (medley/map-vals first)
+           (medley/map-vals
+            (fn [v]
+              (merge v
+                     (select-keys (basic-table (:sub_dtype_id v))
+                                  [:left :right]))))
+           (#(get % "847"))))
 
     (def sa
       (->> (xml->
