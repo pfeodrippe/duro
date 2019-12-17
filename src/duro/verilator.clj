@@ -7,7 +7,8 @@
    [medley.core :as medley]
    [me.raynes.fs :as fs]
    [clojure.java.shell :as sh]
-   [clojure.java.io :as io]))
+   [clojure.java.io :as io]
+   [clojure.set :as set]))
 
 (defn- gen-top-member
   [k]
@@ -406,14 +407,14 @@
            (mapv (fn [x]
                    (zipmap [:type :fl :id :name :sub_dtype_id :items]
                            (cons :enumdtype x))))
-           (group-by :id)
-           (medley/map-vals first)
-           (medley/map-vals
+           (group-by :sub_dtype_id)
+           #_(medley/map-vals first)
+           #_(medley/map-vals
             (fn [v]
               (merge v
                      (select-keys (basic-table (:sub_dtype_id v))
                                   [:left :right]))))
-           (#(get % "847"))))
+           #_(#(get % "847"))))
 
     (def sa
       (->> (xml->
@@ -441,14 +442,17 @@
                         (medley/map-vals
                          (fn [v]
                            (merge v
-                                  (select-keys (basic-table (:sub_dtype_id v))
-                                               [:left :right])))))))
+                                  #_(select-keys (basic-table (:sub_dtype_id v))
+                                               [:left :right])
+                                  #_(select-keys (enum-table (:sub_dtype_id v))
+                                               [:items])))))))
            (partition 4)
            (mapv (fn [x]
                    (zipmap [:type :fl :id :name :members]
                            (cons :structdtype x))))
            (group-by :id)
-           (medley/map-vals first)))
+           (medley/map-vals first)
+           (#(get % "6"))))
 
     (->> name->hier
          (map-indexed (fn [i [n hier]]
