@@ -12,9 +12,21 @@
 ** TODO build zen talk
 
 * Problems
-- Types are not outputted by the verilog -> xml converter, need to
-  check reftype. Hun, maybe the type are sequential to the struct,
-  have to check this!
+** struct
+Types are not outputted by the verilog -> xml converter, need to
+check reftype. Hun, maybe the types are sequential to the struct,
+have to check this.
+
+#+BEGIN_SRC xml
+<structdtype fl="e476" id="6" name="ariane_pkg::xxx">
+  <memberdtype fl="e477" id="198" name="jj" sub_dtype_id="7"/>
+</structdtype>
+<refdtype fl="e477" id="199" name="omg" sub_dtype_id="7"/>
+#+END_SRC
+
+The memberdtype are followed by its types after structdtype, it
+allows to find the respective type to a member.
+
 
 * Zen Talk
 ** Hardware programming
