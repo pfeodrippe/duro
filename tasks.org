@@ -26,6 +26,18 @@ have to check this.
 
 The memberdtype are followed by its types after structdtype, it
 allows to find the respective type of a member.
+We need namespaces refdtypes or it will be impossible to know which
+one verilator is referencing.
+
+#+BEGIN_SRC verilog
+  typedef enum                       logic [2:0] {JA, NA, INA} omg;
+
+  typedef struct                     packed {
+    ariane_pkg::omg jjs;
+  } xxx;
+
+  ariane_pkg::xxx eita;
+#+END_SRC
 
 
 * Zen Talk
