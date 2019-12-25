@@ -25,7 +25,7 @@ have to check this.
 #+END_SRC
 
 The memberdtype are followed by its types after structdtype, it
-allows to find the respective type to a member.
+allows to find the respective type of a member.
 
 
 * Zen Talk
