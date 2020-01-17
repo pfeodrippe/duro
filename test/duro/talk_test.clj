@@ -18,7 +18,10 @@
   (-> @sd/workspace :traced tr/audit-traces)
   (sd/ws-add-trace-ns! duro.verilator)
   (sd/ws-enable-all-traces!)
-  (sd/ws-deref!)
+  (def x (sd/ws-deref!))
+
+  (spit "x.edn" (with-out-str
+                  (clojure.pprint/pprint x)))
 
   ())
 
@@ -27,6 +30,7 @@
     {:trace? true
      :trace-path "naso.vcd"}
     (let [{:keys [:top]} module]
+      (is (= 0 1))
       (duro.core/dump-values top 0)
       (duro.io/eval top {:nao.i/x 0})
       (duro.core/dump-values top 10)

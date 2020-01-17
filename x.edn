@@ -1,0 +1,2772 @@
+{:id :root22871,
+ :path [:root22871],
+ :depth 0,
+ :children
+ [{:args
+   ["nao.v" {:trace? true, :trace-path "naso.vcd", :mod-debug? true}],
+   :path [:root22871 :23225],
+   :children
+   [{:args
+     ["nao.v"
+      {:trace? true, :trace-path "naso.vcd", :mod-debug? true}],
+     :path [:root22871 :23225 :23226],
+     :children
+     [{:args
+       [{:trace? true, :trace-path "naso.vcd", :mod-debug? true}],
+       :path [:root22871 :23225 :23226 :23227],
+       :children [],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name build-verilator-args,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 24,
+        :column 1,
+        :line 469,
+        :end-line 473,
+        :arglists ([{:keys [:module-dirs]}])},
+       :return (),
+       :started-at 1579220337592,
+       :name duro.verilator/build-verilator-args,
+       :arg-map
+       {p__23324
+        {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+        map__23326
+        {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+        module-dirs nil},
+       :id :23227,
+       :ended-at 1579220337592,
+       :depth 3}],
+     :meta
+     {:private true,
+      :ns #namespace[duro.verilator],
+      :name read-xml-info,
+      :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+      :end-column 63,
+      :column 1,
+      :line 475,
+      :end-line 491,
+      :arglists
+      ([mod-path]
+       [mod-path
+        {:keys [:cmd-line-opts :module-dependencies], :as options}])},
+     :return
+     {:xml-hash 844039120,
+      :xml-path
+      "/var/folders/xl/0gx4mcfd1qv1wvcxvcntqzfw0000gn/T/duro1579220337586-2122293369/mod.xml"},
+     :started-at 1579220337586,
+     :name duro.verilator/read-xml-info,
+     :arg-map
+     {mod-path "nao.v",
+      p__23318
+      {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+      map__23320
+      {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+      options {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+      cmd-line-opts nil,
+      module-dependencies nil},
+     :id :23226,
+     :ended-at 1579220337980,
+     :depth 2}
+    {:args
+     ["nao.v"
+      844039120
+      {:trace? true, :trace-path "naso.vcd", :mod-debug? true}],
+     :path [:root22871 :23225 :23228],
+     :children
+     [{:args
+       ["nao.v"
+        {:trace? true, :trace-path "naso.vcd", :mod-debug? true}],
+       :path [:root22871 :23225 :23228 :23229],
+       :children
+       [{:args
+         [{:trace? true, :trace-path "naso.vcd", :mod-debug? true}],
+         :path [:root22871 :23225 :23228 :23229 :23230],
+         :children [],
+         :meta
+         {:private true,
+          :ns #namespace[duro.verilator],
+          :name build-verilator-args,
+          :file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :end-column 24,
+          :column 1,
+          :line 469,
+          :end-line 473,
+          :arglists ([{:keys [:module-dirs]}])},
+         :return (),
+         :started-at 1579220337981,
+         :name duro.verilator/build-verilator-args,
+         :arg-map
+         {p__23324
+          {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+          map__23326
+          {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+          module-dirs nil},
+         :id :23230,
+         :ended-at 1579220337982,
+         :depth 4}],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name read-xml-info,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 63,
+        :column 1,
+        :line 475,
+        :end-line 491,
+        :arglists
+        ([mod-path]
+         [mod-path
+          {:keys [:cmd-line-opts :module-dependencies],
+           :as options}])},
+       :return
+       {:xml-hash 844039120,
+        :xml-path
+        "/var/folders/xl/0gx4mcfd1qv1wvcxvcntqzfw0000gn/T/duro1579220337981-1312024659/mod.xml"},
+       :started-at 1579220337981,
+       :name duro.verilator/read-xml-info,
+       :arg-map
+       {mod-path "nao.v",
+        p__23318
+        {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+        map__23320
+        {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+        options
+        {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+        cmd-line-opts nil,
+        module-dependencies nil},
+       :id :23229,
+       :ended-at 1579220338090,
+       :depth 3}
+      {:args
+       ["/var/folders/xl/0gx4mcfd1qv1wvcxvcntqzfw0000gn/T/duro1579220337981-1312024659/mod.xml"],
+       :path [:root22871 :23225 :23228 :23231],
+       :children
+       [{:args
+         ["<?xml version=\"1.0\" ?>\n<!-- DESCRIPTION: Verilator output: XML representation of netlist -->\n<verilator_xml>\n  <files>\n    <file id=\"a\" filename=\"&lt;built-in&gt;\" language=\"1800-2017\"/>\n    <file id=\"b\" filename=\"&lt;command-line&gt;\" language=\"1800-2017\"/>\n    <file id=\"c\" filename=\"nao.v\" language=\"1800-2017\"/>\n  </files>\n  <module_files>\n    <file id=\"c\" filename=\"nao.v\" language=\"1800-2017\"/>\n  </module_files>\n  <cells>\n    <cell fl=\"c1\" name=\"nao\" submodname=\"nao\" hier=\"nao\"/>\n  </cells>\n  <netlist>\n    <module fl=\"c1\" name=\"nao\" origName=\"nao\">\n      <var fl=\"c2\" name=\"x\" dtype_id=\"1\" dir=\"input\" vartype=\"logic\" origName=\"x\"/>\n      <var fl=\"c3\" name=\"z\" dtype_id=\"1\" dir=\"output\" vartype=\"logic\" origName=\"z\"/>\n      <contassign fl=\"c5\" dtype_id=\"1\">\n        <add fl=\"c5\" dtype_id=\"1\">\n          <const fl=\"c5\" name=\"1&apos;h1\" dtype_id=\"1\"/>\n          <varref fl=\"c5\" name=\"x\" dtype_id=\"1\"/>\n        </add>\n        <varref fl=\"c5\" name=\"z\" dtype_id=\"1\"/>\n      </contassign>\n    </module>\n    <typetable fl=\"a0\">\n      <basicdtype fl=\"c2\" id=\"1\" name=\"logic\"/>\n    </typetable>\n  </netlist>\n</verilator_xml>\n"],
+         :path [:root22871 :23225 :23228 :23231 :23232],
+         :children [],
+         :meta
+         {:private true,
+          :ns #namespace[duro.verilator],
+          :name parse-str,
+          :file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :end-column 64,
+          :column 1,
+          :line 241,
+          :end-line 243,
+          :arglists ([s])},
+         :return
+         [{:tag :verilator_xml,
+           :attrs nil,
+           :content
+           [{:tag :files,
+             :attrs nil,
+             :content
+             [{:tag :file,
+               :attrs
+               {:language "1800-2017",
+                :filename "<built-in>",
+                :id "a"},
+               :content nil}
+              {:tag :file,
+               :attrs
+               {:language "1800-2017",
+                :filename "<command-line>",
+                :id "b"},
+               :content nil}
+              {:tag :file,
+               :attrs
+               {:language "1800-2017", :filename "nao.v", :id "c"},
+               :content nil}]}
+            {:tag :module_files,
+             :attrs nil,
+             :content
+             [{:tag :file,
+               :attrs
+               {:language "1800-2017", :filename "nao.v", :id "c"},
+               :content nil}]}
+            {:tag :cells,
+             :attrs nil,
+             :content
+             [{:tag :cell,
+               :attrs
+               {:hier "nao", :submodname "nao", :name "nao", :fl "c1"},
+               :content nil}]}
+            {:tag :netlist,
+             :attrs nil,
+             :content
+             [{:tag :module,
+               :attrs {:origName "nao", :name "nao", :fl "c1"},
+               :content
+               [{:tag :var,
+                 :attrs
+                 {:origName "x",
+                  :vartype "logic",
+                  :dir "input",
+                  :dtype_id "1",
+                  :name "x",
+                  :fl "c2"},
+                 :content nil}
+                {:tag :var,
+                 :attrs
+                 {:origName "z",
+                  :vartype "logic",
+                  :dir "output",
+                  :dtype_id "1",
+                  :name "z",
+                  :fl "c3"},
+                 :content nil}
+                {:tag :contassign,
+                 :attrs {:dtype_id "1", :fl "c5"},
+                 :content
+                 [{:tag :add,
+                   :attrs {:dtype_id "1", :fl "c5"},
+                   :content
+                   [{:tag :const,
+                     :attrs {:dtype_id "1", :name "1'h1", :fl "c5"},
+                     :content nil}
+                    {:tag :varref,
+                     :attrs {:dtype_id "1", :name "x", :fl "c5"},
+                     :content nil}]}
+                  {:tag :varref,
+                   :attrs {:dtype_id "1", :name "z", :fl "c5"},
+                   :content nil}]}]}
+              {:tag :typetable,
+               :attrs {:fl "a0"},
+               :content
+               [{:tag :basicdtype,
+                 :attrs {:name "logic", :id "1", :fl "c2"},
+                 :content nil}]}]}]}
+          nil],
+         :started-at 1579220338090,
+         :name duro.verilator/parse-str,
+         :arg-map
+         {s
+          "<?xml version=\"1.0\" ?>\n<!-- DESCRIPTION: Verilator output: XML representation of netlist -->\n<verilator_xml>\n  <files>\n    <file id=\"a\" filename=\"&lt;built-in&gt;\" language=\"1800-2017\"/>\n    <file id=\"b\" filename=\"&lt;command-line&gt;\" language=\"1800-2017\"/>\n    <file id=\"c\" filename=\"nao.v\" language=\"1800-2017\"/>\n  </files>\n  <module_files>\n    <file id=\"c\" filename=\"nao.v\" language=\"1800-2017\"/>\n  </module_files>\n  <cells>\n    <cell fl=\"c1\" name=\"nao\" submodname=\"nao\" hier=\"nao\"/>\n  </cells>\n  <netlist>\n    <module fl=\"c1\" name=\"nao\" origName=\"nao\">\n      <var fl=\"c2\" name=\"x\" dtype_id=\"1\" dir=\"input\" vartype=\"logic\" origName=\"x\"/>\n      <var fl=\"c3\" name=\"z\" dtype_id=\"1\" dir=\"output\" vartype=\"logic\" origName=\"z\"/>\n      <contassign fl=\"c5\" dtype_id=\"1\">\n        <add fl=\"c5\" dtype_id=\"1\">\n          <const fl=\"c5\" name=\"1&apos;h1\" dtype_id=\"1\"/>\n          <varref fl=\"c5\" name=\"x\" dtype_id=\"1\"/>\n        </add>\n        <varref fl=\"c5\" name=\"z\" dtype_id=\"1\"/>\n      </contassign>\n    </module>\n    <typetable fl=\"a0\">\n      <basicdtype fl=\"c2\" id=\"1\" name=\"logic\"/>\n    </typetable>\n  </netlist>\n</verilator_xml>\n"},
+         :id :23232,
+         :ended-at 1579220338159,
+         :depth 4}
+        {:args
+         [[{:tag :verilator_xml,
+            :attrs nil,
+            :content
+            [{:tag :files,
+              :attrs nil,
+              :content
+              [{:tag :file,
+                :attrs
+                {:language "1800-2017",
+                 :filename "<built-in>",
+                 :id "a"},
+                :content nil}
+               {:tag :file,
+                :attrs
+                {:language "1800-2017",
+                 :filename "<command-line>",
+                 :id "b"},
+                :content nil}
+               {:tag :file,
+                :attrs
+                {:language "1800-2017", :filename "nao.v", :id "c"},
+                :content nil}]}
+             {:tag :module_files,
+              :attrs nil,
+              :content
+              [{:tag :file,
+                :attrs
+                {:language "1800-2017", :filename "nao.v", :id "c"},
+                :content nil}]}
+             {:tag :cells,
+              :attrs nil,
+              :content
+              [{:tag :cell,
+                :attrs
+                {:hier "nao",
+                 :submodname "nao",
+                 :name "nao",
+                 :fl "c1"},
+                :content nil}]}
+             {:tag :netlist,
+              :attrs nil,
+              :content
+              [{:tag :module,
+                :attrs {:origName "nao", :name "nao", :fl "c1"},
+                :content
+                [{:tag :var,
+                  :attrs
+                  {:origName "x",
+                   :vartype "logic",
+                   :dir "input",
+                   :dtype_id "1",
+                   :name "x",
+                   :fl "c2"},
+                  :content nil}
+                 {:tag :var,
+                  :attrs
+                  {:origName "z",
+                   :vartype "logic",
+                   :dir "output",
+                   :dtype_id "1",
+                   :name "z",
+                   :fl "c3"},
+                  :content nil}
+                 {:tag :contassign,
+                  :attrs {:dtype_id "1", :fl "c5"},
+                  :content
+                  [{:tag :add,
+                    :attrs {:dtype_id "1", :fl "c5"},
+                    :content
+                    [{:tag :const,
+                      :attrs {:dtype_id "1", :name "1'h1", :fl "c5"},
+                      :content nil}
+                     {:tag :varref,
+                      :attrs {:dtype_id "1", :name "x", :fl "c5"},
+                      :content nil}]}
+                   {:tag :varref,
+                    :attrs {:dtype_id "1", :name "z", :fl "c5"},
+                    :content nil}]}]}
+               {:tag :typetable,
+                :attrs {:fl "a0"},
+                :content
+                [{:tag :basicdtype,
+                  :attrs {:name "logic", :id "1", :fl "c2"},
+                  :content nil}]}]}]}
+           nil]
+          "nao"
+          {"1"
+           {:type :basicdtype,
+            :fl "c2",
+            :id "1",
+            :name "logic",
+            :left nil,
+            :right nil}}],
+         :path [:root22871 :23225 :23228 :23231 :23233],
+         :children [],
+         :meta
+         {:file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :line 245,
+          :column 1,
+          :end-line 278,
+          :end-column 43,
+          :arglists ([zipper module-name type-table]),
+          :name extract-module-signals,
+          :ns #namespace[duro.verilator]},
+         :return
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals []},
+         :started-at 1579220338166,
+         :name duro.verilator/extract-module-signals,
+         :arg-map
+         {zipper
+          [{:tag :verilator_xml,
+            :attrs nil,
+            :content
+            [{:tag :files,
+              :attrs nil,
+              :content
+              [{:tag :file,
+                :attrs
+                {:language "1800-2017",
+                 :filename "<built-in>",
+                 :id "a"},
+                :content nil}
+               {:tag :file,
+                :attrs
+                {:language "1800-2017",
+                 :filename "<command-line>",
+                 :id "b"},
+                :content nil}
+               {:tag :file,
+                :attrs
+                {:language "1800-2017", :filename "nao.v", :id "c"},
+                :content nil}]}
+             {:tag :module_files,
+              :attrs nil,
+              :content
+              [{:tag :file,
+                :attrs
+                {:language "1800-2017", :filename "nao.v", :id "c"},
+                :content nil}]}
+             {:tag :cells,
+              :attrs nil,
+              :content
+              [{:tag :cell,
+                :attrs
+                {:hier "nao",
+                 :submodname "nao",
+                 :name "nao",
+                 :fl "c1"},
+                :content nil}]}
+             {:tag :netlist,
+              :attrs nil,
+              :content
+              [{:tag :module,
+                :attrs {:origName "nao", :name "nao", :fl "c1"},
+                :content
+                [{:tag :var,
+                  :attrs
+                  {:origName "x",
+                   :vartype "logic",
+                   :dir "input",
+                   :dtype_id "1",
+                   :name "x",
+                   :fl "c2"},
+                  :content nil}
+                 {:tag :var,
+                  :attrs
+                  {:origName "z",
+                   :vartype "logic",
+                   :dir "output",
+                   :dtype_id "1",
+                   :name "z",
+                   :fl "c3"},
+                  :content nil}
+                 {:tag :contassign,
+                  :attrs {:dtype_id "1", :fl "c5"},
+                  :content
+                  [{:tag :add,
+                    :attrs {:dtype_id "1", :fl "c5"},
+                    :content
+                    [{:tag :const,
+                      :attrs {:dtype_id "1", :name "1'h1", :fl "c5"},
+                      :content nil}
+                     {:tag :varref,
+                      :attrs {:dtype_id "1", :name "x", :fl "c5"},
+                      :content nil}]}
+                   {:tag :varref,
+                    :attrs {:dtype_id "1", :name "z", :fl "c5"},
+                    :content nil}]}]}
+               {:tag :typetable,
+                :attrs {:fl "a0"},
+                :content
+                [{:tag :basicdtype,
+                  :attrs {:name "logic", :id "1", :fl "c2"},
+                  :content nil}]}]}]}
+           nil],
+          module-name "nao",
+          type-table
+          {"1"
+           {:type :basicdtype,
+            :fl "c2",
+            :id "1",
+            :name "logic",
+            :left nil,
+            :right nil}}},
+         :id :23233,
+         :ended-at 1579220338167,
+         :depth 4}],
+       :meta
+       {:file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :line 284,
+        :column 1,
+        :end-line 467,
+        :end-column 22,
+        :arglists ([path]),
+        :name read-module-interfaces,
+        :ns #namespace[duro.verilator]},
+       :return
+       {:nao
+        {:inputs
+         [{:name "x",
+           :type
+           {:type :basicdtype,
+            :fl "c2",
+            :id "1",
+            :name "logic",
+            :left nil,
+            :right nil}}],
+         :outputs
+         [{:name "z",
+           :type
+           {:type :basicdtype,
+            :fl "c2",
+            :id "1",
+            :name "logic",
+            :left nil,
+            :right nil}}],
+         :local-signals [],
+         :top-module? true,
+         :index 0}},
+       :started-at 1579220338090,
+       :name duro.verilator/read-module-interfaces,
+       :arg-map
+       {path
+        "/var/folders/xl/0gx4mcfd1qv1wvcxvcntqzfw0000gn/T/duro1579220337981-1312024659/mod.xml"},
+       :id :23231,
+       :ended-at 1579220338167,
+       :depth 3}
+      {:args [5],
+       :path [:root22871 :23225 :23228 :23234],
+       :children [],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name rand-str,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 21,
+        :column 1,
+        :line 493,
+        :end-line 496,
+        :arglists ([length])},
+       :return "ttsbq",
+       :started-at 1579220338168,
+       :name duro.verilator/rand-str,
+       :arg-map {length 5},
+       :id :23234,
+       :ended-at 1579220338168,
+       :depth 3}
+      {:args
+       [{:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}],
+       :path [:root22871 :23225 :23228 :23235],
+       :children [],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name get-top-module-name,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 64,
+        :column 1,
+        :line 280,
+        :end-line 282,
+        :arglists ([interfaces])},
+       :return "nao",
+       :started-at 1579220338179,
+       :name duro.verilator/get-top-module-name,
+       :arg-map
+       {interfaces
+        {:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}},
+       :id :23235,
+       :ended-at 1579220338180,
+       :depth 3}
+      {:args
+       [{:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}],
+       :path [:root22871 :23225 :23228 :23236],
+       :children [],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name get-top-module-name,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 64,
+        :column 1,
+        :line 280,
+        :end-line 282,
+        :arglists ([interfaces])},
+       :return "nao",
+       :started-at 1579220338180,
+       :name duro.verilator/get-top-module-name,
+       :arg-map
+       {interfaces
+        {:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}},
+       :id :23236,
+       :ended-at 1579220338181,
+       :depth 3}
+      {:args
+       [{:trace? true, :trace-path "naso.vcd", :mod-debug? true}],
+       :path [:root22871 :23225 :23228 :23237],
+       :children [],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name build-verilator-args,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 24,
+        :column 1,
+        :line 469,
+        :end-line 473,
+        :arglists ([{:keys [:module-dirs]}])},
+       :return (),
+       :started-at 1579220338181,
+       :name duro.verilator/build-verilator-args,
+       :arg-map
+       {p__23324
+        {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+        map__23326
+        {:trace? true, :trace-path "naso.vcd", :mod-debug? true},
+        module-dirs nil},
+       :id :23237,
+       :ended-at 1579220338181,
+       :depth 3}
+      {:args
+       [{:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}],
+       :path [:root22871 :23225 :23228 :23238],
+       :children
+       [{:args
+         [[{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}]],
+         :path [:root22871 :23225 :23228 :23238 :23239],
+         :children
+         [{:args ["x"],
+           :path [:root22871 :23225 :23228 :23238 :23239 :23240],
+           :children [],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name gen-top-member,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 26,
+            :column 1,
+            :line 13,
+            :end-line 15,
+            :arglists ([k])},
+           :return "top->x",
+           :started-at 1579220338311,
+           :name duro.verilator/gen-top-member,
+           :arg-map {k "x"},
+           :id :23240,
+           :ended-at 1579220338311,
+           :depth 5}
+          {:args ["x"],
+           :path [:root22871 :23225 :23228 :23238 :23239 :23241],
+           :children [],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name gen-input,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 37,
+            :column 1,
+            :line 29,
+            :end-line 31,
+            :arglists ([k])},
+           :return "input[input_x]",
+           :started-at 1579220338311,
+           :name duro.verilator/gen-input,
+           :arg-map {k "x"},
+           :id :23241,
+           :ended-at 1579220338311,
+           :depth 5}],
+         :meta
+         {:private true,
+          :ns #namespace[duro.verilator],
+          :name gen-inputs,
+          :file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :end-column 28,
+          :column 1,
+          :line 41,
+          :end-line 46,
+          :arglists ([inputs])},
+         :return
+         "#define GENERATED_INPUTS \\\ntop->x = input[input_x];",
+         :started-at 1579220338311,
+         :name duro.verilator/gen-inputs,
+         :arg-map
+         {inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}]},
+         :id :23239,
+         :ended-at 1579220338311,
+         :depth 4}
+        {:args
+         [[{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}]],
+         :path [:root22871 :23225 :23228 :23238 :23242],
+         :children
+         [{:args ["z"],
+           :path [:root22871 :23225 :23228 :23238 :23242 :23243],
+           :children [],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name gen-output,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 39,
+            :column 1,
+            :line 33,
+            :end-line 35,
+            :arglists ([k])},
+           :return "output[output_z]",
+           :started-at 1579220338312,
+           :name duro.verilator/gen-output,
+           :arg-map {k "z"},
+           :id :23243,
+           :ended-at 1579220338312,
+           :depth 5}
+          {:args ["z"],
+           :path [:root22871 :23225 :23228 :23238 :23242 :23244],
+           :children [],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name gen-top-member,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 26,
+            :column 1,
+            :line 13,
+            :end-line 15,
+            :arglists ([k])},
+           :return "top->z",
+           :started-at 1579220338312,
+           :name duro.verilator/gen-top-member,
+           :arg-map {k "z"},
+           :id :23244,
+           :ended-at 1579220338312,
+           :depth 5}],
+         :meta
+         {:private true,
+          :ns #namespace[duro.verilator],
+          :name gen-outputs,
+          :file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :end-column 28,
+          :column 1,
+          :line 48,
+          :end-line 53,
+          :arglists ([outputs])},
+         :return
+         "#define GENERATED_OUTPUTS \\\noutput[output_z] = top->z;",
+         :started-at 1579220338311,
+         :name duro.verilator/gen-outputs,
+         :arg-map
+         {outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}]},
+         :id :23242,
+         :ended-at 1579220338312,
+         :depth 4}
+        {:args
+         [[{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}]],
+         :path [:root22871 :23225 :23228 :23238 :23245],
+         :children [],
+         :meta
+         {:private true,
+          :ns #namespace[duro.verilator],
+          :name gen-input-enum,
+          :file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :end-column 16,
+          :column 1,
+          :line 55,
+          :end-line 60,
+          :arglists ([inputs])},
+         :return "enum Input {\ninput_x\n};",
+         :started-at 1579220338312,
+         :name duro.verilator/gen-input-enum,
+         :arg-map
+         {inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}]},
+         :id :23245,
+         :ended-at 1579220338312,
+         :depth 4}
+        {:args
+         [[{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}]],
+         :path [:root22871 :23225 :23228 :23238 :23246],
+         :children [],
+         :meta
+         {:private true,
+          :ns #namespace[duro.verilator],
+          :name gen-output-enum,
+          :file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :end-column 16,
+          :column 1,
+          :line 62,
+          :end-line 67,
+          :arglists ([outputs])},
+         :return "enum Output {\noutput_z\n};",
+         :started-at 1579220338312,
+         :name duro.verilator/gen-output-enum,
+         :arg-map
+         {outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}]},
+         :id :23246,
+         :ended-at 1579220338313,
+         :depth 4}],
+       :meta
+       {:file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :line 206,
+        :column 1,
+        :end-line 229,
+        :end-column 15,
+        :arglists ([interfaces]),
+        :name gen-top-header-string,
+        :ns #namespace[duro.verilator]},
+       :return
+       "#include \"Vnao.h\"\n\n#define TOP_CLASS Vnao\n\n#define INPUT_SIZE 1\n\n#define OUTPUT_SIZE 1\n\n#define GENERATED_LOCAL_SIGNAL_INPUTS 0;\n\n#define GENERATED_LOCAL_SIGNAL_OUTPUTS 0;\n\n#define GENERATED_ARRAY_SIGNAL_INPUTS 0;\n\n#define GENERATED_ARRAY_SIGNAL_OUTPUTS 0;\n\n#define GENERATED_INDEPENDENT_SIGNAL_INPUTS 0;\n\n#define GENERATED_INDEPENDENT_SIGNAL_OUTPUTS 0;\n\n#define GENERATED_INPUTS \\\ntop->x = input[input_x];\n\n#define GENERATED_OUTPUTS \\\noutput[output_z] = top->z;\n\nenum Input {\ninput_x\n};\n\nenum Output {\noutput_z\n};",
+       :started-at 1579220338310,
+       :name duro.verilator/gen-top-header-string,
+       :arg-map
+       {interfaces
+        {:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}},
+       :id :23238,
+       :ended-at 1579220338313,
+       :depth 3}
+      {:args
+       [{:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}],
+       :path [:root22871 :23225 :23228 :23247],
+       :children [],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name get-top-module-name,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 64,
+        :column 1,
+        :line 280,
+        :end-line 282,
+        :arglists ([interfaces])},
+       :return "nao",
+       :started-at 1579220338313,
+       :name duro.verilator/get-top-module-name,
+       :arg-map
+       {interfaces
+        {:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}},
+       :id :23247,
+       :ended-at 1579220338313,
+       :depth 3}
+      {:args
+       [{:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}
+        "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n"
+        {}],
+       :path [:root22871 :23225 :23228 :23248],
+       :children
+       [{:args
+         [{:nao
+           {:inputs
+            [{:name "x",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :outputs
+            [{:name "z",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :local-signals [],
+            :top-module? true,
+            :index 0}}
+          "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n"],
+         :path [:root22871 :23225 :23228 :23248 :23249],
+         :children
+         [{:args
+           [{:nao
+             {:inputs
+              [{:name "x",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :outputs
+              [{:name "z",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :local-signals [],
+              :top-module? true,
+              :index 0}}
+            #function[duro.verilator/gen-local-signal-cases-inputs/fn--21370]],
+           :path [:root22871 :23225 :23228 :23248 :23249 :23250],
+           :children
+           [{:args
+             [:nao
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23249 :23250 :23251],
+             :children [],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-local-reference,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 38,
+              :column 1,
+              :line 17,
+              :end-line 23,
+              :arglists ([module-name sig])},
+             :return "nao__DOT__x",
+             :started-at 1579220338316,
+             :name duro.verilator/gen-local-reference,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23251,
+             :ended-at 1579220338316,
+             :depth 6}
+            {:args
+             [:nao
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23249 :23250 :23252],
+             :children
+             [{:args
+               [:nao
+                {:name "x",
+                 :type
+                 {:type :basicdtype,
+                  :fl "c2",
+                  :id "1",
+                  :name "logic",
+                  :left nil,
+                  :right nil}}],
+               :path
+               [:root22871
+                :23225
+                :23228
+                :23248
+                :23249
+                :23250
+                :23252
+                :23253],
+               :children [],
+               :meta
+               {:private true,
+                :ns #namespace[duro.verilator],
+                :name gen-local-reference,
+                :file
+                "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+                :end-column 38,
+                :column 1,
+                :line 17,
+                :end-line 23,
+                :arglists ([module-name sig])},
+               :return "nao__DOT__x",
+               :started-at 1579220338317,
+               :name duro.verilator/gen-local-reference,
+               :arg-map
+               {module-name :nao,
+                sig
+                {:name "x",
+                 :type
+                 {:type :basicdtype,
+                  :fl "c2",
+                  :id "1",
+                  :name "logic",
+                  :left nil,
+                  :right nil}}},
+               :id :23253,
+               :ended-at 1579220338317,
+               :depth 7}],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-top-local-member,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 55,
+              :column 1,
+              :line 25,
+              :end-line 27,
+              :arglists ([module-name sig])},
+             :return "top->nao__DOT__x",
+             :started-at 1579220338316,
+             :name duro.verilator/gen-top-local-member,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23252,
+             :ended-at 1579220338317,
+             :depth 6}
+            {:args
+             [:nao
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23249 :23250 :23254],
+             :children [],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-local-reference,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 38,
+              :column 1,
+              :line 17,
+              :end-line 23,
+              :arglists ([module-name sig])},
+             :return "nao__DOT__z",
+             :started-at 1579220338317,
+             :name duro.verilator/gen-local-reference,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23254,
+             :ended-at 1579220338317,
+             :depth 6}
+            {:args
+             [:nao
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23249 :23250 :23255],
+             :children
+             [{:args
+               [:nao
+                {:name "z",
+                 :type
+                 {:type :basicdtype,
+                  :fl "c2",
+                  :id "1",
+                  :name "logic",
+                  :left nil,
+                  :right nil}}],
+               :path
+               [:root22871
+                :23225
+                :23228
+                :23248
+                :23249
+                :23250
+                :23255
+                :23256],
+               :children [],
+               :meta
+               {:private true,
+                :ns #namespace[duro.verilator],
+                :name gen-local-reference,
+                :file
+                "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+                :end-column 38,
+                :column 1,
+                :line 17,
+                :end-line 23,
+                :arglists ([module-name sig])},
+               :return "nao__DOT__z",
+               :started-at 1579220338317,
+               :name duro.verilator/gen-local-reference,
+               :arg-map
+               {module-name :nao,
+                sig
+                {:name "z",
+                 :type
+                 {:type :basicdtype,
+                  :fl "c2",
+                  :id "1",
+                  :name "logic",
+                  :left nil,
+                  :right nil}}},
+               :id :23256,
+               :ended-at 1579220338317,
+               :depth 7}],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-top-local-member,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 55,
+              :column 1,
+              :line 25,
+              :end-line 27,
+              :arglists ([module-name sig])},
+             :return "top->nao__DOT__z",
+             :started-at 1579220338317,
+             :name duro.verilator/gen-top-local-member,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23255,
+             :ended-at 1579220338317,
+             :depth 6}],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name gen-local-signal-cases,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 11,
+            :column 1,
+            :line 76,
+            :end-line 87,
+            :arglists ([interfaces f])},
+           :return
+           ("switch (sig) {"
+            "case 0: \\\ntop->nao__DOT__x = arg; \\\nbreak; \\\ncase 1: \\\ntop->nao__DOT__z = arg; \\\nbreak;"
+            "}"),
+           :started-at 1579220338314,
+           :name duro.verilator/gen-local-signal-cases,
+           :arg-map
+           {interfaces
+            {:nao
+             {:inputs
+              [{:name "x",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :outputs
+              [{:name "z",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :local-signals [],
+              :top-module? true,
+              :index 0}},
+            f
+            #function[duro.verilator/gen-local-signal-cases-inputs/fn--21370]},
+           :id :23250,
+           :ended-at 1579220338317,
+           :depth 5}],
+         :meta
+         {:file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :line 89,
+          :column 1,
+          :end-line 116,
+          :end-column 28,
+          :arglists ([interfaces verilator-top-header]),
+          :name gen-local-signal-cases-inputs,
+          :ns #namespace[duro.verilator]},
+         :return
+         "#define GENERATED_LOCAL_SIGNAL_INPUTS \\\nswitch (sig) { \\\ncase 0: \\\ntop->nao__DOT__x = arg; \\\nbreak; \\\ncase 1: \\\ntop->nao__DOT__z = arg; \\\nbreak; \\\n}",
+         :started-at 1579220338314,
+         :name duro.verilator/gen-local-signal-cases-inputs,
+         :arg-map
+         {interfaces
+          {:nao
+           {:inputs
+            [{:name "x",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :outputs
+            [{:name "z",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :local-signals [],
+            :top-module? true,
+            :index 0}},
+          verilator-top-header
+          "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n"},
+         :id :23249,
+         :ended-at 1579220338317,
+         :depth 4}
+        {:args
+         [{:nao
+           {:inputs
+            [{:name "x",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :outputs
+            [{:name "z",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :local-signals [],
+            :top-module? true,
+            :index 0}}
+          "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n"],
+         :path [:root22871 :23225 :23228 :23248 :23257],
+         :children
+         [{:args
+           [{:nao
+             {:inputs
+              [{:name "x",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :outputs
+              [{:name "z",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :local-signals [],
+              :top-module? true,
+              :index 0}}
+            #function[duro.verilator/gen-local-signal-cases-outputs/fn--21380]],
+           :path [:root22871 :23225 :23228 :23248 :23257 :23258],
+           :children
+           [{:args
+             [:nao
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23257 :23258 :23259],
+             :children [],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-local-reference,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 38,
+              :column 1,
+              :line 17,
+              :end-line 23,
+              :arglists ([module-name sig])},
+             :return "nao__DOT__x",
+             :started-at 1579220338318,
+             :name duro.verilator/gen-local-reference,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23259,
+             :ended-at 1579220338318,
+             :depth 6}
+            {:args
+             [:nao
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23257 :23258 :23260],
+             :children
+             [{:args
+               [:nao
+                {:name "x",
+                 :type
+                 {:type :basicdtype,
+                  :fl "c2",
+                  :id "1",
+                  :name "logic",
+                  :left nil,
+                  :right nil}}],
+               :path
+               [:root22871
+                :23225
+                :23228
+                :23248
+                :23257
+                :23258
+                :23260
+                :23261],
+               :children [],
+               :meta
+               {:private true,
+                :ns #namespace[duro.verilator],
+                :name gen-local-reference,
+                :file
+                "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+                :end-column 38,
+                :column 1,
+                :line 17,
+                :end-line 23,
+                :arglists ([module-name sig])},
+               :return "nao__DOT__x",
+               :started-at 1579220338318,
+               :name duro.verilator/gen-local-reference,
+               :arg-map
+               {module-name :nao,
+                sig
+                {:name "x",
+                 :type
+                 {:type :basicdtype,
+                  :fl "c2",
+                  :id "1",
+                  :name "logic",
+                  :left nil,
+                  :right nil}}},
+               :id :23261,
+               :ended-at 1579220338318,
+               :depth 7}],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-top-local-member,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 55,
+              :column 1,
+              :line 25,
+              :end-line 27,
+              :arglists ([module-name sig])},
+             :return "top->nao__DOT__x",
+             :started-at 1579220338318,
+             :name duro.verilator/gen-top-local-member,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23260,
+             :ended-at 1579220338318,
+             :depth 6}
+            {:args
+             [:nao
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23257 :23258 :23262],
+             :children [],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-local-reference,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 38,
+              :column 1,
+              :line 17,
+              :end-line 23,
+              :arglists ([module-name sig])},
+             :return "nao__DOT__z",
+             :started-at 1579220338318,
+             :name duro.verilator/gen-local-reference,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23262,
+             :ended-at 1579220338318,
+             :depth 6}
+            {:args
+             [:nao
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23257 :23258 :23263],
+             :children
+             [{:args
+               [:nao
+                {:name "z",
+                 :type
+                 {:type :basicdtype,
+                  :fl "c2",
+                  :id "1",
+                  :name "logic",
+                  :left nil,
+                  :right nil}}],
+               :path
+               [:root22871
+                :23225
+                :23228
+                :23248
+                :23257
+                :23258
+                :23263
+                :23264],
+               :children [],
+               :meta
+               {:private true,
+                :ns #namespace[duro.verilator],
+                :name gen-local-reference,
+                :file
+                "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+                :end-column 38,
+                :column 1,
+                :line 17,
+                :end-line 23,
+                :arglists ([module-name sig])},
+               :return "nao__DOT__z",
+               :started-at 1579220338318,
+               :name duro.verilator/gen-local-reference,
+               :arg-map
+               {module-name :nao,
+                sig
+                {:name "z",
+                 :type
+                 {:type :basicdtype,
+                  :fl "c2",
+                  :id "1",
+                  :name "logic",
+                  :left nil,
+                  :right nil}}},
+               :id :23264,
+               :ended-at 1579220338318,
+               :depth 7}],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-top-local-member,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 55,
+              :column 1,
+              :line 25,
+              :end-line 27,
+              :arglists ([module-name sig])},
+             :return "top->nao__DOT__z",
+             :started-at 1579220338318,
+             :name duro.verilator/gen-top-local-member,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23263,
+             :ended-at 1579220338318,
+             :depth 6}],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name gen-local-signal-cases,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 11,
+            :column 1,
+            :line 76,
+            :end-line 87,
+            :arglists ([interfaces f])},
+           :return
+           ("switch (sig) {"
+            "case 0: \\\nreturn top->nao__DOT__x; \\\ncase 1: \\\nreturn top->nao__DOT__z;"
+            "}"),
+           :started-at 1579220338317,
+           :name duro.verilator/gen-local-signal-cases,
+           :arg-map
+           {interfaces
+            {:nao
+             {:inputs
+              [{:name "x",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :outputs
+              [{:name "z",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :local-signals [],
+              :top-module? true,
+              :index 0}},
+            f
+            #function[duro.verilator/gen-local-signal-cases-outputs/fn--21380]},
+           :id :23258,
+           :ended-at 1579220338318,
+           :depth 5}],
+         :meta
+         {:file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :line 118,
+          :column 1,
+          :end-line 148,
+          :end-column 28,
+          :arglists ([interfaces verilator-top-header]),
+          :name gen-local-signal-cases-outputs,
+          :ns #namespace[duro.verilator]},
+         :return
+         "#define GENERATED_LOCAL_SIGNAL_OUTPUTS \\\nswitch (sig) { \\\ncase 0: \\\nreturn top->nao__DOT__x; \\\ncase 1: \\\nreturn top->nao__DOT__z; \\\n}",
+         :started-at 1579220338317,
+         :name duro.verilator/gen-local-signal-cases-outputs,
+         :arg-map
+         {interfaces
+          {:nao
+           {:inputs
+            [{:name "x",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :outputs
+            [{:name "z",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :local-signals [],
+            :top-module? true,
+            :index 0}},
+          verilator-top-header
+          "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n"},
+         :id :23257,
+         :ended-at 1579220338318,
+         :depth 4}
+        {:args
+         [{:nao
+           {:inputs
+            [{:name "x",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :outputs
+            [{:name "z",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :local-signals [],
+            :top-module? true,
+            :index 0}}
+          "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n"],
+         :path [:root22871 :23225 :23228 :23248 :23265],
+         :children
+         [{:args
+           [{:nao
+             {:inputs
+              [{:name "x",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :outputs
+              [{:name "z",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :local-signals [],
+              :top-module? true,
+              :index 0}}
+            #function[duro.verilator/gen-array-signal-cases-inputs/fn--21407]],
+           :path [:root22871 :23225 :23228 :23248 :23265 :23266],
+           :children
+           [{:args
+             [:nao
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23265 :23266 :23267],
+             :children [],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-local-reference,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 38,
+              :column 1,
+              :line 17,
+              :end-line 23,
+              :arglists ([module-name sig])},
+             :return "nao__DOT__x",
+             :started-at 1579220338319,
+             :name duro.verilator/gen-local-reference,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23267,
+             :ended-at 1579220338319,
+             :depth 6}
+            {:args
+             [:nao
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23265 :23266 :23268],
+             :children [],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-local-reference,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 38,
+              :column 1,
+              :line 17,
+              :end-line 23,
+              :arglists ([module-name sig])},
+             :return "nao__DOT__z",
+             :started-at 1579220338319,
+             :name duro.verilator/gen-local-reference,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23268,
+             :ended-at 1579220338319,
+             :depth 6}],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name gen-local-signal-cases,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 11,
+            :column 1,
+            :line 76,
+            :end-line 87,
+            :arglists ([interfaces f])},
+           :return ("switch (sig) {" "" "}"),
+           :started-at 1579220338318,
+           :name duro.verilator/gen-local-signal-cases,
+           :arg-map
+           {interfaces
+            {:nao
+             {:inputs
+              [{:name "x",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :outputs
+              [{:name "z",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :local-signals [],
+              :top-module? true,
+              :index 0}},
+            f
+            #function[duro.verilator/gen-array-signal-cases-inputs/fn--21407]},
+           :id :23266,
+           :ended-at 1579220338319,
+           :depth 5}],
+         :meta
+         {:file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :line 175,
+          :column 1,
+          :end-line 189,
+          :end-column 28,
+          :arglists ([interfaces verilator-top-header]),
+          :name gen-array-signal-cases-inputs,
+          :ns #namespace[duro.verilator]},
+         :return
+         "#define GENERATED_ARRAY_SIGNAL_INPUTS \\\nswitch (sig) { \\\n \\\n}",
+         :started-at 1579220338318,
+         :name duro.verilator/gen-array-signal-cases-inputs,
+         :arg-map
+         {interfaces
+          {:nao
+           {:inputs
+            [{:name "x",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :outputs
+            [{:name "z",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :local-signals [],
+            :top-module? true,
+            :index 0}},
+          verilator-top-header
+          "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n"},
+         :id :23265,
+         :ended-at 1579220338319,
+         :depth 4}
+        {:args
+         [{:nao
+           {:inputs
+            [{:name "x",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :outputs
+            [{:name "z",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :local-signals [],
+            :top-module? true,
+            :index 0}}
+          "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n"],
+         :path [:root22871 :23225 :23228 :23248 :23269],
+         :children
+         [{:args
+           [{:nao
+             {:inputs
+              [{:name "x",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :outputs
+              [{:name "z",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :local-signals [],
+              :top-module? true,
+              :index 0}}
+            #function[duro.verilator/gen-array-signal-cases-outputs/fn--21415]],
+           :path [:root22871 :23225 :23228 :23248 :23269 :23270],
+           :children
+           [{:args
+             [:nao
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23269 :23270 :23271],
+             :children [],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-local-reference,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 38,
+              :column 1,
+              :line 17,
+              :end-line 23,
+              :arglists ([module-name sig])},
+             :return "nao__DOT__x",
+             :started-at 1579220338319,
+             :name duro.verilator/gen-local-reference,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "x",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23271,
+             :ended-at 1579220338319,
+             :depth 6}
+            {:args
+             [:nao
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}],
+             :path
+             [:root22871 :23225 :23228 :23248 :23269 :23270 :23272],
+             :children [],
+             :meta
+             {:private true,
+              :ns #namespace[duro.verilator],
+              :name gen-local-reference,
+              :file
+              "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+              :end-column 38,
+              :column 1,
+              :line 17,
+              :end-line 23,
+              :arglists ([module-name sig])},
+             :return "nao__DOT__z",
+             :started-at 1579220338319,
+             :name duro.verilator/gen-local-reference,
+             :arg-map
+             {module-name :nao,
+              sig
+              {:name "z",
+               :type
+               {:type :basicdtype,
+                :fl "c2",
+                :id "1",
+                :name "logic",
+                :left nil,
+                :right nil}}},
+             :id :23272,
+             :ended-at 1579220338319,
+             :depth 6}],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name gen-local-signal-cases,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 11,
+            :column 1,
+            :line 76,
+            :end-line 87,
+            :arglists ([interfaces f])},
+           :return ("switch (sig) {" "" "}"),
+           :started-at 1579220338319,
+           :name duro.verilator/gen-local-signal-cases,
+           :arg-map
+           {interfaces
+            {:nao
+             {:inputs
+              [{:name "x",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :outputs
+              [{:name "z",
+                :type
+                {:type :basicdtype,
+                 :fl "c2",
+                 :id "1",
+                 :name "logic",
+                 :left nil,
+                 :right nil}}],
+              :local-signals [],
+              :top-module? true,
+              :index 0}},
+            f
+            #function[duro.verilator/gen-array-signal-cases-outputs/fn--21415]},
+           :id :23270,
+           :ended-at 1579220338320,
+           :depth 5}],
+         :meta
+         {:file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :line 191,
+          :column 1,
+          :end-line 204,
+          :end-column 28,
+          :arglists ([interfaces verilator-top-header]),
+          :name gen-array-signal-cases-outputs,
+          :ns #namespace[duro.verilator]},
+         :return
+         "#define GENERATED_ARRAY_SIGNAL_OUTPUTS \\\nswitch (sig) { \\\n \\\n}",
+         :started-at 1579220338319,
+         :name duro.verilator/gen-array-signal-cases-outputs,
+         :arg-map
+         {interfaces
+          {:nao
+           {:inputs
+            [{:name "x",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :outputs
+            [{:name "z",
+              :type
+              {:type :basicdtype,
+               :fl "c2",
+               :id "1",
+               :name "logic",
+               :left nil,
+               :right nil}}],
+            :local-signals [],
+            :top-module? true,
+            :index 0}},
+          verilator-top-header
+          "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n"},
+         :id :23269,
+         :ended-at 1579220338320,
+         :depth 4}
+        {:args [{}],
+         :path [:root22871 :23225 :23228 :23248 :23273],
+         :children
+         [{:args [()],
+           :path [:root22871 :23225 :23228 :23248 :23273 :23274],
+           :children [],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name wrap-in-switch,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 11,
+            :column 1,
+            :line 69,
+            :end-line 74,
+            :arglists ([coll])},
+           :return ("switch (sig) {" "}"),
+           :started-at 1579220338320,
+           :name duro.verilator/wrap-in-switch,
+           :arg-map {coll ()},
+           :id :23274,
+           :ended-at 1579220338320,
+           :depth 5}
+          {:args [()],
+           :path [:root22871 :23225 :23228 :23248 :23273 :23275],
+           :children [],
+           :meta
+           {:private true,
+            :ns #namespace[duro.verilator],
+            :name wrap-in-switch,
+            :file
+            "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+            :end-column 11,
+            :column 1,
+            :line 69,
+            :end-line 74,
+            :arglists ([coll])},
+           :return ("switch (sig) {" "}"),
+           :started-at 1579220338320,
+           :name duro.verilator/wrap-in-switch,
+           :arg-map {coll ()},
+           :id :23275,
+           :ended-at 1579220338320,
+           :depth 5}],
+         :meta
+         {:file
+          "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+          :line 150,
+          :column 1,
+          :end-line 173,
+          :end-column 24,
+          :arglists ([independent-signals]),
+          :name gen-independent-signal-cases,
+          :ns #namespace[duro.verilator]},
+         :return
+         "#define GENERATED_INDEPENDENT_SIGNAL_INPUTS \\\nswitch (sig) { \\\n} \n\n#define GENERATED_INDEPENDENT_SIGNAL_OUTPUTS \\\nswitch (sig) { \\\n}",
+         :started-at 1579220338320,
+         :name duro.verilator/gen-independent-signal-cases,
+         :arg-map {independent-signals {}},
+         :id :23273,
+         :ended-at 1579220338321,
+         :depth 4}],
+       :meta
+       {:file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :line 231,
+        :column 1,
+        :end-line 239,
+        :end-column 27,
+        :arglists
+        ([interfaces verilator-top-header independent-signals]),
+        :name gen-submodules-header-string,
+        :ns #namespace[duro.verilator]},
+       :return
+       "#define GENERATED_LOCAL_SIGNAL_INPUTS \\\nswitch (sig) { \\\ncase 0: \\\ntop->nao__DOT__x = arg; \\\nbreak; \\\ncase 1: \\\ntop->nao__DOT__z = arg; \\\nbreak; \\\n}\n\n#define GENERATED_LOCAL_SIGNAL_OUTPUTS \\\nswitch (sig) { \\\ncase 0: \\\nreturn top->nao__DOT__x; \\\ncase 1: \\\nreturn top->nao__DOT__z; \\\n}\n\n#define GENERATED_ARRAY_SIGNAL_INPUTS \\\nswitch (sig) { \\\n \\\n}\n\n#define GENERATED_ARRAY_SIGNAL_OUTPUTS \\\nswitch (sig) { \\\n \\\n}\n\n#define GENERATED_INDEPENDENT_SIGNAL_INPUTS \\\nswitch (sig) { \\\n} \n\n#define GENERATED_INDEPENDENT_SIGNAL_OUTPUTS \\\nswitch (sig) { \\\n}",
+       :started-at 1579220338314,
+       :name duro.verilator/gen-submodules-header-string,
+       :arg-map
+       {interfaces
+        {:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}},
+        verilator-top-header
+        "// Verilated -*- C++ -*-\n// DESCRIPTION: Verilator output: Primary design header\n//\n// This header should be included by all source files instantiating the design.\n// The class here is then constructed to instantiate the design.\n// See the Verilator manual for examples.\n\n#ifndef _Vnao_H_\n#define _Vnao_H_\n\n#include \"verilated.h\"\n#include \"Vnao__Dpi.h\"\n\nclass Vnao__Syms;\n\n//----------\n\nVL_MODULE(Vnao) {\n  public:\n    \n    // PORTS\n    // The application code writes and reads these signals to\n    // propagate new values into/out from the Verilated model.\n    // Begin mtask footprint all: \n    VL_IN8(x,0,0);\n    VL_OUT8(z,0,0);\n    \n    // LOCAL SIGNALS\n    // Internals; generally not touched by application code\n    // Begin mtask footprint all: \n    VL_SIG8(nao__DOT__x,0,0);\n    VL_SIG8(nao__DOT__z,0,0);\n    \n    // LOCAL VARIABLES\n    // Internals; generally not touched by application code\n    \n    // INTERNAL VARIABLES\n    // Internals; generally not touched by application code\n    Vnao__Syms* __VlSymsp;  // Symbol table\n    \n    // PARAMETERS\n    // Parameters marked /*verilator public*/ for use by application code\n    \n    // CONSTRUCTORS\n  private:\n    VL_UNCOPYABLE(Vnao);  ///< Copying not allowed\n  public:\n    /// Construct the model; called by application code\n    /// The special name  may be used to make a wrapper with a\n    /// single model invisible with respect to DPI scope names.\n    Vnao(const char* name = \"TOP\");\n    /// Destroy the model; called (often implicitly) by application code\n    ~Vnao();\n    \n    // API METHODS\n    /// Evaluate the model.  Application must call when inputs change.\n    void eval();\n    /// Simulation complete, run final blocks.  Application must call on completion.\n    void final();\n    \n    // INTERNAL METHODS\n  private:\n    static void _eval_initial_loop(Vnao__Syms* __restrict vlSymsp);\n  public:\n    void __Vconfigure(Vnao__Syms* symsp, bool first);\n  private:\n    static QData _change_request(Vnao__Syms* __restrict vlSymsp);\n  public:\n    static void _combo__TOP__1(Vnao__Syms* __restrict vlSymsp);\n  private:\n    void _ctor_var_reset() VL_ATTR_COLD;\n  public:\n    static void _eval(Vnao__Syms* __restrict vlSymsp);\n  private:\n#ifdef VL_DEBUG\n    void _eval_debug_assertions();\n#endif // VL_DEBUG\n  public:\n    static void _eval_initial(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n    static void _eval_settle(Vnao__Syms* __restrict vlSymsp) VL_ATTR_COLD;\n} VL_ATTR_ALIGNED(128);\n\n#endif // guard\n",
+        independent-signals {}},
+       :id :23248,
+       :ended-at 1579220338321,
+       :depth 3}
+      {:args
+       [{:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}],
+       :path [:root22871 :23225 :23228 :23276],
+       :children [],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name get-top-module-name,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 64,
+        :column 1,
+        :line 280,
+        :end-line 282,
+        :arglists ([interfaces])},
+       :return "nao",
+       :started-at 1579220338321,
+       :name duro.verilator/get-top-module-name,
+       :arg-map
+       {interfaces
+        {:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}},
+       :id :23276,
+       :ended-at 1579220338321,
+       :depth 3}
+      {:args
+       [{:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}],
+       :path [:root22871 :23225 :23228 :23277],
+       :children [],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name get-top-module-name,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 64,
+        :column 1,
+        :line 280,
+        :end-line 282,
+        :arglists ([interfaces])},
+       :return "nao",
+       :started-at 1579220338321,
+       :name duro.verilator/get-top-module-name,
+       :arg-map
+       {interfaces
+        {:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}},
+       :id :23277,
+       :ended-at 1579220338321,
+       :depth 3}
+      {:args
+       [{:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}],
+       :path [:root22871 :23225 :23228 :23278],
+       :children [],
+       :meta
+       {:private true,
+        :ns #namespace[duro.verilator],
+        :name get-top-module-name,
+        :file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+        :end-column 64,
+        :column 1,
+        :line 280,
+        :end-line 282,
+        :arglists ([interfaces])},
+       :return "nao",
+       :started-at 1579220340513,
+       :name duro.verilator/get-top-module-name,
+       :arg-map
+       {interfaces
+        {:nao
+         {:inputs
+          [{:name "x",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :outputs
+          [{:name "z",
+            :type
+            {:type :basicdtype,
+             :fl "c2",
+             :id "1",
+             :name "logic",
+             :left nil,
+             :right nil}}],
+          :local-signals [],
+          :top-module? true,
+          :index 0}}},
+       :id :23278,
+       :ended-at 1579220340513,
+       :depth 3}],
+     :meta
+     {:file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+      :line 498,
+      :column 1,
+      :end-line 570,
+      :end-column 35,
+      :doc "It caches the module with the options and the xml-hash",
+      :name gen-dynamic-lib*,
+      :ns #namespace[duro.verilator]},
+     :return
+     {:interfaces
+      {:nao
+       {:inputs
+        [{:name "x",
+          :type
+          {:type :basicdtype,
+           :fl "c2",
+           :id "1",
+           :name "logic",
+           :left nil,
+           :right nil}}],
+        :outputs
+        [{:name "z",
+          :type
+          {:type :basicdtype,
+           :fl "c2",
+           :id "1",
+           :name "logic",
+           :left nil,
+           :right nil}}],
+        :local-signals [],
+        :top-module? true,
+        :index 0}},
+      :independent-signals {},
+      :top-module-name "nao",
+      :lib-path
+      "/Users/feodrippe/.duro-simulation/nao.v/libttsbq.dylib",
+      :top-interface
+      {:inputs
+       [{:name "x",
+         :type
+         {:type :basicdtype,
+          :fl "c2",
+          :id "1",
+          :name "logic",
+          :left nil,
+          :right nil}}],
+       :outputs
+       [{:name "z",
+         :type
+         {:type :basicdtype,
+          :fl "c2",
+          :id "1",
+          :name "logic",
+          :left nil,
+          :right nil}}],
+       :local-signals [],
+       :top-module? true,
+       :index 0},
+      :lib-folder "/Users/feodrippe/.duro-simulation/nao.v"},
+     :started-at 1579220337980,
+     :name duro.verilator/gen-dynamic-lib*,
+     :arg-map
+     {0 "nao.v",
+      1 844039120,
+      2 {:trace? true, :trace-path "naso.vcd", :mod-debug? true}},
+     :id :23228,
+     :ended-at 1579220340513,
+     :depth 2}],
+   :meta
+   {:file "file:/Users/feodrippe/dev/duro/src/duro/verilator.clj",
+    :line 572,
+    :column 1,
+    :end-line 578,
+    :end-column 53,
+    :arglists ([mod-path] [mod-path options]),
+    :name gen-dynamic-lib,
+    :ns #namespace[duro.verilator]},
+   :return
+   {:interfaces
+    {:nao
+     {:inputs
+      [{:name "x",
+        :type
+        {:type :basicdtype,
+         :fl "c2",
+         :id "1",
+         :name "logic",
+         :left nil,
+         :right nil}}],
+      :outputs
+      [{:name "z",
+        :type
+        {:type :basicdtype,
+         :fl "c2",
+         :id "1",
+         :name "logic",
+         :left nil,
+         :right nil}}],
+      :local-signals [],
+      :top-module? true,
+      :index 0}},
+    :independent-signals {},
+    :top-module-name "nao",
+    :lib-path "/Users/feodrippe/.duro-simulation/nao.v/libttsbq.dylib",
+    :top-interface
+    {:inputs
+     [{:name "x",
+       :type
+       {:type :basicdtype,
+        :fl "c2",
+        :id "1",
+        :name "logic",
+        :left nil,
+        :right nil}}],
+     :outputs
+     [{:name "z",
+       :type
+       {:type :basicdtype,
+        :fl "c2",
+        :id "1",
+        :name "logic",
+        :left nil,
+        :right nil}}],
+     :local-signals [],
+     :top-module? true,
+     :index 0},
+    :lib-folder "/Users/feodrippe/.duro-simulation/nao.v"},
+   :started-at 1579220337585,
+   :name duro.verilator/gen-dynamic-lib,
+   :arg-map
+   {mod-path "nao.v",
+    options {:trace? true, :trace-path "naso.vcd", :mod-debug? true}},
+   :id :23225,
+   :ended-at 1579220340513,
+   :depth 1}],
+ :traced {:ns #{duro.verilator}, :fn #{}, :inner-fn #{}},
+ :ws-slot nil,
+ :arg-map nil}
